@@ -339,16 +339,16 @@ class StoriesTableSeeder extends Seeder
                     $chapterModels = [];
         
                     foreach ($storyData['chapters'] as $chapterData) {
-                        $chapter = Chapter::create([
-                            'story_id' => $story->id,
-                            'chapter_number' => $chapterData['chapter_number'],
-                            'content' => $chapterData['content'],
-                            'stress_level' => $chapterData['stress_level'],
-                            'stress_impact' => $chapterData['stress_impact'],
-                            'stress_advice' => $chapterData['stress_advice']
-                        ]);
-                        $chapterModels[$chapterData['chapter_number']] = $chapter;
-                    }
+    $chapter = Chapter::create([
+        'story_id' => $story->id,
+        'chapter_number' => $chapterData['chapter_number'],
+        'content' => $chapterData['content'],
+        'stress_level' => $chapterData['stress_level'],
+        'stress_impact' => $chapterData['stress_impact'],
+        'stress_advice' => $chapterData['stress_advice']
+    ]);
+    $chapterModels[$chapterData['chapter_number']] = $chapter;
+}
         
                     foreach ($storyData['chapters'] as $chapterData) {
                         $chapter = $chapterModels[$chapterData['chapter_number']];

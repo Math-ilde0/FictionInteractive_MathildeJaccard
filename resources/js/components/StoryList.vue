@@ -1,8 +1,6 @@
 <template>
   <main>
     <div class="book-page">
-      <h1>Choisissez une histoire</h1>
-
       <!-- Display loading text while stories are being fetched -->
       <p v-if="loading">Chargement des histoires...</p>
 

@@ -17,20 +17,19 @@
       <h1>Chapitre {{ chapter?.chapter_number || '?' }}</h1>
       
       <p>{{ chapter?.content }}</p>
-      
-      <!-- Ajout de l'impact du stress et des conseils -->
-      <div class="stress-info">
-        <p><strong>Impact du stress :</strong> {{ chapter?.stress_impact }}</p>
-        <p><strong>Conseil pour gérer le stress :</strong> {{ chapter?.stress_advice }}</p>
-      </div>
+    
       
       <ul class="choice-list">
-        <li v-for="choice in choices" :key="choice.id">
-          <button @click="goToChapter(choice)">
-            {{ choice.text }}
-          </button>
-        </li>
-      </ul>
+  <li v-for="choice in choices" :key="choice.id" class="choice-item">
+    <button @click="goToChapter(choice)">
+      {{ choice.text }}
+    </button>
+    <div class="stress-tip">
+      <i class="fas fa-info-circle"></i>
+      <span class="tip-text">{{ choice.stress_advice }}</span>
+    </div>
+  </li>
+</ul>
     </div>
   </main>
 </template>
@@ -181,6 +180,42 @@ watch(
 .book-page {
   transition: all 0.3s ease;
   position: relative;
+}
+
+.choice-item {
+  position: relative;
+}
+
+.stress-tip {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.stress-tip .tip-text {
+  visibility: hidden;
+}
+
+.choice-item:hover .stress-tip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.choice-item:hover .tip-text {
+  visibility: visible;
+}
+
+.stress-tip i {
+  margin-right: 5px;
+  color: #888;
 }
 
 @keyframes heartbeat {
