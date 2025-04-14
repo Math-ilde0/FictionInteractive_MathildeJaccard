@@ -87,6 +87,7 @@ const pageEffects = computed(() => {
 });
 
 // Function to fetch chapter data
+// Dans la méthode fetchChapter du composant Chapter.vue
 const fetchChapter = async () => {
   const { storyId, chapterId } = route.params;
   
@@ -94,15 +95,14 @@ const fetchChapter = async () => {
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
     chapter.value = response.data;
     
-    // Transformation des choix
+    // Correction: s'assurer que nous utilisons next_chapter_id au lieu de next_chapter_number
     choices.value = response.data.choices.map(choice => ({
       text: choice.text,
-      next_chapter_number: choice.next_chapter_number
+      next_chapter_id: choice.next_chapter_id  // Utilisez le nom correct du champ
     }));
 
     stressLevel.value = response.data.stress_level || 5;
     
-    // Sauvegarder le niveau de stress dans localStorage pour le garder entre les chapitres
     localStorage.setItem('stressLevel', stressLevel.value);
   } catch (error) {
     console.error('Erreur de chargement du chapitre:', error);
@@ -110,6 +110,7 @@ const fetchChapter = async () => {
 };
 
 // Function to navigate to the next chapter
+// Dans Chapter.vue
 const goToChapter = (choice) => {
   if (!choice) {
     console.error('Choix invalide');
@@ -118,17 +119,17 @@ const goToChapter = (choice) => {
 
   console.log('Navigating with choice:', choice);
 
-  // Vérification explicite de la présence de next_chapter_number
-  if (choice.next_chapter_number === null || choice.next_chapter_number === undefined) {
+  // Vérification de next_chapter_id (au lieu de next_chapter_number)
+  if (choice.next_chapter_id === null || choice.next_chapter_id === undefined) {
     console.log('Pas de prochain chapitre détecté');
     const stressScore = localStorage.getItem('stressLevel') || 5;
     const outcome = stressScore >= 8 ? 'failure' : 'success';
-    window.location.href = `/result/${outcome}`;
+    router.push(`/result/${outcome}`);
   } else {
     // Utiliser les paramètres actuels de la route
     const { storyId } = route.params;
-    console.log(`Navigating to story/${storyId}/chapter/${choice.next_chapter_number}`);
-    window.location.href = `/story/${storyId}/chapter/${choice.next_chapter_number}`;
+    console.log(`Navigating to story/${storyId}/chapter/${choice.next_chapter_id}`);
+    router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
   }
 };
 
