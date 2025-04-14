@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -27,35 +27,47 @@ const router = useRouter();
 
 // Function to fetch chapter data based on the storyId and chapterId
 const fetchChapter = async () => {
-  const { storyId, chapterId } = route.params;  // Extract storyId and chapterId from the route parameters
-  console.log('storyId:', storyId); // Check the storyId in the console
-  console.log('chapterId:', chapterId); // Check the chapterId in the console
+  const { storyId, chapterId } = route.params;
+  console.log('Fetching chapter data for story:', storyId, 'chapter:', chapterId);
   
   try {
-    // Fetch the chapter data from the API using the provided route
+    // Ajoutez le préfixe '/api/' à l'URL
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
-    console.log('Chapter response:', response.data); // Log the chapter data returned by the API
-    chapter.value = response.data; // Set the chapter data to the ref
-    choices.value = response.data.choices; // Set the choices for the chapter
+    console.log('Chapter response:', response.data);
+    chapter.value = response.data;
+    choices.value = response.data.choices;
   } catch (error) {
-    console.error('Erreur de chargement du chapitre:', error); // Log any error during the chapter data fetch
+    console.error('Erreur de chargement du chapitre:', error);
   }
 };
 
 // Function to navigate to the next chapter based on the choice selected
 const goToChapter = (chapterId) => {
+  console.log('Navigating to chapter:', chapterId);
+  
   if (chapterId === null) {
-    // If chapterId is null, go to the result page based on stressLevel
-    if (stressLevel.value >= 10) {
-      router.push(`/result/failure`);
-    } else {
-      router.push(`/result/success`);
-    }
+    console.log('End of story, going to result page');
+    // Si chapterId est null, rediriger vers la page de résultat
+    const outcome = stressLevel.value >= 10 ? 'failure' : 'success';
+    window.location.href = `/result/${outcome}`;
   } else {
-    // Navigate to the next chapter
-    router.push(`/story/${route.params.storyId}/chapter/${chapterId}`);
+    console.log(`Navigating to /story/${route.params.storyId}/chapter/${chapterId}`);
+    // Utiliser window.location pour une navigation complète qui forcera le rechargement
+    window.location.href = `/story/${route.params.storyId}/chapter/${chapterId}`;
   }
 };
+
+// Surveiller les changements de route pour recharger les données du chapitre
+watch(
+  () => route.params,
+  (newParams, oldParams) => {
+    console.log('Route params changed from', oldParams, 'to', newParams);
+    if (newParams.chapterId !== oldParams.chapterId) {
+      fetchChapter();
+    }
+  },
+  { deep: true }
+);
 
 // Fetch chapter data when the component is mounted
 onMounted(fetchChapter);

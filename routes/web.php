@@ -10,14 +10,13 @@ Route::get('/', function () {
 // Story API routes
 Route::get('/api/stories', [StoryController::class, 'index']);
 Route::get('/api/story/{id}', [StoryController::class, 'show']);
-Route::get('/story/1', [StoryController::class, 'show'])->name('story.show');
 
 // Route for game result
-Route::get('/result/{outcome}', function ($outcome) {
-    return view('result', ['outcome' => $outcome]);
+Route::get('/result/{outcome}', function () {
+    return view('welcome');
 });
 
 // Catch-all route for Vue router
 Route::get('/{any}', function () {
     return view('welcome');
-})->where('any', '.*');
+})->where('any', '^(?!api).*');
