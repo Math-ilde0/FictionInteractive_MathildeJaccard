@@ -29,7 +29,8 @@ export default {
     };
   },
   mounted() {
-    const storyId = 1;  // Use the ID for the story you want to load
+    const storyId = 2;  // Hardcoded to match the seeded story
+    // Note the updated URL to match the API route
     axios.get(`/api/story/${storyId}`)
       .then(response => {
         this.story = response.data;  // Set the story data
