@@ -1,19 +1,28 @@
 <template>
   <main>
     <div class="book-page">
-      <h1 v-if="story">{{ story.title }}</h1>
+      <h1>Choisissez une histoire</h1>
 
-      <!-- Display the summary of the story -->
-      <p v-if="story && !loading">{{ story.summary }}</p>
+      <!-- Display loading text while stories are being fetched -->
+      <p v-if="loading">Chargement des histoires...</p>
 
-      <!-- Display loading text while the story is being fetched -->
-      <p v-if="loading">Chargement de l'histoire...</p>
+      <!-- Show error message if no stories are found -->
+      <p v-else-if="stories.length === 0">Aucune histoire disponible.</p>
 
-      <!-- Show error message if no story is found -->
-      <p v-else-if="!story && !loading">Aucune histoire trouvée.</p>
-
-      <!-- Show the button to start the story -->
-      <button v-if="story && !loading" @click="startStory">Démarrer l'histoire</button>
+      <!-- List of stories -->
+      <div v-else class="stories-list">
+        <div 
+          v-for="story in stories" 
+          :key="story.id" 
+          class="story-item"
+        >
+          <h2>{{ story.title }}</h2>
+          <p>{{ story.summary }}</p>
+          <button @click="startStory(story.id)">
+            Commencer cette histoire
+          </button>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -24,28 +33,27 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      story: null,  // Holds the story data
+      stories: [],  // Holds the list of stories
       loading: true,  // Tracks loading state
     };
   },
   mounted() {
-    const storyId = 2;  // Hardcoded to match the seeded story
-    // Note the updated URL to match the API route
-    axios.get(`/api/story/${storyId}`)
+    // Fetch all available stories
+    axios.get('/api/stories')
       .then(response => {
-        this.story = response.data;  // Set the story data
+        this.stories = response.data;  // Set the stories data
         this.loading = false;  // Data is loaded, stop loading
       })
       .catch(error => {
-        console.error('Error loading story:', error);
+        console.error('Error loading stories:', error);
         this.loading = false;  // Stop loading in case of an error
       });
   },
   methods: {
-    // Method to start the story
-    startStory() {
-      // You can define what happens when the user starts the story (e.g., redirect to the first chapter)
-      this.$router.push(`/story/${this.story.id}/chapter/1`); // Example: Redirecting to the first chapter
+    // Method to start a specific story
+    startStory(storyId) {
+      // Navigate to the first chapter of the selected story
+      this.$router.push(`/story/${storyId}/chapter/1`);
     }
   }
 };
@@ -61,18 +69,26 @@ export default {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-.book-page h1 {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 20px;
+.stories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.book-page p {
-  font-size: 1.1rem;
-  text-align: justify;
-  letter-spacing: 0.5px;
-  line-height: 1.8;
-  margin-bottom: 1.5em;
+.story-item {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.story-item h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.story-item p {
+  color: #666;
+  margin-bottom: 15px;
 }
 
 button {
@@ -86,7 +102,6 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 20px;
 }
 
 button:hover {

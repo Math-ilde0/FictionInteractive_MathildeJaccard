@@ -22,6 +22,8 @@ export default defineConfig({
         target: 'http://127.0.0.1:8000', // Proxy API requests to the Laravel backend
         changeOrigin: true, // Changes the origin of the host header to the target URL
         secure: false, // Allows insecure requests (useful for development with HTTP)
+        // Add rewrite to remove '/api' prefix
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
     },
   },

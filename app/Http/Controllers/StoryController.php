@@ -6,19 +6,19 @@ use Illuminate\Http\Request;
 
 class StoryController extends Controller
 {
-    // Affiche une seule histoire (l'histoire avec l'ID 2)
+    // List all available stories
     public function index()
     {
-        $story = Story::with('chapters')->find(2);
+        $stories = Story::all();
         
-        if (!$story) {
-            return response()->json(['error' => 'No story found'], 404);
+        if ($stories->isEmpty()) {
+            return response()->json(['error' => 'No stories found'], 404);
         }
         
-        return response()->json($story);
+        return response()->json($stories);
     }
 
-    // Affiche une histoire spécifique (l'histoire avec l'ID 2)
+    // Display a single story by ID
     public function show($id)
     {
         $story = Story::with('chapters')->find($id);
@@ -29,17 +29,10 @@ class StoryController extends Controller
         
         return response()->json($story);
     }
-    
 
-
-    // Ajoutez cette méthode à votre StoryController
+    // Route for game result
     public function showResult($outcome)
     {
         return view('result', ['outcome' => $outcome]);
     }
-    
-
 }
-
-
-

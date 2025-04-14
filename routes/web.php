@@ -7,10 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Story API routes
-Route::get('/api/stories', [StoryController::class, 'index']);
-Route::get('/api/story/{id}', [StoryController::class, 'show']);
-
 // Route for game result
 Route::get('/result/{outcome}', function () {
     return view('welcome');
