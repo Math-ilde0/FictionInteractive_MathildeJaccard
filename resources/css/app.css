@@ -1,0 +1,162 @@
+/* Applique la police manuscrite sur tout le corps */
+body {
+    font-family: 'Dancing Script', cursive;
+    margin: 0;
+    padding: 10px 0;
+    background-color: #f4f1e3;
+    color: #333;
+    line-height: 1.6;
+    display: block; /* No flex */
+    overflow-y: auto;
+}
+
+
+/* Ajoute un effet de couverture de livre à la première page */
+.cover {
+    background-image: url('path_to_cover_image.jpg');  /* Remplace par l'image de couverture du livre */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.cover h1 {
+    font-size: 4rem;  /* Taille du titre */
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Style des en-têtes */
+header {
+    background-color: #2b2a28; /* Couleur plus sombre pour l'en-tête */
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Style du contenu central, centré */
+main {
+    padding: 40px 20px;
+    max-width: 650px; /* Limite la largeur du texte, plus proche d'un format de livre */
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style des chapitres */
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Style des paragraphes */
+p {
+    font-size: 1.1rem;
+    margin: 20px 0;
+    text-align: justify;
+    letter-spacing: 0.5px;
+}
+
+/* Style des boutons (choix de l'utilisateur) */
+button {
+    background-color: #a5d6a7;  /* Couleur douce pour les boutons */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    margin: 10px 0;
+}
+
+button:hover {
+    background-color: #81c784;  /* Couleur plus foncée au survol */
+}
+
+/* Liste des choix sous forme de boutons */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 15px 0;
+}
+
+li button {
+    width: 100%;
+    font-size: 1.1rem;
+}
+
+/* Effet d'ombre pour les chapitres */
+.chapter-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 30px 0;
+}
+
+/* Effet page tournée pour la première page */
+.page-turn {
+    transition: all 0.5s ease;
+    transform: rotateY(0deg);
+}
+
+.page-turn.flipped {
+    transform: rotateY(180deg);
+}
+
+/* Style responsive pour téléphone */
+@media (max-width: 768px) {
+    .cover h1 {
+        font-size: 2.5rem;
+    }
+
+    .chapter-container {
+        padding: 20px;
+    }
+
+    main {
+        padding: 20px;
+        max-width: 90%;
+    }
+}
+
+/* Styles pour la page de fin */
+.result-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 20px;
+    font-family: 'Dancing Script', cursive;
+}
+
+.success {
+    background-color: #a5d6a7;
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.failure {
+    background-color: #ef5350;
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
