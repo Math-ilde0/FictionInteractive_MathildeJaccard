@@ -1,6 +1,9 @@
+
 <template>
   <main>
     <div class="book-page">
+      <h1>Histoires Interactives</h1>
+      
       <!-- Display loading text while stories are being fetched -->
       <p v-if="loading">Chargement des histoires...</p>
 
@@ -37,26 +40,33 @@ export default {
   },
   mounted() {
     // Fetch all available stories
-    axios.get('/api/stories')
-      .then(response => {
-        this.stories = response.data;  // Set the stories data
-        this.loading = false;  // Data is loaded, stop loading
-      })
-      .catch(error => {
-        console.error('Error loading stories:', error);
-        this.loading = false;  // Stop loading in case of an error
-      });
+    // Dans StoryList.vue
+axios.get('/api/stories')
+  .then(response => {
+    this.stories = response.data;
+    this.loading = false;
+  })
+  .catch(error => {
+    console.error('Error loading stories:', error);
+    this.loading = false;
+  });
   },
   methods: {
     // Method to start a specific story
-    startStory(storyId) {
-      // Navigate to the first chapter of the selected story
-      this.$router.push(`/story/${storyId}/chapter/1`);
+    async startStory(storyId) {
+      try {
+        // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
+        await axios.post('/api/stress/reset');
+        
+        // Navigate to the first chapter of the selected story
+        this.$router.push(`/story/${storyId}/chapter/1`);
+      } catch (error) {
+        console.error('Error starting story:', error);
+      }
     }
   }
 };
 </script>
-
 <style scoped>
 .book-page {
   background-color: white;
