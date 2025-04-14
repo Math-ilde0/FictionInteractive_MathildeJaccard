@@ -21,18 +21,20 @@ class ChapterController extends Controller
 
     // Fetch and display a specific chapter by storyId and chapterId
     public function show($storyId, $chapterId)
-{
-    // Retrieve the chapter for the given storyId and chapterId
-    $chapter = Chapter::where('story_id', $storyId)->find($chapterId);
+    {
+        // Retrieve the chapter for the given storyId and chapterId
+        $chapter = Chapter::where('story_id', $storyId)->find($chapterId);
 
-    if (!$chapter) {
-        return response()->json(['error' => 'Chapter not found'], 404);
+        if (!$chapter) {
+            return response()->json(['error' => 'Chapter not found'], 404);
+        }
+
+        // Load the choices associated with this chapter
+        $chapter->load('choices');
+
+        // Return the chapter as a JSON response
+        return response()->json($chapter);
     }
-
-    // Return the chapter as a JSON response
-    return response()->json($chapter);
-}
-
 
     // Update a chapter (not used in this case)
     public function update(Request $request, $id)
