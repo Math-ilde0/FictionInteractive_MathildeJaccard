@@ -1,18 +1,44 @@
 <template>
     <main>
-      <div class="book-page result-container">
-        <h1>Résultat de l'histoire</h1>
-        <p v-if="outcome === 'success'">
-          Bravo, vous avez échappé au burn-out ! Vous avez su gérer vos choix avec sagesse. Félicitations !
-        </p>
-        <p v-else-if="outcome === 'failure'">
-          Vous êtes en burn-out. Si vous avez besoin d'aide, contactez un professionnel de santé. Prenez soin de vous.
-        </p>
-        <p v-else>
-          Une erreur s'est produite. Veuillez réessayer.
-        </p>
-        <router-link to="/" class="button">Retour à l'accueil</router-link>
-      </div>
+      <div v-if="outcome === 'success'" class="result-success">
+  <h2>🏆 Succès Total !</h2>
+  <p>Félicitations ! Vous avez brillamment géré le stress et maintenu votre équilibre mental. Votre résilience est remarquable !</p>
+  <div class="achievement">
+    <span>🌟 Déverrouillé : Maître de la Sérénité</span>
+  </div>
+</div>
+
+<div v-else-if="outcome === 'warning'" class="result-warning">
+  <h2>⚠️ Proche du Burn-out</h2>
+  <p>Vous avez frôlé l'épuisement. Bien que vous ayez survécu, il est crucial de prendre soin de votre santé mentale.</p>
+  <div class="advice">
+    <h3>Conseils de Prévention :</h3>
+    <ul>
+      <li>Établissez des limites claires</li>
+      <li>Pratiquez la pleine conscience</li>
+      <li>Consultez un professionnel si nécessaire</li>
+    </ul>
+  </div>
+</div>
+
+<div v-else-if="outcome === 'failure'" class="result-failure">
+  <h2>🔥 Burn-out Détecté</h2>
+  <p>Votre niveau de stress a atteint un point critique. Il est urgent de prendre soin de vous.</p>
+  <div class="emergency-resources">
+    <h3>Ressources d'Aide :</h3>
+    <ul>
+      <li>📞 Ligne d'écoute : 0800 STRESS</li>
+      <li>💻 Sites de soutien psychologique</li>
+      <li>👥 Groupes de support</li>
+    </ul>
+  </div>
+</div>
+
+<div v-else class="result-error">
+  <p>Une erreur s'est produite. Veuillez réessayer.</p>
+</div>
+
+<router-link to="/" class="button">Retour à l'accueil</router-link>
     </main>
   </template>
   

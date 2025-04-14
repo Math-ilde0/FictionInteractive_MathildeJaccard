@@ -5,8 +5,8 @@
         <div class="stress-meter">
           <div class="stress-text">Niveau de stress: {{ chapter?.stress_level || 5 }}/10</div>
           <div class="stress-bar">
-            <div 
-              class="stress-fill" 
+            <div
+              class="stress-fill"
               :style="{ width: `${(chapter?.stress_level || 5) * 10}%`, backgroundColor: stressColor }"
             ></div>
           </div>
@@ -15,10 +15,18 @@
       </div>
       
       <h1>Chapitre {{ chapter?.chapter_number || '?' }}</h1>
+      
       <p>{{ chapter?.content }}</p>
+      
+      <!-- Ajout de l'impact du stress et des conseils -->
+      <div class="stress-info">
+        <p><strong>Impact du stress :</strong> {{ chapter?.stress_impact }}</p>
+        <p><strong>Conseil pour gérer le stress :</strong> {{ chapter?.stress_advice }}</p>
+      </div>
+      
       <ul class="choice-list">
         <li v-for="choice in choices" :key="choice.id">
-          <button @click="goToChapter(choice.next_chapter_id)">
+          <button @click="goToChapter(choice)">
             {{ choice.text }}
           </button>
         </li>
@@ -56,7 +64,6 @@ const stressEmoji = computed(() => {
   return '🤯'; // Burnout imminent
 });
 
-// Après stressEmoji, ajoutez:
 // Computed property pour les effets visuels de stress
 const pageEffects = computed(() => {
   const level = chapter.value?.stress_level || 5;
@@ -92,10 +99,18 @@ const fetchChapter = async () => {
 };
 
 // Function to navigate to the next chapter
-const goToChapter = (chapterId) => {
+const goToChapter = (choice) => {
+  if (!choice) {
+    console.error('Choix invalide');
+    return;
+  }
+
+  const chapterId = choice.next_chapter_id;
+
   if (chapterId === null) {
     // Déterminer l'issue en fonction du niveau de stress accumulé
-    const outcome = stressLevel.value >= 8 ? 'failure' : 'success';
+    const stressScore = localStorage.getItem('stressLevel') || 5;
+    const outcome = stressScore >= 8 ? 'failure' : 'success';
     window.location.href = `/result/${outcome}`;
   } else {
     window.location.href = `/story/${route.params.storyId}/chapter/${chapterId}`;
@@ -125,8 +140,7 @@ watch(
 </script>
 
 <style scoped>
-/* Styles existants... */
-
+/* Styles précédents conservés */
 .stress-container {
   margin-bottom: 20px;
   border-radius: 8px;
@@ -164,13 +178,11 @@ watch(
   margin-top: 5px;
 }
 
-/* Ajoutez ceci à votre style dans Chapter.vue */
 .book-page {
   transition: all 0.3s ease;
   position: relative;
 }
 
-/* Applique un effet de battement de cœur quand le stress est élevé */
 @keyframes heartbeat {
   0% { transform: scale(1); }
   10% { transform: scale(1.01); }
@@ -180,7 +192,6 @@ watch(
   100% { transform: scale(1); }
 }
 
-/* Applique un effet de tremblement léger quand le stress est très élevé */
 @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(2px); }
