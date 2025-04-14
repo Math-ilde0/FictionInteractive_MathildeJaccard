@@ -18,18 +18,23 @@
       
       <p>{{ chapter?.content }}</p>
     
-      
-      <ul class="choice-list">
-  <li v-for="choice in choices" :key="choice.id" class="choice-item">
-    <button @click="goToChapter(choice)">
-      {{ choice.text }}
-    </button>
-    <div class="stress-tip">
-      <i class="fas fa-info-circle"></i>
-      <span class="tip-text">{{ choice.stress_advice }}</span>
-    </div>
-  </li>
-</ul>
+      <div class="choice-list">
+        <button 
+          v-for="(choice, index) in choices" 
+          :key="index" 
+          @click="goToChapter(choice)"
+          class="choice-button"
+        >
+          {{ choice.text }}
+        </button>
+      </div>
+
+      <div class="info-section">
+        <i class="fas fa-info-circle info-icon" @mouseover="showInfo = true" @mouseleave="showInfo = false"></i>
+        <div v-if="showInfo" class="info-tooltip">
+          {{ chapter?.stress_advice || 'Aucun conseil disponible' }}
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -41,6 +46,7 @@ import axios from 'axios';
 
 const chapter = ref({});
 const choices = ref([]);
+const showInfo = ref(false);
 const stressLevel = ref(5);
 const route = useRoute();
 const router = useRouter();
@@ -87,7 +93,13 @@ const fetchChapter = async () => {
   try {
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
     chapter.value = response.data;
-    choices.value = response.data.choices;
+    
+    // Transformation des choix
+    choices.value = response.data.choices.map(choice => ({
+      text: choice.text,
+      next_chapter_number: choice.next_chapter_number
+    }));
+
     stressLevel.value = response.data.stress_level || 5;
     
     // Sauvegarder le niveau de stress dans localStorage pour le garder entre les chapitres
@@ -104,15 +116,19 @@ const goToChapter = (choice) => {
     return;
   }
 
-  const chapterId = choice.next_chapter_id;
+  console.log('Navigating with choice:', choice);
 
-  if (chapterId === null) {
-    // Déterminer l'issue en fonction du niveau de stress accumulé
+  // Vérification explicite de la présence de next_chapter_number
+  if (choice.next_chapter_number === null || choice.next_chapter_number === undefined) {
+    console.log('Pas de prochain chapitre détecté');
     const stressScore = localStorage.getItem('stressLevel') || 5;
     const outcome = stressScore >= 8 ? 'failure' : 'success';
     window.location.href = `/result/${outcome}`;
   } else {
-    window.location.href = `/story/${route.params.storyId}/chapter/${chapterId}`;
+    // Utiliser les paramètres actuels de la route
+    const { storyId } = route.params;
+    console.log(`Navigating to story/${storyId}/chapter/${choice.next_chapter_number}`);
+    window.location.href = `/story/${storyId}/chapter/${choice.next_chapter_number}`;
   }
 };
 
@@ -139,7 +155,6 @@ watch(
 </script>
 
 <style scoped>
-/* Styles précédents conservés */
 .stress-container {
   margin-bottom: 20px;
   border-radius: 8px;
@@ -182,40 +197,55 @@ watch(
   position: relative;
 }
 
-.choice-item {
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.choice-button {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  background-color: #a5d6a7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.choice-button:hover {
+  background-color: #81c784;
+}
+
+.info-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
   position: relative;
 }
 
-.stress-tip {
+.info-icon {
+  font-size: 1.5rem;
+  color: #888;
+  cursor: help;
+}
+
+.info-tooltip {
   position: absolute;
-  bottom: -40px;
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
+  background-color: #333;
+  color: white;
   padding: 10px;
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.stress-tip .tip-text {
-  visibility: hidden;
-}
-
-.choice-item:hover .stress-tip {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.choice-item:hover .tip-text {
-  visibility: visible;
-}
-
-.stress-tip i {
-  margin-right: 5px;
-  color: #888;
+  border-radius: 4px;
+  max-width: 300px;
+  text-align: center;
+  z-index: 10;
 }
 
 @keyframes heartbeat {
