@@ -19,19 +19,20 @@ class StoriesTableSeeder extends Seeder
 
         $stories = [
             [
-                'title' => 'Évite le Burnout',
-                'summary' => 'Une aventure interactive où chaque décision affecte ta charge mentale : plus ce chiffre est élevé, plus tu te rapproches de l\'épuisement mental. Parviendras-tu à maintenir l\'équilibre ou finiras-tu en burnout ?',
+                'title' => 'Batterie Mentale',
+                'summary' => 'Cette histoire interactive suit le parcours d\'un étudiant en ingénierie des médias à la HEIG-VD qui navigue entre projets, cours et vie personnelle. Chaque chapitre présente une situation et deux choix possibles qui influencent le niveau de stress du protagoniste.',
                 'chapters' => [
                     [
                         'chapter_number' => 1,
-                        'content' => 'Ce lundi matin, ton réveil hurle à 6h30 comme une alarme de fin du monde. Tu ouvres difficilement les yeux. Ta chambre est encore baignée dans l\'obscurité, mais ton cerveau s\'active déjà, bombardé par la liste interminable des tâches à accomplir. Trois deadlines dans la semaine, une réunion de projet que tu redoutes, des mails qui s\'empilent comme des menaces silencieuses. Ton cœur s\'accélère, ton estomac se noue, et tu n\'as même pas encore posé un pied au sol. Tu restes allongé quelques secondes, paralysé par l\'avalanche de responsabilités. Le plafond devient ton miroir, froid et impassible, pendant que tes pensées tournent en boucle. Tu pourrais te lever maintenant et affronter la journée, ou bien t\'enfouir un peu plus profondément sous la couette et faire semblant que le monde extérieur n\'existe pas. Les deux options t\'épuisent. Ton téléphone clignote avec une nouvelle notification. Rien d\'urgent, mais suffisant pour ajouter une couche de pression. Tu inspires profondément, essayant de rassembler assez d\'énergie pour bouger. Une voix dans ta tête murmure : "Tu ne tiendras pas la semaine comme ça." Une autre réplique : "Juste une chose à la fois."',
+                        'content' => 'Ce lundi matin, ton réveil hurle à 6h30 comme une alarme de fin du monde. Tes yeux s\'ouvrent difficilement dans ta chambre d\'étudiant à Yverdon. Tu fixes le plafond, accablé par la liste mentale qui se déroule déjà: le projet de développement web dont le deadline est vendredi, la présentation de Visualisation de données cette après-midi, et cet exercice de programmation que tu n\'as pas terminé. La HEIG-VD n\'est pas réputée pour être facile, mais la filière Ingénierie des Médias semble avoir concentré toutes ses évaluations cette semaine.
+                        Ton téléphone vibre: un message de ton groupe de projet qui panique déjà à 6h30 du matin. "Est-ce que quelqu\'un a réussi le déploiement sur le serveur?" Tu sens une boule se former dans ton estomac. L\'envie de te rendormir est tentante, mais l\'angoisse est là. Tu pourrais sauter le petit-déjeuner et te précipiter directement sur ton ordinateur pour avancer, ou prendre 15 minutes pour manger correctement et respirer avant d\'affronter cette journée.',
                         'stress_level' => 0,
                         'stress_impact' => 1,
                         'is_recovery_point' => false,
-                        'stress_advice' => 'Commencer en étant lucide sur ta charge peut t\'aider à mieux la gérer.',
+                        'stress_advice' => ' "Le matin définit souvent le rythme de ta journée. Prendre quelques minutes pour toi n\'est pas du temps perdu."',
                         'choices' => [
                             [
-                                'text' => 'Te lever, sauter le petit-déj et foncer directement dans ta boîte mail.',
+                                'text' => 'Te lever, sauter le petit-déj et foncer directement dans ton ordinateur.',
                                 'next_chapter_number' => 2
                             ],
                             [
@@ -42,90 +43,116 @@ class StoriesTableSeeder extends Seeder
                     ],
                     [
                         'chapter_number' => 2,
-                        'content' => 'Tu arrives en cours avec quelques minutes de retard. L\'amphithéâtre est déjà plongé dans un silence pesant, uniquement troublé par la voix monocorde du professeur. Tu t\'installes en essayant de ne pas faire de bruit, ton sac glisse de ton épaule et frappe légèrement la chaise. Quelques têtes se tournent vers toi. Gêné, tu ouvres ton ordinateur. Le PowerPoint projeté est dense. Trop dense. Tes yeux tentent de suivre les lignes, mais tes paupières sont lourdes, comme lestées de plomb. Ton cerveau est encore en mode brouillard. Tu n\'as même pas pris de petit déjeuner. Les mots du prof deviennent un fond sonore indistinct, comme une radio mal captée. "Et n\'oubliez pas le devoir pour mercredi", lâche-t-il soudain. Tu sursautes. Quel devoir ? Tu regardes autour de toi, cherchant un regard rassurant. Mais tout le monde semble savoir de quoi il parle. Tu te sens isolé, déconnecté. Tu te forces à taper quelques notes, mais rien ne fait sens. Ta tête dodeline, ton cou se crispe. Tu sens que tu atteins déjà ta limite alors que la journée vient à peine de commencer. L\'air est lourd, oppressant. Et cette petite voix revient : "Tu n\'y arriveras pas."',
+                        'content' => 'Tu arrives à la HEIG avec quelques minutes de retard, ton café à emporter à moitié renversé sur ta veste. La salle T102 est plongée dans la pénombre, le cours de Data Visualization déjà commencé. Tu te glisses discrètement au fond, tandis que la prof projette des graphiques complexes que tu n\'arrives pas à décoder dans la précipitation.
+
+                        Tu as manqué l\'introduction et maintenant rien n\'a de sens. Ton estomac gronde — le café à lui seul ne remplace pas un petit-déjeuner. Quand la prof mentionne "ce sera bien sûr dans l\'examen de vendredi", tu sens ton cœur s\'accélérer. Ton ordinateur s\'allume péniblement alors que tous les autres semblent déjà plongés dans l\'exercice pratique de D3.
+                        
+                        Des dizaines de notifications non lues s\'affichent: 36 messages dans le groupe du projet D3, 5 emails des professeurs, et une alerte du système de rendu: "Attention: il vous reste 3 jours pour soumettre votre projet final."',
                         'stress_level' => 3,
                         'stress_impact' => 2,
                         'is_recovery_point' => false,
-                        'stress_advice' => 'Dire "oui" tout le temps, c\'est dire "non" à toi-même.',
+                        'stress_advice' => "La précipitation constante est l'ennemie de la concentration. Parfois, un pas en arrière permet d'en faire deux en avant.",
                         'choices' => [
                             [
-                                'text' => 'Boire un café et continuer à encaisser sans broncher.',
+                                'text' => 'Commander un second café à la cafétéria et essayer de rattraper le cours coûte que coûte.',
                                 'next_chapter_number' => 4
                             ],
                             [
-                                'text' => 'Faire une pause, marcher 10 minutes dehors.',
+                                'text' => 'Sortir discrètement faire une courte pause pour éclaircir tes idées.',
                                 'next_chapter_number' => 3
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 3,
-                        'content' => 'Tu as pris le temps de respirer et de te recentrer. Le simple fait de t\'accorder cette pause te fait déjà sentir plus léger. L\'air frais emplit tes poumons, et tu te rappelles l\'importance de ces petits moments pour toi-même. En marchant, tu commences à organiser tes pensées. Ce n\'est pas la fin du monde si tu ne réponds pas à tous ces messages dans l\'heure qui suit. La journée s\'annonce chargée, mais en la découpant en petites étapes gérables, elle devient moins intimidante. Tu te répètes : "Une chose à la fois". En rentrant, tu te sens déjà plus lucide, plus présent. Les défis sont toujours là, mais ton regard sur eux a changé. Peut-être que la clé n\'est pas de courir plus vite, mais de mieux choisir son chemin.',
+                        'content' => 'Tu as pris le temps de respirer et de te recentrer. Assis sur un banc du campus St-Roch de la HEIG-VD, tu observes les montagnes au loin. L\'air frais du matin emplit tes poumons, et tu réalises combien ce simple moment est précieux.
+
+                        Tu sors ton carnet et notes les priorités réelles de la journée: d\'abord terminer l\'exercice de Dév Prod Méd (2 heures maximum), puis consacrer l\'après-midi au projet de groupe après la présentation. Le reste peut attendre demain.
+                        
+                        Le stress ne disparaît pas complètement, mais il devient gérable. Ton téléphone continue de vibrer, mais tu décides consciemment de ne pas vérifier chaque notification. Ce n\'est pas la fin du monde si tu ne réponds pas immédiatement à tous ces messages.
+                        
+                        En organisant mentalement ta journée, les tâches semblent moins écrasantes. "Une chose à la fois", te répètes-tu.',
                         'stress_level' => 0,
                         'stress_impact' => -1, // Impact négatif = réduction du stress
                         'is_recovery_point' => true,
-                        'stress_advice' => 'S\'organiser réduit la charge mentale invisible.',
+                        'stress_advice' => '"La gestion du temps commence par définir consciemment ce qui mérite ton attention immédiate."',
                         'choices' => [
                             [
-                                'text' => 'Prendre une grande respiration, puis planifier ta journée dans un agenda.',
+                                'text' => ' Ouvrir ton agenda et organiser méthodiquement tes tâches pour la semaine. ',
                                 'next_chapter_number' => 5
                             ],
                             [
-                                'text' => 'Ouvrir TikTok "juste 5 minutes" (spoiler: ce sera 45).',
+                                'text' => 'Jeter un œil à Instagram "juste 5 minutes" pour te détendre un peu plus. ',
                                 'next_chapter_number' => 6
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 4,
-                        'content' => 'L\'après-midi avance, et tu t\'es finalement installé dans un coin du salon avec ton ordinateur. Une tasse de thé refroidit doucement à côté de toi. Tu ouvres ton agenda numérique : c\'est une jungle. Des alertes rouges clignotent comme des signaux de détresse. Tu inspires profondément, et pour une fois, tu ne paniques pas. Tu ouvres une feuille blanche et commences à écrire. Liste de tâches, par ordre d\'urgence. Cocher une ligne, puis une autre. Une satisfaction minuscule, mais réelle. Mais le calme ne dure jamais longtemps. Une pensée parasite surgit : "Tu aurais dû faire ça hier", puis une autre : "Tu vas finir en retard, comme d\'habitude". Le stress rode, silencieux, prêt à bondir au moindre faux pas. Tu sens une tension dans ta nuque. Tu te forces à rester concentré. Ce n\'est pas le moment de flancher. Tu veux prouver que tu peux t\'en sortir seul. Mais au fond de toi, une voix douce te dit que tu n\'es pas obligé de porter tout ça sans aide. Tu l\'entends, mais tu ne l\'écoutes pas encore.',
+                        'content' => 'Le deuxième café de la matinée fait battre ton cœur à un rythme inquiétant. Tes mains tremblent légèrement sur ton clavier tandis que tu essaies désespérément de rattraper le cours. La prof de Data Visualization parle maintenant d\'une nouvelle bibliothèque JavaScript dont tu n\'as jamais entendu parler, et tout le monde autour semble comprendre parfaitement.
+
+                        Une notification de Calendar apparaît: réunion de projet pour le cours de Proposition de Valeur dans 45 minutes, et tu n\'as pas préparé ta partie. Ton binôme t\'envoie un message direct: "T\'as fini le Business Model Canva? Je dois l\'avoir pour finir ma partie."
+                        
+                        Ton écran se divise entre le cours auquel tu essaies de participer et les messages de plus en plus anxieux de ton équipe. Ta capacité à te concentrer s\'effrite. Ta gorge se serre et tu as l\'impression que la salle de cours rétrécit autour de toi.',
                         'stress_level' => 6,
                         'stress_impact' => 3,
                         'is_recovery_point' => false,
-                        'stress_advice' => 'Ton corps n\'est pas un robot.',
+                        'stress_advice' => '"La multitâche est un mythe. Ton cerveau ne peut pas se concentrer efficacement sur plusieurs tâches complexes simultanément."',
                         'choices' => [
                             [
-                                'text' => 'Prendre un cachet et continuer sans pause.',
-                                'next_chapter_number' => 99
+                                'text' => 'Ignorer le cours et travailler frénétiquement sur le projet pour tenir les délais.',
+                                'next_chapter_number' => 7
                             ],
                             [
-                                'text' => 'Couper la caméra et te lever pour t\'étirer 5 min.',
+                                'text' => 'Fermer toutes les applications sauf une et te concentrer uniquement sur le cours présent. ',
                                 'next_chapter_number' => 5
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 5,
-                        'content' => 'Tu es devant ton écran depuis des heures. Le devoir te fixe comme un mur infranchissable. Tu t\'es juré de le faire ce matin, puis à midi, puis après le café. Et te voilà, la nuit tombée, à peine commencé. Tu tapes, tu supprimes, tu recommences. Ton esprit est embrumé, mais tu continues. Tu ne veux pas abandonner. Autour de toi, le monde s\'éteint peu à peu. Les fenêtres des voisins s\'obscurcissent. Ton téléphone vibre, mais tu l\'ignores. Tu n\'as pas le temps de répondre. Même respirer devient une corvée. Ton corps te supplie de t\'arrêter : picotements dans les doigts, tension dans le cou, vertiges légers. Tu bois une gorgée d\'eau tiède et reprends. Chaque phrase écrite est une victoire, chaque paragraphe un combat. Tu refuses de lâcher prise. "Encore un peu", te répètes-tu. Mais l\'élasticité mentale que tu tires depuis des jours est sur le point de rompre. Et tu le sais. Pourtant, tu continues.',
+                        'content' => 'Maintenant, tu décides de t\'installes dans l\'espace d\'étude du deuxième étage, ton ordinateur ouvert devant toi. Plutôt que de réagir à chaque notification, tu as désactivé les alertes et ouvert un document avec trois colonnes: "Urgent", "Important", "Peut attendre".
+
+                        En classant tes tâches, tu réalises que beaucoup de choses peuvent attendre demain. Tu identifies les deux actions critiques pour aujourd\'hui: finaliser ton Business Model Canva le projet de groupe, et préparer les points clés pour la présentation de cet après-midi.
+                        
+                        Le simple fait d\'avoir un plan clair allège ton esprit. Tu commences par la tâche la plus complexe, en te donnant 90 minutes de concentration totale. Tu places ton téléphone en mode avion et mets tes écouteurs.
+                        
+                        Pour la première fois de la journée, ton esprit se focalise pleinement sur une seule chose à la fois.',
                         'stress_level' => 2,
-                        'stress_impact' => 1,
-                        'is_recovery_point' => false,
-                        'stress_advice' => 'Prendre du recul est un signe de maturité mentale.',
+                        'stress_impact' => -1,
+                        'is_recovery_point' => true,
+                        'stress_advice' => '"La clarté des priorités est le premier pas vers la productivité sereine."',
                         'choices' => [
                             [
-                                'text' => 'Continuer tranquillement avec des pauses régulières.',
-                                'next_chapter_number' => 15
+                                'text' => 'Continuer à travailler méthodiquement, avec des pauses planifiées.',
+                                'next_chapter_number' => 8
                             ],
                             [
-                                'text' => 'Accepter encore une mission urgente envoyée par ton boss.',
+                                'text' => 'Accepter de dépanner un autre groupe qui te demande de l\'aide en urgence.',
                                 'next_chapter_number' => 6
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 6,
-                        'content' => 'Il est tard. Très tard. L\'éclat bleu de ton écran est la seule lumière dans la pièce. Tu fixes ton document, les lignes s\'entrelacent comme des serpents sans queue ni tête. Tu n\'as plus la force de comprendre ce que tu écris. Tes yeux piquent, tes tempes battent, et tes épaules semblent prêtes à se désintégrer. Tu n\'as pas mangé. Tu n\'as pas bougé. Tu te rends compte que tu n\'as pas dit un mot depuis des heures. Tu es seul, dans une bulle de performance où chaque minute est un compte à rebours vers un épuisement que tu refuses d\'admettre. Tu es dépassé, mais tu continues. Comme si arrêter maintenant signifiait échouer. Tu te parles à toi-même, en silence : "Encore un effort", "Juste une dernière page". Mais cette page se multiplie. La tâche n\'en finit plus. Tu regardes l\'heure. 3h12. Et tu es toujours là. Tu sais que tu frôles tes limites, mais tu ne veux pas l\'accepter. Alors tu restes assis. Encore un peu.',
+                        'content' => 'Tu finis par scroller sur TikTok, et les "5 minutes" se transforment en 40. Des vidéos de voyage, de cuisine, et ironiquement, des conseils de productivité défilent sans que tu ne t\'en rendes compte. Lorsque tu reprends conscience du temps qui passe, une vague d\'anxiété te submerge.
+
+                        Tu regardes l\'heure: 11h20. La réunion de projet est dans 10 minutes et tu n\'as rien préparé. Tu ouvres frénétiquement ton Miro, mais ton cerveau peine à se reconcentrer.
+                        
+                        Trois membres de ton groupe de projet t\'ont envoyé des messages personnels, s\'inquiétant de ton silence. Ton téléphone sonne: c\'est le responsable du projet qui te demande si tout va bien. Tu bafouilles une excuse en promettant que tout sera prêt.
+                        
+                        Un sentiment d\'imposture te gagne. Comment as-tu pu perdre autant de temps? Tu tentes de travailler sur plusieurs fichiers simultanément, sautant d\'une tâche à l\'autre sans vraiment en terminer aucune.',
                         'stress_level' => 5,
                         'stress_impact' => 3,
                         'is_recovery_point' => false,
-                        'stress_advice' => 'Multitâche permanent = mental brisé.',
+                        'stress_advice' => '"La procrastination n\'est pas un problème de gestion du temps, mais de gestion des émotions face aux tâches difficiles."',
                         'choices' => [
                             [
-                                'text' => 'Continuer jusqu\'à 2h du matin, café à la main.',
-                                'next_chapter_number' => 99
+                                'text' => ' Enchaîner les boissons énergisantes pour tenir le rythme et travailler jusqu\'à très tard.',
+                                'next_chapter_number' => 7
                             ],
                             [
-                                'text' => 'Fermer tout, mettre un minuteur, et te concentrer sur une seule tâche.',
+                                'text' => 'Admettre ton retard, t\'excuser, et te concentrer sur une seule tâche prioritaire.',
                                 'next_chapter_number' => 5
                             ]
                         ]
@@ -134,145 +161,194 @@ class StoriesTableSeeder extends Seeder
                     
                     [
                         'chapter_number' => 7,
-                        'content' => 'Tu t\'es isolé dans la salle d\'étude, mais rien ne rentre. Tu relis la même phrase cinq fois sans comprendre. Autour de toi, les autres tapent, lisent, avancent. Toi, tu te bats juste pour rester éveillé. Tu as une boule au ventre, mais tu ignores ton corps. Tu serres les dents. Tu refuses de lâcher. Tu refuses d\'échouer. La pression monte. Tu te dis que tu ne peux pas prendre de pause. Pas maintenant. Pourtant, ta vision se brouille, ton cœur s\'emballe. Mais tu restes là, à te convaincre que "ça passera".',
-                        'stress_level' => 4,
+                        'content' => 'Ton cœur bat la chamade. Il est 16h, la journée n\'est pas terminée, mais ton corps semble au bord de la rupture. Dans le laboratoire d\'informatique de la HEIG, tu fixes ton écran où les lignes de code commencent à se brouiller devant tes yeux fatigués.
+
+                        Tu as enchaîné trois Red Bull depuis ce matin. Tes mains tremblent sur le clavier. Une migraine s\'installe derrière tes yeux, et tu remarques que tu serres tellement la mâchoire que ton visage te fait mal.
+                        
+                        Ta présentation s\'est mal passée. Tu as oublié des éléments clés et bafouillé aux questions du professeur. L\'explication de ton algorithme était confuse, tu le sais. Et maintenant, le projet de groupe semble prendre encore plus de retard.',
+        
+                        'stress_level' => 8,
                         'stress_impact' => 2,
                         'is_recovery_point' => false,
-                        'stress_advice' => 'L\'obstination n\'est pas du courage quand elle devient une déconnexion de soi.',
+                        'stress_advice' => '"Ton corps t\'envoie des signaux d\'alarme bien avant le point de rupture. Apprends à les reconnaître."',
                         'choices' => [
                             [
-                                'text' => 'Boire un énergisant et t\'accrocher, coûte que coûte.',
+                                'text' => 'Prendre une pilule de caféine concentrée offerte par un camarade pour tenir jusqu\'à la fin. ',
                                 'next_chapter_number' => 99
                             ],
                             [
-                                'text' => 'Sortir t\'aérer quelques minutes et respirer en pleine conscience.',
+                                'text' => 'Admettre que tu as besoin d\'air et sortir marcher dix minutes autour du campus. ',
                                 'next_chapter_number' => 8
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 8,
-                        'content' => 'Le silence de la bibliothèque est apaisant. Tu te poses. Tu ouvres ton carnet. Plutôt que de foncer tête baissée, tu planifies. Tu écris. Tu classes. Tu redonnes une forme au chaos. Tes mains tremblent encore, mais ton esprit s\'éclaircit. Tu passes enfin du mode "survie" au mode "réflexion". Tu ajustes tes objectifs, réalistes cette fois. Un petit pas. Puis un autre. Tu retrouves le goût d\'avancer sans te détruire.',
+                        'content' => 'Tu marches autour du centre St-Roch, le vent frais de Yverdon sur ton visage. Pour la première fois de la journée, tu prends une vraie respiration profonde, remplissant tes poumons d\'air frais. Le lac brille au loin.
+
+                        Tu t\'assieds sur un banc et fermes les yeux un instant, pratiquant une technique de respiration que ton ami t\'a montrée. Quatre secondes d\'inspiration, rétention quatre secondes, expiration six secondes.
+                        
+                        Après quelques cycles, ton esprit s\'éclaircit suffisamment pour réaliser l\'évidence: tu ne peux pas tout faire parfaitement. Personne ne le peut. Tu prends une décision: plutôt que de tout faire médiocrement, tu vas choisir ce qui est vraiment essentiel et le faire correctement.
+                        
+                        Tu envoies un message honnête à ton groupe: "J\'ai pris du retard, je me concentre sur la fonctionnalité principale pour ce soir. Les améliorations viendront demain."',
                         'stress_level' => 3,
-                        'stress_impact' => -2, // Impact négatif = réduction du stress
+                        'stress_impact' => -2, 
                         'is_recovery_point' => true,
-                        'stress_advice' => 'Faire une pause stratégique, ce n\'est pas perdre du temps. C\'est en gagner.',
+                        'stress_advice' => '"L\'honnêteté envers toi-même et les autres est libératrice. Personne n\'est surhumain."',
                         'choices' => [
                             [
-                                'text' => 'Continuer à planifier et structurer ta semaine sereinement.',
+                                'text' => 'Retourner à l\'intérieur avec un plan clair pour la soirée et le reste de la semaine.',
                                 'next_chapter_number' => 9
                             ],
                             [
-                                'text' => 'Relancer tous les projets en parallèle dès ce soir.',
+                                'text' => 'Te laisser convaincre par un camarade de rejoindre une session de codage nocturne pour rattraper tout le retard d\'un coup.',
                                 'next_chapter_number' => 99
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 9,
-                        'content' => 'Tu t\'installes dans un café. Un chocolat chaud, des écouteurs, une playlist focus. C\'est étrange comme un cadre différent peut changer l\'état d\'esprit. Tu ne penses pas à "finir", tu penses à "faire un pas". Le document s\'ouvre, et tu avances. Tu n\'as pas tout géré, mais tu as repris la barre. C\'est plus qu\'une victoire : c\'est un revirement.',
+                        'content' => 'Tu t\'installes à la bibliothèque avec un nouvel état d\'esprit. Ton ordinateur est ouvert, mais cette fois, seule une application fonctionne: Visual Studio Code, concentré sur la tâche principale.
+
+                        Ton plan est simple: deux heures de travail ciblé sur l\'API backend que ton groupe attend. Pas de réseaux sociaux, pas d\'emails, juste du code. Tu as même mis une minuterie: 25 minutes de travail, 5 minutes de pause.
+                        
+                        Les premières lignes sont difficiles, mais progressivement, le flow s\'installe. Les fonctions s\'enchaînent, les tests passent au vert. À ta pause, tu t\'étires et regardes par la fenêtre, plutôt que de vérifier ton téléphone.
+                        
+                        Tu sens une satisfaction profonde, différente de l\'agitation fébrile de ce matin. Ce n\'est pas l\'euphorie, mais plutôt une tranquillité productive, comme si tu avais retrouvé ton rythme naturel.',
                         'stress_level' => 2,
-                        'stress_impact' => -1, // Impact négatif = réduction du stress
+                        'stress_impact' => -1, 
                         'is_recovery_point' => true,
-                        'stress_advice' => 'Changer de contexte peut suffire à désamorcer une spirale.',
+                        'stress_advice' => ' "Le véritable état de flow vient d\'un équilibre entre défi et compétence, pas de la pression excessive."',
                         'choices' => [
                             [
-                                'text' => 'Terminer une tâche importante avant la fin de la journée.',
+                                'text' => 'Envoyer ton travail au groupe et décider de rentrer à une heure raisonnable ce soir.',
                                 'next_chapter_number' => 10
                             ],
                             [
-                                'text' => 'Répondre à tous les mails, lancer deux projets et finir le PowerPoint ce soir.',
+                                'text' => ' Profiter de cet élan pour ajouter toutes les fonctionnalités bonus que tu avais envisagées.',
                                 'next_chapter_number' => 99
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 10,
-                        'content' => 'Tu fermes ton ordi. Tu te sens vidé, mais lucide. Tu ne t\'es pas dispersé. Tu n\'as pas tout fait, mais tu n\'as pas tout sacrifié. Tu prends une grande inspiration. La semaine est loin d\'être terminée, mais tu sens que tu peux y arriver. Tu regardes ton agenda, et pour la première fois, tu souris. Pas parce qu\'il est vide, mais parce qu\'il est possible.',
+                        'content' => 'Tu as réussi à maintenir ton rythme équilibré pendant deux jours. Les membres de ton groupe de PropVal remarquent le changement: tes contributions sont plus ciblées et tu communiques plus clairement.
+
+                        À la fin du cours de Proposition de valeur, ton professeur te retient: "Ton groupe avance bien sur le projet principal. J\'ai une opportunité pour toi — un hackathon à la RTS ce weekend. C\'est une chance de te faire remarquer."
+                        
+                        Une partie de toi s\'enthousiasme à l\'idée. C\'est exactement le genre d\'occasion qui pourrait enrichir ton CV. Mais une autre partie de toi se souvient de l\'état dans lequel tu étais il y a deux jours, et se demande si c\'est raisonnable d\'ajouter cela à ta charge de travail.
+                        
+                        Tu regardes ton planning de la semaine: il reste deux projets à finaliser, et tu commences tout juste à retrouver un rythme de sommeil normal.',
                         'stress_level' => 3,
-                        'stress_impact' => -2, // Impact négatif = réduction du stress
-                        'is_recovery_point' => true,
-                        'stress_advice' => 'Le vrai succès, c\'est de garder ton mental intact jusqu\'au bout.',
+                        'stress_impact' => 1, 
+                        'is_recovery_point' => false,
+                        'stress_advice' => ' "Les opportunités sont infinies, mais ton énergie et ton temps ne le sont pas. Choisir, c\'est aussi renoncer."                        ',
                         'choices' => [
                             [
-                                'text' => 'Aller courir ou cuisiner quelque chose de bon pour toi.',
+                                'text' => 'Refuser poliment l\'invitation au hackathon en expliquant que tu dois gérer ta charge actuelle.',
                                 'next_chapter_number' => 11
                             ],
                             [
-                                'text' => 'Te lancer dans la relecture de tous tes projets avant minuit.',
-                                'next_chapter_number' => 99
+                                'text' => 'Accepter le hackathon avec enthousiasme — tu dormiras la semaine prochaine!',
+                                'next_chapter_number' => 12
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 11,
-                        'content' => 'Tu reçois un message. "Réu à 18h, projet à revoir." Tu fronces les sourcils. Tu pensais souffler ce soir. Tu hésites. Puis tu ouvres ton ordi. Encore. Tu relis les commentaires, tu prends des notes. Ton esprit te dit stop, ton corps aussi, mais tu continues. Un collègue envoie un vocal, 2 minutes de reproches déguisés. Tu ricanes nerveusement. Tu as envie de hurler, mais tu tapes une réponse polie. Tu sacrifies encore ton temps perso, encore ton énergie. Et tu te demandes... si tu vas t\'en sortir.',
-                        'stress_level' => 4,
-                        'stress_impact' => 2,
-                        'is_recovery_point' => false,
-                        'stress_advice' => 'Ton temps n\'est pas une ressource infinie.',
+                        'content' => '"J\'apprécie vraiment cette opportunité, Professeur, mais je dois décliner. Je me suis engagé à livrer un travail de qualité sur mes projets actuels, et je dois respecter mes limites."
+
+                        Les mots sortent de ta bouche avec une assurance qui te surprend toi-même. Le professeur te regarde un moment, puis hoche la tête avec ce qui ressemble à du respect. "C\'est une décision mature. Le hackathon reviendra, ne t\'inquiète pas."
+                        
+                        En quittant le bâtiment, tu ressens un mélange étrange de soulagement et de légère déception. As-tu raté une opportunité? Peut-être. Mais en marchant vers ton appartement, tu réalises que tu viens de faire quelque chose d\'important: établir une limite saine.
+                        
+                        Ce soir, tu as le temps de préparer un vrai repas au lieu de manger un sandwich devant ton ordinateur. Tu prends même une heure pour appeler tes parents, qui s\'étonnent de t\'entendre si détendu en pleine période de projets.',
+                        'stress_level' => 2,
+                        'stress_impact' => -2,
+                        'is_recovery_point' => true,
+                        'stress_advice' => '"Dire non à certaines choses te permet de dire un oui plus engagé à d\'autres."                        ',
                         'choices' => [
                             [
-                                'text' => 'Tout accepter et refaire le travail sans broncher.',
-                                'next_chapter_number' => 99
+                                'text' => 'Maintenir ce cap et accorder autant d\'importance à ton bien-être qu\'à tes études.',
+                                'next_chapter_number' => 13
                             ],
                             [
-                                'text' => 'Proposer un délai et prendre une vraie pause ce soir.',
+                                'text' => 'Compenser ton refus en redoublant d\'efforts sur tes projets actuels pour prouver ta valeur. ',
                                 'next_chapter_number' => 12
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 12,
-                        'content' => 'Tu t\'es imposé un stop. C\'est rare. Tu t\'allonges, casque sur les oreilles, playlist douce. Tu repenses à la semaine. Les moments où tu as tenu bon. Les moments où tu as craqué. Tu te rends compte que tout s\'enchaîne trop vite. Tu n\'as jamais le temps de respirer entre deux feux. Et ce soir, pour la première fois depuis longtemps, tu respires. Vraiment. Le silence te fait peur au début. Puis il t\'apaise.',
-                        'stress_level' => 2,
-                        'stress_impact' => -3, // Impact négatif = réduction du stress
-                        'is_recovery_point' => true,
-                        'stress_advice' => 'Laisser passer l\'orage intérieur, c\'est mieux que le fuir.',
+                        'content' => 'Les jours passent et ton agenda déborde. Entre les cours à la HEIG, le hackathon que tu as accepté, et ton projet principal, chaque minute est comptée. Tu dors à peine 5 heures par nuit, et ton alimentation se résume à des snacks pris sur le pouce.
+
+                        Ta performance reste correcte, mais tu remarques que ton esprit n\'est plus aussi vif. Lors d\'une présentation de groupe en UX, tu perds le fil de tes idées plusieurs fois. Un camarade doit intervenir pour terminer ton explication.
+                        
+                        Dans les couloirs, tu croises un étudiant de troisième année qui te lance: "Ça va? T\'as une tête à faire peur." Tu balaies la remarque d\'un revers de main, mais en te regardant dans le miroir des toilettes, tu ne reconnais pas le visage épuisé qui te fixe.
+                        
+                        Ce soir, le professeur de développement web a proposé une session facultative de révision avancée. Tu hésites — ton corps te supplie de rentrer dormir, mais tu crains de prendre du retard.',
+                        'stress_level' => 6,
+                        'stress_impact' => 2,
+                        'is_recovery_point' => false,
+                        'stress_advice' => '"L\'excellence soutenue nécessite des périodes de récupération. Même les athlètes d\'élite programment des jours de repos."',
                         'choices' => [
                             [
-                                'text' => 'Programmer une pause régulière chaque jour.',
-                                'next_chapter_number' => 13
+                                'text' => 'Ignorer tous les signaux d\'alerte et assister à la session supplémentaire.',
+                                'next_chapter_number' => 99
                             ],
                             [
-                                'text' => 'Compresser toute la to-do list demain pour "rattraper le retard".',
-                                'next_chapter_number' => 99
+                                'text' => 'Écouter ton corps et rentrer te reposer, même si cela signifie manquer une opportunité.',
+                                'next_chapter_number' => 13
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 13,
-                        'content' => 'Tu as tenu parole. Pause à midi. Pause à 18h. Et tu as bossé entre deux sans te cramer. Incroyable. Tu réalises que ce que tu redoutais le plus — ralentir — est en fait ce qui t\'a permis d\'avancer. Tu croises quelqu\'un dans le couloir. "Tu sembles plus serein.e", dit-il. Tu souris. Tu n\'es pas guéri.e, mais tu es en chemin.',
+                        'content' => 'C\'est vendredi après-midi, la semaine touche à sa fin. Tu es assis dans le parc à côté de la HEIG, relisant les notes de la dernière réunion de projet. Le soleil filtre à travers les feuilles des arbres, projetant des motifs changeants sur ton cahier.
+
+                        Ces derniers jours, tu as maintenu une discipline étonnante: 7 heures de sommeil par nuit, des repas pris loin de ton ordinateur, et surtout, des limites claires entre travail et repos. Tu as même recommencé à courir le matin, juste 20 minutes, mais suffisamment pour éclaircir ton esprit.
+                        
+                        Tes notes de cours sont plus organisées, tes contributions au projet plus pertinentes. La quantité de travail n\'a pas diminué, mais ta façon de l\'aborder a changé. Tu ne réagis plus dans l\'urgence constante.
+                        
+                        Un camarade de classe passe et s\'arrête: "Comment tu fais pour rester si calme avec tous ces deadlines? T\'as un secret?"',
                         'stress_level' => 2,
                         'stress_impact' => -2, // Impact négatif = réduction du stress
                         'is_recovery_point' => true,
-                        'stress_advice' => 'Être bien ne veut pas dire être parfait. Juste présent.',
+                        'stress_advice' => '"Le vrai secret de la productivité n\'est pas de faire plus, mais de récupérer mieux."',
                         'choices' => [
                             [
-                                'text' => 'Continuer sur ce rythme équilibré, même si c\'est lent.',
+                                'text' => 'Partager avec lui tes techniques de gestion du stress et d\'organisation.',
                                 'next_chapter_number' => 14
                             ],
                             [
-                                'text' => 'Relancer tous les projets pour "profiter de l\'élan".',
-                                'next_chapter_number' => 99
+                                'text' => 'Minimiser tes progrès et te remettre immédiatement au travail par peur de trop te relâcher. ',
+                                'next_chapter_number' => 12
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 14,
-                        'content' => 'Tu as enfin compris que la productivité ne vaut rien sans ta santé mentale. Tu fermes les yeux. Pas pour dormir. Pour écouter ton corps. Tu sens la tension descendre de tes épaules. Tu n\'as rien accompli d\'extraordinaire aujourd\'hui. Et pourtant, tu te sens mieux que depuis longtemps. Tu n\'as pas brillé. Tu as juste tenu debout. Et c\'est déjà énorme.',
+                        'content' => '"En fait, j\'ai juste appris à respecter mes limites," expliques-tu à ton camarade. Vous vous asseyez sur un banc et tu lui montres ton système simple: un agenda où chaque tâche est délibérément planifiée avec du temps tampon, des périodes de récupération clairement marquées en vert, et une liste de priorités quotidiennes limitée à trois éléments maximum.
+
+                        "Le truc, c\'est que je n\'essaie plus d\'être parfait dans tout. J\'ai choisi les domaines où je veux vraiment exceller, et pour le reste, je vise juste la compétence correcte."
+                        
+                        Ton camarade prend des notes, visiblement intéressé. "Et les profs? Ils acceptent que tu ne rendes pas toujours un travail parfait?"
+                        
+                        Tu souris: "En fait, la qualité de mon travail a augmenté depuis que je me concentre sur moins de choses à la fois. Et quand je dois faire un compromis, je suis transparent à ce sujet."
+                        
+                        En expliquant ton approche, tu réalises à quel point elle s\'est ancrée en toi. Ce n\'est plus juste une technique — c\'est devenu ta philosophie d\'étudiant.',
                         'stress_level' => 1,
-                        'stress_impact' => -2, // Impact négatif = réduction du stress
+                        'stress_impact' => -1, 
                         'is_recovery_point' => true,
-                        'stress_advice' => 'La paix intérieure est une performance en soi.',
+                        'stress_advice' => '"Enseigner est l\'une des meilleures façons d\'intégrer profondément un apprentissage."',
                         'choices' => [
                             [
-                                'text' => 'Écrire un message de gratitude à toi-même ou à un proche.',
+                                'text' => ' Continuer sur cette lancée équilibrée jusqu\'à la fin du semestre. ',
                                 'next_chapter_number' => 15
                             ],
                             [
-                                'text' => 'Reprendre le dossier en retard juste "pour finir propre".',
-                                'next_chapter_number' => 99
+                                'text' => 'Te laisser piéger par le perfectionnisme sur le projet final.',
+                                'next_chapter_number' => 12
                             ]
                         ]
                     ],
@@ -281,32 +357,44 @@ class StoriesTableSeeder extends Seeder
                     
                     [
                         'chapter_number' => 15,
-                        'content' => 'Tu arrives à la fin de la semaine, fatigué·e, mais encore debout. Tu as appris à écouter tes limites.',
-                        'stress_level' => 2,
-                        'stress_impact' => -1, // Impact négatif = réduction du stress
+                        'content' => 'La période des examens finaux est terminée. Tu ranges tes affaires dans ton sac, quittant la salle de ton dernier test avec un sentiment de calme satisfaction.
+
+                        En descendant les escaliers du bâtiment, tu croises des visages aux expressions diverses: certains étudiants semblent exténués, d\'autres euphoriques, beaucoup simplement soulagés. Tu réalises que ton propre visage n\'affiche ni l\'exaltation de celui qui a travaillé jusqu\'à l\'épuisement, ni la panique de celui qui a improvisé.
+                        
+                        Le semestre a été exigeant, comme tous les semestres en Ingénierie des Médias. Mais pour la première fois, tu l\'as traversé sans sacrifier ton bien-être. Tes notes sont solides — excellentes dans les matières qui te passionnent, correctes dans les autres.
+                        
+                        Plus important encore, tu te sens en forme pour attaquer la suite, qu\'il s\'agisse des stages professionnels ou du prochain semestre. Tu as acquis plus que des connaissances techniques; tu as développé une compétence que ni l\'IA ni l\'automatisation ne pourront remplacer: la capacité à gérer ton énergie mentale de façon durable.',
+                        'stress_level' => 1,
+                        'stress_impact' => -1, 
                         'is_recovery_point' => true,
-                        'stress_advice' => 'Garder un équilibre, c\'est une victoire quotidienne.',
+                        'stress_advice' => '"Le véritable succès académique n\'est pas de briller temporairement, mais de maintenir une flamme constante."',
                         'choices' => [
                             [
-                                'text' => 'Fêter ça avec une vraie pause sans écran.',
+                                'text' => 'Célébrer cette réussite avec tes amis et prendre un vrai temps de déconnexion avant la suite. ',
                                 'next_chapter_number' => null
                             ],
                             [
-                                'text' => 'Te jeter dans un nouveau projet sans réfléchir.',
+                                'text' => ' Immédiatement te lancer dans un projet personnel intensif sans prendre de pause. ',
                                 'next_chapter_number' => 99
                             ]
                         ]
                     ],
                     [
                         'chapter_number' => 99,
-                        'content' => 'Tu as atteint le niveau critique de charge mentale. Ton corps et ton esprit te lâchent. C\'est le burn-out. Tu ne peux plus avancer.',
+                        'content' => 'Ton téléphone sonne. Une fois. Deux fois. Tu l\'entends mais tu ne peux pas bouger. Allongé sur ton lit, dans ton studio d\'étudiant à Yverdon, tu fixes le plafond. Des livres et des notes de cours sont éparpillés partout autour de toi, mais tu n\'as même pas l\'énergie de tendre le bras pour attraper ton téléphone.
+
+                        Ça a commencé par une fatigue que le café ne dissipait plus. Puis sont venues les migraines persistantes, les troubles du sommeil malgré l\'épuisement total. La semaine dernière, en plein exposé, ton esprit s\'est vidé. Trou noir. Incapacité complète à articuler la moindre idée cohérente.
+                        
+                        Ton médecin  a été formel: "Burnout. Repos complet pendant au moins deux semaines. Pas d\'écrans, pas de cours." Le certificat médical qu\'il t\'a remis tremble encore dans ta main. Comment en es-tu arrivé là? Comment as-tu pu laisser les choses dégénérer à ce point?
+                        
+                        Tu te demandes combien de projets vont échouer à cause de ton absence, combien d\'examens tu vas devoir reporter. La spirale de culpabilité commence, mais tu es trop épuisé même pour la panique. C\'est juste un grand vide.',
                         'stress_level' => 10,
                         'stress_impact' => 0,
                         'is_recovery_point' => false,
-                        'stress_advice' => 'Quand le corps dit stop, il faut écouter. Il n\'est jamais trop tard pour demander de l\'aide.',
+                        'stress_advice' => '"Le burnout n\'est pas un échec personnel, mais le résultat prévisible d\'un système en surcharge prolongée. La guérison commence par l\'acceptation."',
                         'choices' => [
                             [
-                                'text' => 'Tu t\'effondres.',
+                                'text' => 'Accepter la situation et commencer le long chemin de la récupération.',
                                 'next_chapter_number' => null
                             ]
                         ]
