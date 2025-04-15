@@ -1,18 +1,20 @@
 <template>
   <main>
-    <div class="book-page" :style="pageEffects">
-      <div class="stress-container">
-        <div class="stress-meter">
-          <div class="stress-text">Niveau de stress: {{ stressLevel }}/10</div>
-          <div class="stress-bar">
-            <div
-              class="stress-fill"
-              :style="{ width: `${stressLevel * 10}%`, backgroundColor: stressColor }"
-            ></div>
-          </div>
-          <div class="stress-emoji">{{ stressEmoji }}</div>
-        </div>
-      </div>
+    <!-- Indicateur de chargement -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Chargement du chapitre...</div>
+    </div>
+    
+    <!-- Affichage des erreurs -->
+    <div v-else-if="error" class="error-container">
+      <div class="error-icon">⚠️</div>
+      <div class="error-message">{{ error }}</div>
+      <button @click="retryFetch" class="retry-button">Réessayer</button>
+    </div>
+    
+    <div v-else class="book-page" :style="pageEffects">
+      <StressMeter :level="stressLevel" />
       
       <h1>Chapitre {{ chapter?.chapter_number || '?' }}</h1>
       
@@ -47,6 +49,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import StressMeter from './StressMeter.vue';
 
 const chapter = ref({});
 const choices = ref([]);
@@ -55,27 +58,11 @@ const stressLevel = ref(0);
 const showStressImpact = ref(true); // Option pour afficher l'impact de stress des choix
 const route = useRoute();
 const router = useRouter();
+const loading = ref(true); // État pour le chargement
+const error = ref(null); // État pour les erreurs
 
 // Map pour stocker les valeurs d'impact de stress pour chaque choix
 const choiceStressImpacts = ref(new Map());
-
-// Computed property for stress color
-const stressColor = computed(() => {
-  const level = stressLevel.value || 0;
-  if (level <= 3) return '#a5d6a7'; // Vert pour stress faible
-  if (level <= 7) return '#ffd54f'; // Jaune pour stress moyen
-  return '#ef5350'; // Rouge pour stress élevé
-});
-
-// Computed property for stress emoji
-const stressEmoji = computed(() => {
-  const level = stressLevel.value || 0;
-  if (level <= 3) return '😌'; // Détendu
-  if (level <= 5) return '😐'; // Neutre
-  if (level <= 7) return '😓'; // Inquiet
-  if (level <= 9) return '😰'; // Très stressé
-  return '🤯'; // Burnout imminent
-});
 
 // Computed property pour les effets visuels de stress
 const pageEffects = computed(() => {
@@ -103,9 +90,43 @@ const getChoiceStressImpact = (choice) => {
   return 0; // Par défaut, pas d'impact
 };
 
+// Sauvegarder la progression dans localStorage
+const saveProgress = () => {
+  localStorage.setItem('storyProgress', JSON.stringify({
+    storyId: route.params.storyId,
+    chapterId: route.params.chapterId,
+    stressLevel: stressLevel.value
+  }));
+};
+
+// Charger la progression sauvegardée
+const loadProgress = () => {
+  const savedProgress = localStorage.getItem('storyProgress');
+  if (savedProgress) {
+    try {
+      const progress = JSON.parse(savedProgress);
+      if (progress.storyId && progress.chapterId) {
+        return progress;
+      }
+    } catch (e) {
+      console.error('Erreur lors du chargement de la progression:', e);
+    }
+  }
+  return null;
+};
+
+// Function to retry fetching data
+const retryFetch = () => {
+  error.value = null;
+  fetchChapter();
+};
+
 // Function to fetch chapter data
 const fetchChapter = async () => {
   const { storyId, chapterId } = route.params;
+  
+  loading.value = true; // Commencer le chargement
+  error.value = null; // Réinitialiser les erreurs
   
   try {
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
@@ -129,8 +150,14 @@ const fetchChapter = async () => {
     // Récupérer les valeurs d'impact de stress pour chaque choix
     fetchChoiceStressImpacts();
     
-  } catch (error) {
-    console.error('Erreur de chargement du chapitre:', error);
+    // Sauvegarder la progression après chargement du chapitre
+    saveProgress();
+    
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
+    console.error('Erreur de chargement du chapitre:', err);
+  } finally {
+    loading.value = false; // Terminer le chargement
   }
 };
 
@@ -185,6 +212,8 @@ const fetchChapterInfo = async (chapterId) => {
 // Function to make a choice and update stress
 const makeChoice = async (choice) => {
   try {
+    loading.value = true; // Montrer le chargement pendant l'action
+    
     if (!choice.id) {
       console.error('ID de choix manquant');
       return;
@@ -207,7 +236,7 @@ const makeChoice = async (choice) => {
     // Navigation vers le chapitre suivant
     if (!choice.next_chapter_id) {
       // Si pas de chapitre suivant, c'est la fin de l'histoire
-      const outcome = stressLevel.value >= 8 ? 'failure' : 'success';
+      const outcome = stressLevel.value >= 8 ? 'warning' : 'success';
       router.push(`/result/${outcome}`);
     } else {
       // Sinon, aller au chapitre suivant
@@ -216,16 +245,26 @@ const makeChoice = async (choice) => {
     }
   } catch (error) {
     console.error('Erreur lors du choix:', error);
+    error.value = error.response?.data?.message || 'Erreur lors du choix';
+  } finally {
+    loading.value = false; // Cacher le chargement
   }
 };
 
 // Récupérer le niveau de stress depuis la session au chargement
 onMounted(() => {
-  fetchCurrentStress();
-  fetchChapter();
+  loading.value = true;
+  fetchCurrentStress()
+    .then(() => fetchChapter())
+    .catch(err => {
+      error.value = err.message || 'Une erreur s\'est produite';
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 });
 
-// Surveiller les changements de route
+// Surveiller les changements de route et sauvegarder la progression
 watch(
   () => route.params,
   (newParams, oldParams) => {
@@ -235,44 +274,85 @@ watch(
   },
   { deep: true }
 );
+
+// Surveiller les changements de niveau de stress pour sauvegarder la progression
+watch(
+  stressLevel,
+  () => {
+    saveProgress();
+  }
+);
 </script>
 
 <style scoped>
-.stress-container {
-  margin-bottom: 20px;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #f9f9f9;
-}
-
-.stress-meter {
+/* Styles pour l'indicateur de chargement */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
-.stress-text {
-  font-size: 1rem;
-  margin-bottom: 5px;
-  font-weight: bold;
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #a5d6a7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.stress-bar {
-  width: 100%;
-  height: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  overflow: hidden;
+.loading-text {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #333;
 }
 
-.stress-fill {
-  height: 100%;
-  transition: width 0.5s ease, background-color 0.5s ease;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.stress-emoji {
-  font-size: 1.5rem;
-  margin-top: 5px;
+/* Styles pour l'affichage des erreurs */
+.error-container {
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 500px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: #c62828;
+  margin-bottom: 20px;
+}
+
+.retry-button {
+  background-color: #ef5350;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.retry-button:hover {
+  background-color: #d32f2f;
 }
 
 .book-page {

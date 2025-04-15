@@ -13,14 +13,15 @@ class StressController extends Controller
      */
     public function updateStress(Request $request)
     {
+        $choice = Choice::findOrFail($request->choice_id);
         // Valider les données entrantes
         $validatedData = $request->validate([
             'choice_id' => 'required|exists:choices,id',
         ]);
 
         $choice = Choice::findOrFail($validatedData['choice_id']);
-        $chapter = Chapter::findOrFail($choice->chapter_id);
         
+
         // Récupérer le chapitre suivant pour obtenir le stress_impact
         $nextChapter = null;
         if ($choice->next_chapter_id) {
@@ -28,41 +29,29 @@ class StressController extends Controller
         }
         
         // Mettre à jour le niveau de stress en session
-        if (session()->has('stress_level')) {
-            $currentStress = session('stress_level');
-            
-            // Ajouter l'impact du stress du chapitre suivant (ou 0 si pas de chapitre suivant)
-            $stressImpact = $nextChapter ? $nextChapter->stress_impact : 0;
-            $newStress = $currentStress + $stressImpact;
-            
-            // S'assurer que le niveau de stress ne descend pas en dessous de 0
-            $newStress = max(0, $newStress);
-            
-            session(['stress_level' => $newStress]);
-            
-            // Vérifier si le niveau de stress a atteint 10 (burnout)
-            if ($newStress >= 10) {
-                return response()->json([
-                    'stress_level' => $newStress,
-                    'is_burnout' => true,
-                    'redirect_to' => '/result/failure'
-                ]);
-            }
-            
+        $currentStress = session('stress_level', 0);
+        
+        // Ajouter l'impact du stress du chapitre suivant
+        $stressImpact = $nextChapter ? $nextChapter->stress_impact : 0;
+        $newStress = $currentStress + $stressImpact;
+        
+        // S'assurer que le niveau de stress reste entre 0 et 10
+        $newStress = max(0, min(10, $newStress));
+        
+        session(['stress_level' => $newStress]);
+        
+        // Vérifier si le niveau de stress a atteint 10 (burnout)
+        if ($newStress >= 10) {
             return response()->json([
                 'stress_level' => $newStress,
-                'is_burnout' => false
+                'is_burnout' => true,
+                'redirect_to' => '/result/failure'
             ]);
         }
         
-        // Si la session n'avait pas encore de niveau de stress, initialiser à 0 + impact
-        $stressImpact = $nextChapter ? $nextChapter->stress_impact : 0;
-        $initialStress = max(0, $stressImpact);
-        session(['stress_level' => $initialStress]);
-        
         return response()->json([
-            'stress_level' => $initialStress,
-            'is_burnout' => $initialStress >= 10
+            'stress_level' => $newStress,
+            'is_burnout' => false
         ]);
     }
     
