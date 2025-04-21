@@ -16,12 +16,11 @@ Route::get('story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'sh
 // Choices Routes
 Route::apiResource('choices', ChoiceController::class);
 
-// Metrics Management Routes
 Route::get('metrics', [MetricsController::class, 'getMetrics']);
 Route::post('metrics/update', [MetricsController::class, 'updateMetrics']);
 Route::post('metrics/reset', [MetricsController::class, 'resetMetrics']);
 
-// Pour la rétrocompatibilité (ces routes redirigent vers les nouvelles)
+// Pour la rétrocompatibilité (puisque le front-end utilise ces routes)
 Route::get('stress', [MetricsController::class, 'getMetrics']);
 Route::post('stress/update', [MetricsController::class, 'updateMetrics']);
 Route::post('stress/reset', [MetricsController::class, 'resetMetrics']);

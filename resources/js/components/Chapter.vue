@@ -126,7 +126,9 @@ const fetchChapter = async () => {
   error.value = null; // Réinitialiser les erreurs
   
   try {
+    console.log(`Fetching chapter: /api/story/${storyId}/chapter/${chapterId}`);
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
+    console.log('Chapter data received:', response.data);
     chapter.value = response.data;
     
     // Map choices with additional data
@@ -138,19 +140,21 @@ const fetchChapter = async () => {
     
     // Si le serveur nous envoie un niveau de stress actuel, l'utiliser
     if (response.data.current_stress_level !== undefined) {
+      console.log('Setting stress level from chapter data:', response.data.current_stress_level);
       stressLevel.value = response.data.current_stress_level;
     } else {
       // Sinon, obtenir le niveau de stress actuel via l'API
-      fetchCurrentStress();
+      await fetchCurrentStress();
     }
 
     // Récupérer les valeurs d'impact de stress pour chaque choix
-    fetchChoiceStressImpacts();
+    await fetchChoiceStressImpacts();
     
     // Sauvegarder la progression après chargement du chapitre
     saveProgress();
     
   } catch (err) {
+    console.error('Fetch chapter error details:', err);
     error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
     console.error('Erreur de chargement du chapitre:', err);
   } finally {
@@ -161,11 +165,14 @@ const fetchChapter = async () => {
 // Récupérer le niveau de stress actuel
 const fetchCurrentStress = async () => {
   try {
+    console.log('Fetching current stress level from /api/stress');
     const response = await axios.get('/api/stress');
+    console.log('Stress API response:', response.data);
     stressLevel.value = response.data.stress_level || 0;
     
     // Si burnout détecté, rediriger
     if (response.data.is_burnout) {
+      console.log('Burnout detected, redirecting to failure page');
       router.push('/result/failure');
     }
   } catch (error) {
@@ -178,11 +185,13 @@ const fetchChoiceStressImpacts = async () => {
   const fetchedImpacts = new Map();
   
   try {
+    console.log('Fetching stress impacts for choices');
     // Pour chaque choix, récupérer le chapitre suivant pour connaître son impact de stress
     for (const choice of choices.value) {
       if (choice.next_chapter_id) {
         const nextChapter = await fetchChapterInfo(choice.next_chapter_id);
         if (nextChapter && nextChapter.stress_impact !== undefined) {
+          console.log(`Choice ${choice.id} has stress impact: ${nextChapter.stress_impact}`);
           fetchedImpacts.set(choice.id, nextChapter.stress_impact);
         }
       }
@@ -198,6 +207,7 @@ const fetchChoiceStressImpacts = async () => {
 const fetchChapterInfo = async (chapterId) => {
   try {
     const { storyId } = route.params;
+    console.log(`Fetching chapter info: /api/story/${storyId}/chapter/${chapterId}`);
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
     return response.data;
   } catch (error) {
@@ -206,7 +216,6 @@ const fetchChapterInfo = async (chapterId) => {
   }
 };
 
-// Function to make a choice and update stress
 // Function to make a choice and update stress
 const makeChoice = async (choice) => {
   try {
@@ -217,33 +226,41 @@ const makeChoice = async (choice) => {
       return;
     }
     
+    console.log(`Making choice ${choice.id}`);
     // Mettre à jour le niveau de stress via l'API
     const response = await axios.post('/api/stress/update', {
       choice_id: choice.id
     });
+    
+    console.log('Choice update response:', response.data);
     
     // Mettre à jour le niveau de stress local
     stressLevel.value = response.data.stress_level || stressLevel.value;
     
     // Si burnout détecté, rediriger vers la page d'échec
     if (response.data.is_burnout) {
+      console.log('Burnout detected after choice, redirecting to failure page');
       router.push('/result/failure');
       return;
     }
     
     // Navigation vers le chapitre suivant
     if (!choice.next_chapter_id) {
+      console.log('No next chapter, determining outcome');
       // Si on est sur le chapitre burnout (99), toujours rediriger vers failure
       if (chapter.value.chapter_number === 99) {
+        console.log('Chapter 99 (burnout chapter), redirecting to failure');
         router.push('/result/failure');
       } else {
         // Sinon, c'est une fin normale basée sur le niveau de stress
         const outcome = stressLevel.value >= 8 ? 'warning' : 'success';
+        console.log(`Normal ending with outcome: ${outcome} (stress level: ${stressLevel.value})`);
         router.push(`/result/${outcome}`);
       }
     } else {
       // Sinon, aller au chapitre suivant
       const { storyId } = route.params;
+      console.log(`Navigating to next chapter: ${choice.next_chapter_id}`);
       router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
     }
   } catch (error) {
@@ -255,18 +272,23 @@ const makeChoice = async (choice) => {
 };
 
 // Récupérer le niveau de stress depuis la session au chargement
-// Récupérer le niveau de stress depuis la session au chargement
 onMounted(() => {
+  console.log('Chapter component mounted');
   loading.value = true;
   fetchCurrentStress()
-    .then(() => fetchChapter())
+    .then(() => {
+      console.log('Stress level fetched, now fetching chapter');
+      return fetchChapter();
+    })
     .then(() => {
       // Si c'est le chapitre 99, forcer le niveau de stress à 10
       if (chapter.value && chapter.value.chapter_number === 99) {
+        console.log('Chapter 99 detected, setting stress level to 10');
         stressLevel.value = 10;
       }
     })
     .catch(err => {
+      console.error('Error during initial data load:', err);
       error.value = err.message || 'Une erreur s\'est produite';
     })
     .finally(() => {
@@ -278,7 +300,9 @@ onMounted(() => {
 watch(
   () => route.params,
   (newParams, oldParams) => {
+    console.log('Route params changed', newParams, oldParams);
     if (newParams.chapterId !== oldParams.chapterId) {
+      console.log('Chapter ID changed, fetching new chapter');
       fetchChapter();
     }
   },
@@ -288,7 +312,8 @@ watch(
 // Surveiller les changements de niveau de stress pour sauvegarder la progression
 watch(
   stressLevel,
-  () => {
+  (newValue) => {
+    console.log('Stress level changed to', newValue);
     saveProgress();
   }
 );
