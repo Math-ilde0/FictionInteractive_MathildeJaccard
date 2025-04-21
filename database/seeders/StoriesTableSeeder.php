@@ -20,7 +20,7 @@ class StoriesTableSeeder extends Seeder
         $stories = [
             [
                 'title' => 'Batterie Mentale',
-                'summary' => 'Cette histoire interactive suit le parcours d\'un étudiant en ingénierie des médias à la HEIG-VD qui navigue entre projets, cours et vie personnelle. Chaque chapitre présente une situation et deux choix possibles qui influencent le niveau de stress du protagoniste.',
+                'summary' => 'Cette histoire interactive suit le parcours d\'un étudiant en ingénierie des médias à la HEIG-VD qui navigue entre projets, cours et vie personnelle. Chaque chapitre présente une situation et des choix possibles qui influencent le niveau de stress, le sommeil et les notes du protagoniste.',
                 'chapters' => [
                     [
                         'chapter_number' => 1,
@@ -28,8 +28,14 @@ class StoriesTableSeeder extends Seeder
                         Ton téléphone vibre: un message de ton groupe de projet qui panique déjà à 6h30 du matin. "Est-ce que quelqu\'un a réussi le déploiement sur le serveur?" Tu sens une boule se former dans ton estomac. L\'envie de te rendormir est tentante, mais l\'angoisse est là. Tu pourrais sauter le petit-déjeuner et te précipiter directement sur ton ordinateur pour avancer, ou prendre 15 minutes pour manger correctement et respirer avant d\'affronter cette journée.',
                         'stress_level' => 0,
                         'stress_impact' => 1,
+                        'sleep_impact' => 0,
+                        'grades_impact' => 0,
+                        'min_sleep_level' => 5,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => false,
                         'stress_advice' => ' "Le matin définit souvent le rythme de ta journée. Prendre quelques minutes pour toi n\'est pas du temps perdu."',
+                        'sleep_advice' => '"Un bon petit-déjeuner aide ton cerveau à se réveiller, même après une nuit difficile."',
+                        'grades_advice' => '"Commencer la journée calmement permet de mieux organiser ses priorités académiques."',
                         'choices' => [
                             [
                                 'text' => 'Te lever, sauter le petit-déj et foncer directement dans ton ordinateur.',
@@ -50,8 +56,14 @@ class StoriesTableSeeder extends Seeder
                         Des dizaines de notifications non lues s\'affichent: 36 messages dans le groupe du projet D3, 5 emails des professeurs, et une alerte du système de rendu: "Attention: il vous reste 3 jours pour soumettre votre projet final."',
                         'stress_level' => 3,
                         'stress_impact' => 2,
+                        'sleep_impact' => -1,
+                        'grades_impact' => -1,
+                        'min_sleep_level' => 4,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => false,
                         'stress_advice' => "La précipitation constante est l'ennemie de la concentration. Parfois, un pas en arrière permet d'en faire deux en avant.",
+                        'sleep_advice' => "Le manque de petit-déjeuner et l'excès de caféine perturbent ton cycle de sommeil, même si tu ne le sens pas immédiatement.",
+                        'grades_advice' => "Arriver en retard te fait manquer des informations cruciales pour comprendre la matière.",
                         'choices' => [
                             [
                                 'text' => 'Commander un second café à la cafétéria et essayer de rattraper le cours coûte que coûte.',
@@ -74,8 +86,14 @@ class StoriesTableSeeder extends Seeder
                         En organisant mentalement ta journée, les tâches semblent moins écrasantes. "Une chose à la fois", te répètes-tu.',
                         'stress_level' => 0,
                         'stress_impact' => -1, // Impact négatif = réduction du stress
+                        'sleep_impact' => 1,
+                        'grades_impact' => 1,
+                        'min_sleep_level' => 4,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => true,
                         'stress_advice' => '"La gestion du temps commence par définir consciemment ce qui mérite ton attention immédiate."',
+                        'sleep_advice' => '"Les pauses régulières améliorent la qualité de ton sommeil la nuit suivante."',
+                        'grades_advice' => '"Savoir prioriser les tâches académiques est souvent plus efficace que de tout faire en même temps."',
                         'choices' => [
                             [
                                 'text' => ' Ouvrir ton agenda et organiser méthodiquement tes tâches pour la semaine. ',
@@ -96,8 +114,14 @@ class StoriesTableSeeder extends Seeder
                         Ton écran se divise entre le cours auquel tu essaies de participer et les messages de plus en plus anxieux de ton équipe. Ta capacité à te concentrer s\'effrite. Ta gorge se serre et tu as l\'impression que la salle de cours rétrécit autour de toi.',
                         'stress_level' => 6,
                         'stress_impact' => 3,
+                        'sleep_impact' => -2,
+                        'grades_impact' => -1,
+                        'min_sleep_level' => 5,
+                        'min_grades_level' => 6,
                         'is_recovery_point' => false,
                         'stress_advice' => '"La multitâche est un mythe. Ton cerveau ne peut pas se concentrer efficacement sur plusieurs tâches complexes simultanément."',
+                        'sleep_advice' => '"La surcharge de caféine perturbe gravement ton sommeil et peut créer un cercle vicieux de fatigue et d\'anxiété."',
+                        'grades_advice' => '"Disperser ton attention entre plusieurs tâches garantit que tu ne feras aucune d\'elles correctement."',
                         'choices' => [
                             [
                                 'text' => 'Ignorer le cours et travailler frénétiquement sur le projet pour tenir les délais.',
@@ -120,8 +144,14 @@ class StoriesTableSeeder extends Seeder
                         Pour la première fois de la journée, ton esprit se focalise pleinement sur une seule chose à la fois.',
                         'stress_level' => 2,
                         'stress_impact' => -1,
+                        'sleep_impact' => 1,
+                        'grades_impact' => 2,
+                        'min_sleep_level' => 4,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => true,
                         'stress_advice' => '"La clarté des priorités est le premier pas vers la productivité sereine."',
+                        'sleep_advice' => '"L\'organisation réduit l\'anxiété nocturne qui perturbe l\'endormissement."',
+                        'grades_advice' => '"La qualité du travail profond sur une seule tâche surpasse toujours la quantité du travail superficiel sur plusieurs tâches."',
                         'choices' => [
                             [
                                 'text' => 'Continuer à travailler méthodiquement, avec des pauses planifiées.',
@@ -144,8 +174,14 @@ class StoriesTableSeeder extends Seeder
                         Un sentiment d\'imposture te gagne. Comment as-tu pu perdre autant de temps? Tu tentes de travailler sur plusieurs fichiers simultanément, sautant d\'une tâche à l\'autre sans vraiment en terminer aucune.',
                         'stress_level' => 5,
                         'stress_impact' => 3,
+                        'sleep_impact' => -1,
+                        'grades_impact' => -2,
+                        'min_sleep_level' => 5,
+                        'min_grades_level' => 6,
                         'is_recovery_point' => false,
                         'stress_advice' => '"La procrastination n\'est pas un problème de gestion du temps, mais de gestion des émotions face aux tâches difficiles."',
+                        'sleep_advice' => '"L\'anxiété accumulée pendant la journée se manifeste souvent la nuit sous forme d\'insomnie ou de sommeil agité."',
+                        'grades_advice' => '"Les réseaux sociaux sont conçus pour capter ton attention, exactement comme ils l\'ont fait aujourd\'hui, au détriment de ton travail académique."',
                         'choices' => [
                             [
                                 'text' => ' Enchaîner les boissons énergisantes pour tenir le rythme et travailler jusqu\'à très tard.',
@@ -169,8 +205,14 @@ class StoriesTableSeeder extends Seeder
         
                         'stress_level' => 8,
                         'stress_impact' => 2,
+                        'sleep_impact' => -3,
+                        'grades_impact' => -2,
+                        'min_sleep_level' => 6,
+                        'min_grades_level' => 7,
                         'is_recovery_point' => false,
                         'stress_advice' => '"Ton corps t\'envoie des signaux d\'alarme bien avant le point de rupture. Apprends à les reconnaître."',
+                        'sleep_advice' => '"La caféine et les boissons énergisantes provoquent un effondrement du système nerveux après leur effet temporaire."',
+                        'grades_advice' => '"Un esprit épuisé ne peut pas produire un travail de qualité, ce qui se reflète dans tes notes."',
                         'choices' => [
                             [
                                 'text' => 'Prendre une pilule de caféine concentrée offerte par un camarade pour tenir jusqu\'à la fin. ',
@@ -193,8 +235,14 @@ class StoriesTableSeeder extends Seeder
                         Tu envoies un message honnête à ton groupe: "J\'ai pris du retard, je me concentre sur la fonctionnalité principale pour ce soir. Les améliorations viendront demain."',
                         'stress_level' => 3,
                         'stress_impact' => -2, 
+                        'sleep_impact' => 2,
+                        'grades_impact' => 1,
+                        'min_sleep_level' => 5,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => true,
                         'stress_advice' => '"L\'honnêteté envers toi-même et les autres est libératrice. Personne n\'est surhumain."',
+                        'sleep_advice' => '"L\'exercice physique léger comme la marche aide à réguler les hormones du stress qui perturbent le sommeil."',
+                        'grades_advice' => '"Savoir reconnaître ses limites et communiquer honnêtement est une compétence professionnelle valorisée par les enseignants."',
                         'choices' => [
                             [
                                 'text' => 'Retourner à l\'intérieur avec un plan clair pour la soirée et le reste de la semaine.',
@@ -217,8 +265,14 @@ class StoriesTableSeeder extends Seeder
                         Tu sens une satisfaction profonde, différente de l\'agitation fébrile de ce matin. Ce n\'est pas l\'euphorie, mais plutôt une tranquillité productive, comme si tu avais retrouvé ton rythme naturel.',
                         'stress_level' => 2,
                         'stress_impact' => -1, 
+                        'sleep_impact' => 1,
+                        'grades_impact' => 2,
+                        'min_sleep_level' => 4,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => true,
                         'stress_advice' => ' "Le véritable état de flow vient d\'un équilibre entre défi et compétence, pas de la pression excessive."',
+                        'sleep_advice' => '"Le travail satisfaisant et bien cadré en journée favorise un sommeil profond et réparateur la nuit."',
+                        'grades_advice' => '"La technique Pomodoro (25 min de travail, 5 min de pause) est scientifiquement prouvée pour améliorer la qualité et la rétention du travail académique."',
                         'choices' => [
                             [
                                 'text' => 'Envoyer ton travail au groupe et décider de rentrer à une heure raisonnable ce soir.',
@@ -241,8 +295,14 @@ class StoriesTableSeeder extends Seeder
                         Tu regardes ton planning de la semaine: il reste deux projets à finaliser, et tu commences tout juste à retrouver un rythme de sommeil normal.',
                         'stress_level' => 3,
                         'stress_impact' => 1, 
+                        'sleep_impact' => 0,
+                        'grades_impact' => 0,
+                        'min_sleep_level' => 5,
+                        'min_grades_level' => 6,
                         'is_recovery_point' => false,
-                        'stress_advice' => ' "Les opportunités sont infinies, mais ton énergie et ton temps ne le sont pas. Choisir, c\'est aussi renoncer."                        ',
+                        'stress_advice' => ' "Les opportunités sont infinies, mais ton énergie et ton temps ne le sont pas. Choisir, c\'est aussi renoncer."',
+                        'sleep_advice' => '"Parfois, dire non aujourd\'hui te permet de dire oui à de meilleures opportunités demain, avec plus d\'énergie."',
+                        'grades_advice' => '"Les professeurs respectent les étudiants qui connaissent leurs limites et savent gérer leur charge de travail."',
                         'choices' => [
                             [
                                 'text' => 'Refuser poliment l\'invitation au hackathon en expliquant que tu dois gérer ta charge actuelle.',
@@ -265,8 +325,14 @@ class StoriesTableSeeder extends Seeder
                         Ce soir, tu as le temps de préparer un vrai repas au lieu de manger un sandwich devant ton ordinateur. Tu prends même une heure pour appeler tes parents, qui s\'étonnent de t\'entendre si détendu en pleine période de projets.',
                         'stress_level' => 2,
                         'stress_impact' => -2,
+                        'sleep_impact' => 2,
+                        'grades_impact' => 1,
+                        'min_sleep_level' => 4,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => true,
-                        'stress_advice' => '"Dire non à certaines choses te permet de dire un oui plus engagé à d\'autres."                        ',
+                        'stress_advice' => '"Dire non à certaines choses te permet de dire un oui plus engagé à d\'autres."',
+                        'sleep_advice' => '"Une soirée détendue sans écrans avant le coucher améliore considérablement la qualité du sommeil."',
+                        'grades_advice' => '"La constance dans la qualité du travail vaut mieux que des pics d\'excellence suivis d\'épuisement."',
                         'choices' => [
                             [
                                 'text' => 'Maintenir ce cap et accorder autant d\'importance à ton bien-être qu\'à tes études.',
@@ -289,8 +355,14 @@ class StoriesTableSeeder extends Seeder
                         Ce soir, le professeur de développement web a proposé une session facultative de révision avancée. Tu hésites — ton corps te supplie de rentrer dormir, mais tu crains de prendre du retard.',
                         'stress_level' => 6,
                         'stress_impact' => 2,
+                        'sleep_impact' => -3,
+                        'grades_impact' => -1,
+                        'min_sleep_level' => 7,
+                        'min_grades_level' => 6,
                         'is_recovery_point' => false,
                         'stress_advice' => '"L\'excellence soutenue nécessite des périodes de récupération. Même les athlètes d\'élite programment des jours de repos."',
+                        'sleep_advice' => '"Les recherches montrent qu\'après 16 heures d\'éveil, tes capacités cognitives sont équivalentes à celles d\'une personne légalement ivre."',
+                        'grades_advice' => '"La mémoire à long terme, essentielle pour les examens, se consolide pendant le sommeil profond que tu n\'as pas en ce moment."',
                         'choices' => [
                             [
                                 'text' => 'Ignorer tous les signaux d\'alerte et assister à la session supplémentaire.',
@@ -313,8 +385,14 @@ class StoriesTableSeeder extends Seeder
                         Un camarade de classe passe et s\'arrête: "Comment tu fais pour rester si calme avec tous ces deadlines? T\'as un secret?"',
                         'stress_level' => 2,
                         'stress_impact' => -2, // Impact négatif = réduction du stress
+                        'sleep_impact' => 2,
+                        'grades_impact' => 2,
+                        'min_sleep_level' => 4,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => true,
                         'stress_advice' => '"Le vrai secret de la productivité n\'est pas de faire plus, mais de récupérer mieux."',
+                        'sleep_advice' => '"L\'exercice matinal régule les hormones du sommeil et améliore la qualité de ton repos nocturne."',
+                        'grades_advice' => '"La régularité dans l\'effort est la clé d\'une réussite académique durable."',
                         'choices' => [
                             [
                                 'text' => 'Partager avec lui tes techniques de gestion du stress et d\'organisation.',
@@ -339,8 +417,14 @@ class StoriesTableSeeder extends Seeder
                         En expliquant ton approche, tu réalises à quel point elle s\'est ancrée en toi. Ce n\'est plus juste une technique — c\'est devenu ta philosophie d\'étudiant.',
                         'stress_level' => 1,
                         'stress_impact' => -1, 
+                        'sleep_impact' => 1,
+                        'grades_impact' => 1,
+                        'min_sleep_level' => 4,
+                        'min_grades_level' => 5,
                         'is_recovery_point' => true,
                         'stress_advice' => '"Enseigner est l\'une des meilleures façons d\'intégrer profondément un apprentissage."',
+                        'sleep_advice' => '"Partager tes connaissances avec les autres renforce ta confiance et réduit l\'anxiété qui nuit au sommeil."',
+                        'grades_advice' => '"Les meilleurs étudiants sont souvent ceux qui savent collaborer et partager leurs méthodes d\'apprentissage."',
                         'choices' => [
                             [
                                 'text' => ' Continuer sur cette lancée équilibrée jusqu\'à la fin du semestre. ',
@@ -366,8 +450,14 @@ class StoriesTableSeeder extends Seeder
                         Plus important encore, tu te sens en forme pour attaquer la suite, qu\'il s\'agisse des stages professionnels ou du prochain semestre. Tu as acquis plus que des connaissances techniques; tu as développé une compétence que ni l\'IA ni l\'automatisation ne pourront remplacer: la capacité à gérer ton énergie mentale de façon durable.',
                         'stress_level' => 1,
                         'stress_impact' => -1, 
+                        'sleep_impact' => 1,
+                        'grades_impact' => 1,
+                        'min_sleep_level' => 3,
+                        'min_grades_level' => 4,
                         'is_recovery_point' => true,
                         'stress_advice' => '"Le véritable succès académique n\'est pas de briller temporairement, mais de maintenir une flamme constante."',
+                        'sleep_advice' => '"Les habitudes saines de sommeil que tu as développées te serviront bien au-delà de tes études."',
+                        'grades_advice' => '"La vraie réussite n\'est pas seulement dans les notes, mais dans l\'équilibre que tu as su créer entre vie académique et personnelle."',
                         'choices' => [
                             [
                                 'text' => 'Célébrer cette réussite avec tes amis et prendre un vrai temps de déconnexion avant la suite. ',
@@ -390,8 +480,14 @@ class StoriesTableSeeder extends Seeder
                         Tu te demandes combien de projets vont échouer à cause de ton absence, combien d\'examens tu vas devoir reporter. La spirale de culpabilité commence, mais tu es trop épuisé même pour la panique. C\'est juste un grand vide.',
                         'stress_level' => 10,
                         'stress_impact' => 0,
+                        'sleep_impact' => -3,
+                        'grades_impact' => -3,
+                        'min_sleep_level' => 7,
+                        'min_grades_level' => 7,
                         'is_recovery_point' => false,
                         'stress_advice' => '"Le burnout n\'est pas un échec personnel, mais le résultat prévisible d\'un système en surcharge prolongée. La guérison commence par l\'acceptation."',
+                        'sleep_advice' => '"La récupération d\'un sommeil sain après un burnout peut prendre plusieurs semaines, mais c\'est l\'étape fondamentale pour retrouver ton équilibre."',
+                        'grades_advice' => '"Ta santé est plus importante que n\'importe quelle note. Les procédures administratives existent pour les cas médicaux comme le tien."',
                         'choices' => [
                             [
                                 'text' => 'Accepter la situation et commencer le long chemin de la récupération.',
@@ -417,8 +513,14 @@ class StoriesTableSeeder extends Seeder
                     'content' => $chapterData['content'],
                     'stress_level' => $chapterData['stress_level'],
                     'stress_impact' => $chapterData['stress_impact'],
+                    'sleep_impact' => $chapterData['sleep_impact'] ?? 0,
+                    'grades_impact' => $chapterData['grades_impact'] ?? 0,
+                    'min_sleep_level' => $chapterData['min_sleep_level'] ?? 0,
+                    'min_grades_level' => $chapterData['min_grades_level'] ?? 0,
                     'is_recovery_point' => $chapterData['is_recovery_point'],
-                    'stress_advice' => $chapterData['stress_advice']
+                    'stress_advice' => $chapterData['stress_advice'],
+                    'sleep_advice' => $chapterData['sleep_advice'] ?? null,
+                    'grades_advice' => $chapterData['grades_advice'] ?? null
                 ]);
                 $chapterModels[$chapterData['chapter_number']] = $chapter;
             }

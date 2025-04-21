@@ -29,9 +29,6 @@
           :class="{ 'stress-increase': getChoiceStressImpact(choice) > 0, 'stress-decrease': getChoiceStressImpact(choice) < 0 }"
         >
           {{ choice.text }}
-          <span v-if="showStressImpact && getChoiceStressImpact(choice) !== 0" class="stress-impact">
-            {{ getChoiceStressImpact(choice) > 0 ? '+' : '' }}{{ getChoiceStressImpact(choice) }} stress
-          </span>
         </button>
       </div>
 
@@ -210,6 +207,7 @@ const fetchChapterInfo = async (chapterId) => {
 };
 
 // Function to make a choice and update stress
+// Function to make a choice and update stress
 const makeChoice = async (choice) => {
   try {
     loading.value = true; // Montrer le chargement pendant l'action
@@ -235,9 +233,14 @@ const makeChoice = async (choice) => {
     
     // Navigation vers le chapitre suivant
     if (!choice.next_chapter_id) {
-      // Si pas de chapitre suivant, c'est la fin de l'histoire
-      const outcome = stressLevel.value >= 8 ? 'warning' : 'success';
-      router.push(`/result/${outcome}`);
+      // Si on est sur le chapitre burnout (99), toujours rediriger vers failure
+      if (chapter.value.chapter_number === 99) {
+        router.push('/result/failure');
+      } else {
+        // Sinon, c'est une fin normale basée sur le niveau de stress
+        const outcome = stressLevel.value >= 8 ? 'warning' : 'success';
+        router.push(`/result/${outcome}`);
+      }
     } else {
       // Sinon, aller au chapitre suivant
       const { storyId } = route.params;
@@ -252,10 +255,17 @@ const makeChoice = async (choice) => {
 };
 
 // Récupérer le niveau de stress depuis la session au chargement
+// Récupérer le niveau de stress depuis la session au chargement
 onMounted(() => {
   loading.value = true;
   fetchCurrentStress()
     .then(() => fetchChapter())
+    .then(() => {
+      // Si c'est le chapitre 99, forcer le niveau de stress à 10
+      if (chapter.value && chapter.value.chapter_number === 99) {
+        stressLevel.value = 10;
+      }
+    })
     .catch(err => {
       error.value = err.message || 'Une erreur s\'est produite';
     })

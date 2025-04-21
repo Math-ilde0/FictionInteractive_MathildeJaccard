@@ -12,19 +12,10 @@
     </div>
 
     <div v-else class="book-page">
-      <h1>Histoires Interactives</h1>
+     
       
       <!-- Section pour continuer la progression sauvegardée -->
-      <div v-if="savedProgress" class="continue-story">
-        <h3>Continuer votre aventure</h3>
-        <p>Niveau de stress actuel: {{ savedProgress.stressLevel }}/10</p>
-        <button @click="continueLastStory" class="continue-button">
-          <i class="fas fa-play-circle"></i> Reprendre où vous avez arrêté
-        </button>
-        <button @click="clearSavedProgress" class="clear-button">
-          <i class="fas fa-trash"></i> Effacer la sauvegarde
-        </button>
-      </div>
+      
       
       <!-- Show error message if no stories are found -->
       <p v-if="stories.length === 0 && !loading">Aucune histoire disponible.</p>
@@ -41,7 +32,18 @@
           <button @click="startStory(story.id)" class="start-button">
             <i class="fas fa-book-open"></i> Commencer cette histoire
           </button>
+        
         </div>
+        <div v-if="savedProgress" class="continue-story">
+        <h3>Continuer votre aventure</h3>
+        <p>Niveau de stress actuel: {{ savedProgress.stressLevel }}/10</p>
+        <button @click="continueLastStory" class="continue-button">
+          <i class="fas fa-play-circle"></i> Reprendre où vous avez arrêté
+        </button>
+        <button @click="clearSavedProgress" class="clear-button">
+          <i class="fas fa-trash"></i> Effacer la sauvegarde
+        </button>
+      </div>
       </div>
     </div>
   </main>

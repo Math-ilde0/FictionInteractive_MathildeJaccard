@@ -23,16 +23,52 @@
 
 <div v-else-if="outcome === 'failure'" class="result-failure">
   <h2>🔥 Burn-out Détecté</h2>
-  <p>Votre niveau de stress a atteint un point critique. Il est urgent de prendre soin de vous.</p>
+  <p>Votre charge mentale a atteint un niveau critique. Il est essentiel de faire une pause et de chercher du soutien.</p>
+
   <div class="emergency-resources">
-    <h3>Ressources d'Aide :</h3>
+    <br>
+    <h3>📚 Trouver de l'aide</h3>
+
+    <h4>🧠 Permanences en ligne et téléphoniques</h4>
     <ul>
-      <li>📞 Ligne d'écoute : 0800 STRESS</li>
-      <li>💻 Sites de soutien psychologique</li>
-      <li>👥 Groupes de support</li>
+      <li><strong><a href="https://www.147.ch" target="_blank">147.ch</a></strong> – Ligne gratuite 24h/24 pour les jeunes (téléphone, chat, SMS, e-mail).</li>
+      <li><strong><a href="https://www.ontecoute.ch" target="_blank">Ontecoute.ch</a></strong> – Questions anonymes aux professionnel·le·s, forum, adresses utiles.</li>
     </ul>
+
+    <h4>🏥 Associations romandes de soutien</h4>
+    <ul>
+      <li><strong>Association Ciao</strong> – Aide ponctuelle et orientation vers des services spécialisés.</li>
+      <li><strong><a href="https://www.santepsy.ch" target="_blank">SantéPsy</a></strong> – Infos et outils pour mieux gérer les difficultés psychiques.</li>
+      <li><strong><a href="https://www.noburnout.ch" target="_blank">No burnout</a></strong> – Évaluation personnelle et prévention de l'épuisement professionnel.</li>
+      <li><strong><a href="https://www.stressnostress.ch" target="_blank">stressnostress.ch</a></strong> – Portail de la FSP sur les risques liés au stress.</li>
+      <li><strong><a href="https://www.seco.admin.ch/seco/fr/home/Arbeit/Arbeitsbedingungen/Gesundheitsschutz/Burnout.html" target="_blank">Brochure SECO</a></strong> – Détection précoce et prévention du burn-out (PDF gratuit).</li>
+      <li><strong><a href="https://www.avpsy.ch" target="_blank">Association vaudoise des psychologues</a></strong> – Répertoire de psychologues selon divers critères.</li>
+    </ul>
+
+    <h4>🎓 Ressources étudiantes à la HEIG-VD</h4>
+    <ul>
+      <li><strong>Service de santé</strong> – Infirmières disponibles pour vous accueillir, évaluer et orienter.</li>
+      <li><strong>Aumônerie</strong> – Service d’écoute et de dialogue interreligieux/interculturel.</li>
+      <li><strong>ASSIDE</strong> – Association interfilière des étudiant·es, relais vers la direction.</li>
+      <li><strong>REACHED</strong> – Lutte contre le harcèlement sexuel et accompagnement étudiant.</li>
+    </ul>
+<br>
+
+    <h4>🧑‍⚕️ Soutien psychologique – HEIG-VD</h4>
+    <p>Les consultations psychologiques sont gratuites pour les étudiant·es. La confidentialité est garantie, tant pour la prise de contact que pour les entretiens.</p>
+<br>
+    <p><strong>Psychologue de référence :</strong></p>
+    <p>
+      <strong>Danièle Mügeli Ardia</strong><br>
+      Psychologue-psychothérapeute FSP<br>
+      Rue des Pêcheurs 8d, 1400 Yverdon-les-Bains<br>
+      <a href="mailto:daniele.muegeliardia@psychologie.ch">daniele.muegeliardia@psychologie.ch</a><br>
+      024 425 62 22
+    </p>
   </div>
 </div>
+
+
 
 <div v-else class="result-error">
   <p>Une erreur s'est produite. Veuillez réessayer.</p>
