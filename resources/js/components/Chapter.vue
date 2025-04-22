@@ -317,10 +317,20 @@ const makeChoice = async (choice) => {
     
     console.log('Choice update response:', response.data);
     
-    // Mettre à jour les métriques locales
-    chargeMentale.value = response.data.stress_level || chargeMentale.value;
-    sommeil.value = response.data.sleep_level || sommeil.value;
-    notes.value = response.data.grades_level || notes.value;
+    // Si un chapitre suivant existe, naviguer vers ce chapitre
+    if (choice.next_chapter_id) {
+      const { storyId } = route.params;
+      const nextChapter = await axios.get(`/api/story/${storyId}/chapter/${choice.next_chapter_id}`);
+      
+      // Mise à jour des métriques
+      chargeMentale.value = response.data.stress_level || chargeMentale.value;
+      sommeil.value = response.data.sleep_level || sommeil.value;
+      notes.value = response.data.grades_level || notes.value;
+      
+      // Navigation vers le chapitre suivant
+      router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
+      return;
+    }
     
     // Vérification des situations spéciales
     if (response.data.is_burnout) {
@@ -338,21 +348,6 @@ const makeChoice = async (choice) => {
       return;
     }
     
-    // Navigation vers le chapitre suivant
-    if (!choice.next_chapter_id) {
-      // Si on est sur le chapitre 99 (burnout), rediriger vers failure
-      if (chapter.value.chapter_number === 99) {
-        router.push('/result/failure');
-      } else {
-        // Sinon, c'est une fin normale basée sur le niveau de stress
-        const outcome = chargeMentale.value >= 8 ? 'warning' : 'success';
-        router.push(`/result/${outcome}`);
-      }
-    } else {
-      // Aller au chapitre suivant
-      const { storyId } = route.params;
-      router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
-    }
   } catch (error) {
     console.error('Erreur lors du choix:', error);
     error.value = error.response?.data?.message || 'Erreur lors du choix';
