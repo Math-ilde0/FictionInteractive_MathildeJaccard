@@ -38,11 +38,12 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\StressLevelMiddleware::class, // Votre middleware de stress
         ],
-
+    
         'api' => [
             \Illuminate\Session\Middleware\StartSession::class, // Ajout de la session pour l'API
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         ],
     ];
 

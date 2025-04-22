@@ -298,7 +298,7 @@ const checkWarnings = () => {
            Votre progression académique est en danger !`);
   }
 };
-
+// Function to make a choice and update metrics
 // Function to make a choice and update metrics
 const makeChoice = async (choice) => {
   try {
@@ -310,77 +310,105 @@ const makeChoice = async (choice) => {
     }
     
     console.log(`Making choice ${choice.id}`);
+    console.log('Métriques avant choix:', {
+      chargeMentale: chargeMentale.value,
+      sommeil: sommeil.value,
+      notes: notes.value
+    });
+    
     // Mettre à jour les métriques via l'API
+    console.log('Envoi de la requête à /api/metrics/update');
     const response = await axios.post('/api/metrics/update', {
       choice_id: choice.id
     });
     
-    console.log('Choice update response:', response.data);
+    console.log('Response received:', response);
+    console.log('Choice update response data:', response.data);
     
-    // Si un chapitre suivant existe, naviguer vers ce chapitre
-    if (choice.next_chapter_id) {
-      const { storyId } = route.params;
-      const nextChapter = await axios.get(`/api/story/${storyId}/chapter/${choice.next_chapter_id}`);
-      
-      // Mise à jour des métriques
-      chargeMentale.value = response.data.stress_level || chargeMentale.value;
-      sommeil.value = response.data.sleep_level || sommeil.value;
-      notes.value = response.data.grades_level || notes.value;
-      
-      // Navigation vers le chapitre suivant
-      router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
-      return;
-    }
+    // Mettre à jour les métriques locales
+    const oldStress = chargeMentale.value;
+    const oldSleep = sommeil.value;
+    const oldGrades = notes.value;
+    
+    chargeMentale.value = response.data.stress_level;
+    sommeil.value = response.data.sleep_level;
+    notes.value = response.data.grades_level;
+    
+    console.log('Métriques après mise à jour:', {
+      chargeMentale: chargeMentale.value, 
+      sommeil: sommeil.value, 
+      notes: notes.value
+    });
+    console.log('Différences:', {
+      stress: chargeMentale.value - oldStress,
+      sleep: sommeil.value - oldSleep,
+      grades: notes.value - oldGrades  
+    });
+    
+    // Sauvegarder les métriques dans localStorage pour la persistance
+    localStorage.setItem('stress_level', chargeMentale.value);
+    localStorage.setItem('sleep_level', sommeil.value);
+    localStorage.setItem('grades_level', notes.value);
     
     // Vérification des situations spéciales
     if (response.data.is_burnout) {
+      console.log('Burnout détecté, redirection vers /result/failure');
       router.push('/result/failure');
       return;
     }
     
     if (response.data.sleep_crisis) {
+      console.log('Crise de sommeil détectée, redirection vers /result/sleep-crisis');
       router.push('/result/sleep-crisis');
       return;
     }
     
     if (response.data.academic_crisis) {
+      console.log('Crise académique détectée, redirection vers /result/academic-crisis');
       router.push('/result/academic-crisis');
       return;
     }
     
+    // Navigation vers le chapitre suivant
+    if (!choice.next_chapter_id) {
+      console.log('Pas de chapitre suivant spécifié');
+      // Si on est sur le chapitre 99 (burnout), rediriger vers failure
+      if (chapter.value.chapter_number === 99) {
+        console.log('Chapitre 99 (burnout), redirection vers /result/failure');
+        router.push('/result/failure');
+      } else {
+        // Sinon, c'est une fin normale basée sur le niveau de stress
+        const outcome = chargeMentale.value >= 8 ? 'warning' : 'success';
+        console.log(`Fin normale, niveau de stress ${chargeMentale.value}, redirection vers /result/${outcome}`);
+        router.push(`/result/${outcome}`);
+      }
+    } else {
+      // Aller au chapitre suivant
+      const { storyId } = route.params;
+      console.log(`Navigation vers le chapitre suivant: /story/${storyId}/chapter/${choice.next_chapter_id}`);
+      router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
+    }
   } catch (error) {
     console.error('Erreur lors du choix:', error);
+    
+    // Afficher les détails de l'erreur pour le débogage
+    if (error.response) {
+      console.error('Détails de l\'erreur de réponse:', {
+        status: error.response.status,
+        headers: error.response.headers,
+        data: error.response.data
+      });
+    } else if (error.request) {
+      console.error('La requête a été faite mais pas de réponse reçue:', error.request);
+    } else {
+      console.error('Erreur lors de la configuration de la requête:', error.message);
+    }
+    
     error.value = error.response?.data?.message || 'Erreur lors du choix';
   } finally {
     loading.value = false;
   }
 };
-
-// Récupérer les métriques au chargement
-onMounted(() => {
-  console.log('Chapter component mounted');
-  loading.value = true;
-  
-  // Récupérer d'abord les métriques actuelles
-  axios.get('/api/metrics')
-    .then(response => {
-      console.log('Current metrics:', response.data);
-      chargeMentale.value = response.data.stress_level || 0;
-      sommeil.value = response.data.sleep_level || 10;
-      notes.value = response.data.grades_level || 7;
-      
-      // Ensuite charger le chapitre
-      return fetchChapter();
-    })
-    .catch(err => {
-      console.error('Error getting metrics:', err);
-      // Charger quand même le chapitre en cas d'erreur
-      fetchChapter();
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-});
 
 // Surveiller les changements de route
 watch(
@@ -392,6 +420,7 @@ watch(
   },
   { deep: true }
 );
+
 
 // Surveiller les changements de métriques pour sauvegarder la progression
 watch(

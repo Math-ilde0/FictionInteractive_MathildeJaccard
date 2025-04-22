@@ -13,14 +13,25 @@ Route::get('story/{id}', [StoryController::class, 'show']);
 // Chapter Routes
 Route::get('story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show']);
 
-// Choices Routes
-Route::apiResource('choices', ChoiceController::class);
-
+// Metrics Routes
 Route::get('metrics', [MetricsController::class, 'getMetrics']);
 Route::post('metrics/update', [MetricsController::class, 'updateMetrics']);
 Route::post('metrics/reset', [MetricsController::class, 'resetMetrics']);
 
-// Pour la rétrocompatibilité (puisque le front-end utilise ces routes)
-Route::get('stress', [MetricsController::class, 'getMetrics']);
-Route::post('stress/update', [MetricsController::class, 'updateMetrics']);
-Route::post('stress/reset', [MetricsController::class, 'resetMetrics']);
+// Choices Routes 
+Route::apiResource('choices', ChoiceController::class);
+
+Route::get('test-metrics/{stress}/{sleep}/{grades}', function($stress, $sleep, $grades) {
+    session([
+        'stress_level' => (int)$stress,
+        'sleep_level' => (int)$sleep, 
+        'grades_level' => (int)$grades
+    ]);
+    
+    return response()->json([
+        'message' => 'Métriques mises à jour directement',
+        'stress_level' => session('stress_level'),
+        'sleep_level' => session('sleep_level'),
+        'grades_level' => session('grades_level')
+    ]);
+});
