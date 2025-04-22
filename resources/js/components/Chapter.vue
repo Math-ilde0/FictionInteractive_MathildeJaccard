@@ -88,6 +88,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import { setCookie, getCookie } from '../utils/cookies';
 
 const chapter = ref({});
 const choices = ref([]);
@@ -345,10 +346,10 @@ const makeChoice = async (choice) => {
       grades: notes.value - oldGrades  
     });
     
-    // Sauvegarder les métriques dans localStorage pour la persistance
-    localStorage.setItem('stress_level', chargeMentale.value);
-    localStorage.setItem('sleep_level', sommeil.value);
-    localStorage.setItem('grades_level', notes.value);
+    
+    setCookie('stress_level', chargeMentale.value);
+setCookie('sleep_level', sommeil.value);
+setCookie('grades_level', notes.value);
     
     // Vérification des situations spéciales
     if (response.data.is_burnout) {

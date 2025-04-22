@@ -15,21 +15,19 @@ class StressLevelMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Initialiser le niveau de stress s'il n'existe pas encore
-        if (!session()->has('stress_level')) {
-            session(['stress_level' => 0]);
-        }
-
+        // Utiliser les cookies au lieu des sessions
+        $stressLevel = $request->cookie('stress_level', 0);
+    
         $response = $next($request);
-
+    
         // Vérifier si le niveau de stress dépasse 10 (burnout)
-        if (session('stress_level') >= 10) {
+        if ($stressLevel >= 10) {
             // Si l'URL actuelle n'est pas déjà '/result/failure'
             if ($request->path() !== 'result/failure' && !$request->is('api/*')) {
                 return redirect('/result/failure');
             }
         }
-
+    
         return $response;
     }
 }

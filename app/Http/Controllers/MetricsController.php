@@ -11,7 +11,10 @@ class MetricsController extends Controller
     /**
      * Mettre à jour les métriques basées sur un choix
      */
-    public function updateMetrics(Request $request)
+/**
+ * Mettre à jour les métriques basées sur un choix
+ */
+public function updateMetrics(Request $request)
 {
     \Log::info('updateMetrics appelé avec:', $request->all());
     
@@ -23,13 +26,26 @@ class MetricsController extends Controller
             'grades_level' => $request->grades_level
         ]);
         
-        session([
-            'stress_level' => $request->stress_level ?? session('stress_level', 0),
-            'sleep_level' => $request->sleep_level ?? session('sleep_level', 10),
-            'grades_level' => $request->grades_level ?? session('grades_level', 7)
+        $stressLevel = $request->stress_level ?? $request->cookie('stress_level', 0);
+        $sleepLevel = $request->sleep_level ?? $request->cookie('sleep_level', 10);
+        $gradesLevel = $request->grades_level ?? $request->cookie('grades_level', 7);
+        
+        $minutes = 60 * 24 * 30; // Cookie valide 30 jours
+        
+        $response = response()->json([
+            'stress_level' => $stressLevel,
+            'sleep_level' => $sleepLevel,
+            'grades_level' => $gradesLevel,
+            'is_burnout' => $stressLevel >= 10,
+            'sleep_crisis' => $sleepLevel <= 0,
+            'academic_crisis' => $gradesLevel <= 0
         ]);
         
-        return $this->getMetrics();
+        $response->cookie('stress_level', $stressLevel, $minutes);
+        $response->cookie('sleep_level', $sleepLevel, $minutes);
+        $response->cookie('grades_level', $gradesLevel, $minutes);
+        
+        return $response;
     }
     
     // Valider les données entrantes
@@ -48,16 +64,20 @@ class MetricsController extends Controller
         \Log::info('Chapitre suivant trouvé:', $nextChapter ? $nextChapter->toArray() : 'null');
     }
     
-    // Mettre à jour les métriques en session
-    $currentStress = session('stress_level', 0);
-    $currentSleep = session('sleep_level', 10);
-    $currentGrades = session('grades_level', 7);
+    // Récupérer les métriques actuelles depuis les cookies
+    $currentStress = $request->cookie('stress_level', 0);
+    $currentSleep = $request->cookie('sleep_level', 10);
+    $currentGrades = $request->cookie('grades_level', 7);
     
-    \Log::info('Métriques actuelles:', [
+    \Log::info('Métriques actuelles depuis les cookies:', [
         'stress_level' => $currentStress,
         'sleep_level' => $currentSleep,
         'grades_level' => $currentGrades
     ]);
+    
+    $newStress = $currentStress;
+    $newSleep = $currentSleep;
+    $newGrades = $currentGrades;
     
     if ($nextChapter) {
         // Calculer les nouvelles valeurs des métriques
@@ -73,40 +93,31 @@ class MetricsController extends Controller
             'sleep_impact' => $nextChapter->sleep_impact ?? 0,
             'grades_impact' => $nextChapter->grades_impact ?? 0
         ]);
-        
-        // Stocker les valeurs en session
-        session([
-            'stress_level' => $newStress,
-            'sleep_level' => $newSleep,
-            'grades_level' => $newGrades
-        ]);
-        
-        // Vérifier si les niveaux critiques sont atteints
-        if ($newStress >= 10) {
-            return response()->json([
-                'stress_level' => $newStress,
-                'sleep_level' => $newSleep,
-                'grades_level' => $newGrades,
-                'is_burnout' => true,
-                'redirect_to' => '/result/failure'
-            ]);
-        }
-        
-        // [autres vérifications...]
     }
     
-    $response = [
-        'stress_level' => session('stress_level', 0),
-        'sleep_level' => session('sleep_level', 10),
-        'grades_level' => session('grades_level', 7),
-        'is_burnout' => session('stress_level', 0) >= 10,
-        'sleep_crisis' => session('sleep_level', 10) <= 0,
-        'academic_crisis' => session('grades_level', 7) <= 0
-    ];
+    $minutes = 60 * 24 * 30; // Cookie valide 30 jours
     
-    \Log::info('Réponse finale:', $response);
+    $response = response()->json([
+        'stress_level' => $newStress,
+        'sleep_level' => $newSleep,
+        'grades_level' => $newGrades,
+        'is_burnout' => $newStress >= 10,
+        'sleep_crisis' => $newSleep <= 0,
+        'academic_crisis' => $newGrades <= 0
+    ]);
     
-    return response()->json($response);
+    // Ajouter les cookies à la réponse
+    $response->cookie('stress_level', $newStress, $minutes);
+    $response->cookie('sleep_level', $newSleep, $minutes);
+    $response->cookie('grades_level', $newGrades, $minutes);
+    
+    \Log::info('Réponse finale avec cookies:', [
+        'stress_level' => $newStress,
+        'sleep_level' => $newSleep,
+        'grades_level' => $newGrades
+    ]);
+    
+    return $response;
 }
     
     /**

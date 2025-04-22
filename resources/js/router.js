@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import StoryList from './components/StoryList.vue';
 import Chapter from './components/Chapter.vue';
 import Result from './components/Result.vue';
+import { getCookie } from './utils/cookies';
 
 const routes = [
   {
@@ -37,10 +38,10 @@ router.beforeEach((to, from, next) => {
     return;
   }
   
-  // Vérifier le niveau de stress dans la session (si disponible)
-  const stress = parseInt(localStorage.getItem('stress_level')) || 0;
-  const sleep = parseInt(localStorage.getItem('sleep_level')) || 10;
-  const grades = parseInt(localStorage.getItem('grades_level')) || 7;
+  // Vérifier le niveau de stress dans les cookies (si disponible)
+  const stress = parseInt(getCookie('stress_level')) || 0;
+  const sleep = parseInt(getCookie('sleep_level')) || 10;
+  const grades = parseInt(getCookie('grades_level')) || 7;
   
   // Rediriger en fonction des métriques
   if (stress >= 10) {
