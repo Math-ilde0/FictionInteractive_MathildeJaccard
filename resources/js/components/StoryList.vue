@@ -115,6 +115,7 @@
 
 <script>
 import axios from 'axios';
+import { setCookie, getCookie } from '@/utils/cookies';
 
 export default {
   data() {
@@ -135,20 +136,31 @@ export default {
   methods: {
     // Charger les histoires disponibles
     loadStories() {
-      this.loading = true;
-      this.error = null;
+  this.loading = true;
+  this.error = null;
+  
+  axios.get('/stories')
+    .then(response => {
+      console.log('Response from /stories:', response);
       
-      axios.get('/stories')
-        .then(response => {
-          this.stories = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error('Error loading stories:', error);
-          this.error = error.response?.data?.message || 'Erreur lors du chargement des histoires';
-          this.loading = false;
-        });
-    },
+      // S'assurer que nous avons un tableau valide
+      if (Array.isArray(response.data)) {
+        this.stories = response.data;
+      } else if (response.data && Array.isArray(response.data.data)) {
+        this.stories = response.data.data;
+      } else {
+        this.stories = [];
+        console.error('Format de données inattendu:', response.data);
+      }
+      
+      this.loading = false;
+    })
+    .catch(error => {
+      console.error('Error loading stories:', error);
+      this.error = error.response?.data?.message || 'Erreur lors du chargement des histoires';
+      this.loading = false;
+    });
+},
     
     // Charger la progression sauvegardée depuis localStorage
     loadSavedProgress() {
@@ -174,30 +186,28 @@ export default {
     
     // Continuer la dernière histoire sauvegardée
     continueLastStory() {
-      if (this.savedProgress) {
-        this.loading = true;
-        
-        // Mettre à jour les métriques côté serveur
-        axios.post('/api/metrics/update', {
-          stress_level: this.savedProgress.chargeMentale,
-          sleep_level: this.savedProgress.sommeil,
-          grades_level: this.savedProgress.notes
-        })
-          .then(() => {
-            // Naviguer vers le chapitre sauvegardé
-            this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
-          })
-          .catch(error => {
-            console.error('Erreur lors de la reprise de la partie:', error);
-            // Naviguer quand même en cas d'erreur
-            this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
-      }
-    },
+  if (this.savedProgress) {
+    this.loading = true;
     
+    // Mettre à jour les métriques côté serveur
+    axios.post('/metrics/update', {
+      stress_level: this.savedProgress.chargeMentale,
+      sleep_level: this.savedProgress.sommeil,
+      grades_level: this.savedProgress.notes
+    })
+      .then(() => {
+        this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
+      })
+      .catch(error => {
+        console.error('Erreur lors de la reprise de la partie:', error);
+        this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
+      })
+      .finally(() => {
+        this.loading = false;
+      });
+  }
+    
+},  
     // Effacer la progression sauvegardée
     clearSavedProgress() {
       if (confirm('Êtes-vous sûr de vouloir effacer votre progression ? Cette action est irréversible.')) {
@@ -208,23 +218,24 @@ export default {
     
     // Démarrer une nouvelle histoire
     async startStory(storyId) {
-      try {
-        this.loading = true;
-        
-        // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
-        await axios.post('/api/metrics/reset');
-        
-        // Effacer la progression précédente
-        localStorage.removeItem('storyProgress');
-        
-        // Naviguer vers le premier chapitre de l'histoire sélectionnée
-        this.$router.push(`/story/${storyId}/chapter/1`);
-      } catch (error) {
-        console.error('Error starting story:', error);
-        this.error = error.response?.data?.message || 'Erreur lors du démarrage de l\'histoire';
-        this.loading = false;
-      }
-    }
+  try {
+    this.loading = true;
+    
+    // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
+    await axios.post('/metrics/reset');
+    
+    // Effacer la progression précédente
+    localStorage.removeItem('storyProgress');
+    
+    // Naviguer vers le premier chapitre de l'histoire sélectionnée
+    this.$router.push(`/story/${storyId}/chapter/1`);
+  } catch (error) {
+    console.error('Error starting story:', error);
+    this.error = error.response?.data?.message || 'Erreur lors du démarrage de l\'histoire';
+    this.loading = false;
+  }
+},
+
   }
 };
 </script>

@@ -237,13 +237,18 @@ const fetchChoiceImpacts = async () => {
   try {
     for (const choice of choices.value) {
       if (choice.next_chapter_id) {
-        const nextChapter = await fetchChapterInfo(choice.next_chapter_id);
-        if (nextChapter) {
-          impactsMap.set(choice.id, {
-            stress_impact: nextChapter.stress_impact || 0,
-            sleep_impact: nextChapter.sleep_impact || 0,
-            grades_impact: nextChapter.grades_impact || 0
-          });
+        try {
+          const nextChapter = await fetchChapterInfo(choice.next_chapter_id);
+          if (nextChapter) {
+            impactsMap.set(choice.id, {
+              stress_impact: nextChapter.stress_impact || 0,
+              sleep_impact: nextChapter.sleep_impact || 0,
+              grades_impact: nextChapter.grades_impact || 0
+            });
+          }
+        } catch (innerError) {
+          console.error(`Erreur pour le choix ${choice.id}:`, innerError);
+          // Continue with other choices even if one fails
         }
       }
     }

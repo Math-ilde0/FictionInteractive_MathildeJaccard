@@ -1,18 +1,18 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StoryController;
 
-// Main application route
+// Route d'accueil qui renvoie la vue welcome
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Routes for different game results
+// Routes pour les résultats du jeu
 Route::get('/result/{outcome}', function () {
     return view('welcome');
 })->where('outcome', 'success|failure|warning|sleep-crisis|academic-crisis');
 
-// Catch-all route for Vue router
+// IMPORTANT: Modifiez votre route catch-all pour qu'elle n'intercepte pas les routes API
+// L'ordre des routes est important ici!
 Route::get('/{any}', function () {
     return view('welcome');
-})->where('any', '^(?!api).*');
+})->where('any', '^(?!stories$|^story|^choices|^metrics).*');

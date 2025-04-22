@@ -126,12 +126,12 @@ public function updateMetrics(Request $request)
     public function getMetrics()
     {
         return response()->json([
-            'stress_level' => session('stress_level', 0),
-            'sleep_level' => session('sleep_level', 10),
-            'grades_level' => session('grades_level', 7),
-            'is_burnout' => session('stress_level', 0) >= 10,
-            'sleep_crisis' => session('sleep_level', 10) <= 0,
-            'academic_crisis' => session('grades_level', 7) <= 0
+            'stress_level' => request()->cookie('stress_level', 0),
+            'sleep_level' => request()->cookie('sleep_level', 10),
+            'grades_level' => request()->cookie('grades_level', 7),
+            'is_burnout' => request()->cookie('stress_level', 0) >= 10,
+            'sleep_crisis' => request()->cookie('sleep_level', 10) <= 0,
+            'academic_crisis' => request()->cookie('grades_level', 7) <= 0
         ]);
     }
     
