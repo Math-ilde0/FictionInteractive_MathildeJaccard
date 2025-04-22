@@ -135,7 +135,7 @@ const outcome = computed(() => route.params.outcome);
 const restartGame = async () => {
   try {
     // Réinitialiser toutes les métriques
-    await axios.post('/api/metrics/reset');
+    await axios.post('/metrics/reset');
     
     // Effacer la progression sauvegardée
     localStorage.removeItem('storyProgress');

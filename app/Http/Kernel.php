@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\StressLevelMiddleware::class, // Votre middleware de stress
+            \App\Http\Middleware\MetricsMiddleware::class, // Ajout du MetricsMiddleware
         ],
     
         'api' => [
@@ -69,5 +70,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'stress' => \App\Http\Middleware\StressLevelMiddleware::class, // Alias pour le middleware de stress
+        'metrics' => \App\Http\Middleware\MetricsMiddleware::class,
     ];
 }

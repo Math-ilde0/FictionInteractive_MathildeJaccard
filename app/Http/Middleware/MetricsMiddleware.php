@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -11,15 +10,10 @@ class MetricsMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        // Ignorer les routes API
-    if ($request->is('api/*')) {
-        return $next($request);
-    }
         // Récupérer les métriques depuis les cookies, ou utiliser les valeurs par défaut
         $stressLevel = $request->cookie('stress_level', 0);
         $sleepLevel = $request->cookie('sleep_level', 10);
@@ -27,28 +21,26 @@ class MetricsMiddleware
 
         $response = $next($request);
 
-        // Vérifier si les métriques ont atteint des niveaux critiques
-        
         // Burnout (stress trop élevé)
         if ($stressLevel >= 10) {
             // Si l'URL actuelle n'est pas déjà '/result/failure'
-            if ($request->path() !== 'result/failure' && !$request->is('api/*')) {
+            if ($request->path() !== 'result/failure') {
                 return redirect('/result/failure');
             }
         }
-        
+
         // Crise de sommeil (sommeil trop bas)
         if ($sleepLevel <= 0) {
             // Si l'URL actuelle n'est pas déjà '/result/sleep-crisis'
-            if ($request->path() !== 'result/sleep-crisis' && !$request->is('api/*')) {
+            if ($request->path() !== 'result/sleep-crisis') {
                 return redirect('/result/sleep-crisis');
             }
         }
-        
+
         // Crise académique (notes trop basses)
         if ($gradesLevel <= 0) {
             // Si l'URL actuelle n'est pas déjà '/result/academic-crisis'
-            if ($request->path() !== 'result/academic-crisis' && !$request->is('api/*')) {
+            if ($request->path() !== 'result/academic-crisis') {
                 return redirect('/result/academic-crisis');
             }
         }

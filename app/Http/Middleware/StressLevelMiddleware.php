@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -11,27 +10,23 @@ class StressLevelMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Ignorer les routes API
-    if ($request->is('api/*')) {
-        return $next($request);
-    }
         // Utiliser les cookies au lieu des sessions
         $stressLevel = $request->cookie('stress_level', 0);
-    
+
         $response = $next($request);
-    
+
         // Vérifier si le niveau de stress dépasse 10 (burnout)
         if ($stressLevel >= 10) {
             // Si l'URL actuelle n'est pas déjà '/result/failure'
-            if ($request->path() !== 'result/failure' && !$request->is('api/*')) {
+            if ($request->path() !== 'result/failure') {
                 return redirect('/result/failure');
             }
         }
-    
+
         return $response;
     }
 }

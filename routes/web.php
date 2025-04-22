@@ -1,10 +1,14 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ChapterController;
+
 // Route d'accueil qui renvoie la vue welcome
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show']);
 
 // Routes pour les résultats du jeu
 Route::get('/result/{outcome}', function () {

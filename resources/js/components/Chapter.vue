@@ -182,52 +182,26 @@ const retryFetch = () => {
 
 // Function to fetch chapter data
 const fetchChapter = async () => {
-  const { storyId, chapterId } = route.params;
-  
-  loading.value = true;
-  error.value = null;
-  
-  try {
-    console.log(`Fetching chapter: /story/${storyId}/chapter/${chapterId}`);
-    const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
-    console.log('Chapter data received:', response.data);
-    chapter.value = response.data;
+    const { storyId, chapterId } = route.params;
     
-    // Map choices with additional data
-    choices.value = response.data.choices.map(choice => ({
-      id: choice.id,
-      text: choice.text,
-      next_chapter_id: choice.next_chapter_id
-    }));
+    loading.value = true;
+    error.value = null;
     
-    // Utiliser les métriques de la réponse si disponibles
-    if (response.data.current_stress_level !== undefined) {
-      chargeMentale.value = response.data.current_stress_level;
+    try {
+        console.log(`Fetching chapter: /story/${storyId}/chapter/${chapterId}`);
+        
+        const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
+        
+        console.log('Chapter data received:', response.data);
+        chapter.value = response.data;
+        
+        // Reste du code...
+    } catch (err) {
+        console.error('Fetch chapter error:', err);
+        error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
+    } finally {
+        loading.value = false;
     }
-    
-    if (response.data.current_sleep_level !== undefined) {
-      sommeil.value = response.data.current_sleep_level;
-    }
-    
-    if (response.data.current_grades_level !== undefined) {
-      notes.value = response.data.current_grades_level;
-    }
-    
-    // Récupérer les impacts des choix
-    await fetchChoiceImpacts();
-    
-    // Sauvegarder la progression
-    saveProgress();
-    
-    // Vérifier si des avertissements doivent être affichés
-    checkWarnings();
-    
-  } catch (err) {
-    console.error('Fetch chapter error details:', err);
-    error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
-  } finally {
-    loading.value = false;
-  }
 };
 
 // Récupérer les impacts des choix
@@ -323,8 +297,8 @@ const makeChoice = async (choice) => {
     });
     
     // Mettre à jour les métriques via l'API
-    console.log('Envoi de la requête à /api/metrics/update');
-    const response = await axios.post('/api/metrics/update', {
+    console.log('Envoi de la requête à /metrics/update');
+    const response = await axios.post('/metrics/update', {
       choice_id: choice.id
     });
     
