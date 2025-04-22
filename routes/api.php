@@ -7,6 +7,7 @@ use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\MetricsController;
 
 // Story Routes
+Route::middleware('api')->prefix('api')->group(function () {
 Route::get('stories', [StoryController::class, 'index']);
 Route::get('story/{id}', [StoryController::class, 'show']);
 
@@ -21,17 +22,4 @@ Route::post('metrics/reset', [MetricsController::class, 'resetMetrics']);
 // Choices Routes 
 Route::apiResource('choices', ChoiceController::class);
 
-Route::get('test-metrics/{stress}/{sleep}/{grades}', function($stress, $sleep, $grades) {
-    session([
-        'stress_level' => (int)$stress,
-        'sleep_level' => (int)$sleep, 
-        'grades_level' => (int)$grades
-    ]);
-    
-    return response()->json([
-        'message' => 'Métriques mises à jour directement',
-        'stress_level' => session('stress_level'),
-        'sleep_level' => session('sleep_level'),
-        'grades_level' => session('grades_level')
-    ]);
 });

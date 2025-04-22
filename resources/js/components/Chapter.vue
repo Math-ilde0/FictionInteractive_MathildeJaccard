@@ -88,7 +88,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { setCookie, getCookie } from '../utils/cookies';
+import { setCookie, getCookie } from '@/utils/cookies';
 
 const chapter = ref({});
 const choices = ref([]);
