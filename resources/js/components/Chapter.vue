@@ -14,7 +14,11 @@
     </div>
     
     <div v-else class="book-page" :style="pageEffects">
-      <StressMeter :level="stressLevel" />
+      <StressMeter 
+        :level="stressLevel" 
+        :sleep-level="chapter?.current_sleep_level || 10" 
+        :grades-level="chapter?.current_grades_level || 7" 
+      />
       
       <h1>Chapitre {{ chapter?.chapter_number || '?' }}</h1>
       
@@ -26,18 +30,35 @@
           :key="index" 
           @click="makeChoice(choice)"
           class="choice-button"
-          :class="{ 'stress-increase': getChoiceStressImpact(choice) > 0, 'stress-decrease': getChoiceStressImpact(choice) < 0 }"
+          :class="{
+            'stress-increase': getChoiceStressImpact(choice) > 0, 
+            'stress-decrease': getChoiceStressImpact(choice) < 0,
+            'sleep-increase': getChoiceSleepImpact(choice) > 0,
+            'sleep-decrease': getChoiceSleepImpact(choice) < 0,
+            'grades-increase': getChoiceGradesImpact(choice) > 0,
+            'grades-decrease': getChoiceGradesImpact(choice) < 0
+          }"
         >
           {{ choice.text }}
+          <div class="choice-impact">
+            <span v-if="getChoiceStressImpact(choice) !== 0" class="stress-impact">
+              Stress: {{ getChoiceStressImpact(choice) > 0 ? '+' : '' }}{{ getChoiceStressImpact(choice) }}
+            </span>
+            <span v-if="getChoiceSleepImpact(choice) !== 0" class="sleep-impact">
+              Sommeil: {{ getChoiceSleepImpact(choice) > 0 ? '+' : '' }}{{ getChoiceSleepImpact(choice) }}
+            </span>
+            <span v-if="getChoiceGradesImpact(choice) !== 0" class="grades-impact">
+              Notes: {{ getChoiceGradesImpact(choice) > 0 ? '+' : '' }}{{ getChoiceGradesImpact(choice) }}
+            </span>
+          </div>
         </button>
       </div>
 
-      <div class="info-section">
-        <i class="fas fa-info-circle info-icon" @mouseover="showInfo = true" @mouseleave="showInfo = false"></i>
-        <div v-if="showInfo" class="info-tooltip">
-          {{ chapter?.stress_advice || 'Aucun conseil disponible' }}
-        </div>
-      </div>
+      <AdviceTooltip 
+        :stress-advice="chapter?.stress_advice" 
+        :sleep-advice="chapter?.sleep_advice" 
+        :grades-advice="chapter?.grades_advice"
+      />
     </div>
   </main>
 </template>
@@ -47,21 +68,17 @@ import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import StressMeter from './StressMeter.vue';
+import AdviceTooltip from './adviceTooltip.vue';
 
 const chapter = ref({});
 const choices = ref([]);
-const showInfo = ref(false);
 const stressLevel = ref(0);
-const showStressImpact = ref(true); // Option pour afficher l'impact de stress des choix
 const route = useRoute();
 const router = useRouter();
-const loading = ref(true); // État pour le chargement
-const error = ref(null); // État pour les erreurs
+const loading = ref(true);
+const error = ref(null);
 
-// Map pour stocker les valeurs d'impact de stress pour chaque choix
-const choiceStressImpacts = ref(new Map());
-
-// Computed property pour les effets visuels de stress
+// Computed property for page visual effects based on stress
 const pageEffects = computed(() => {
   const level = stressLevel.value || 0;
   if (level <= 3) return {};
@@ -78,36 +95,27 @@ const pageEffects = computed(() => {
   };
 });
 
-// Function to get stress impact for a choice
+// Function to get choice impact methods
 const getChoiceStressImpact = (choice) => {
-  // Si nous avons un impact de stress stocké pour ce choix, l'utiliser
-  if (choiceStressImpacts.value.has(choice.id)) {
-    return choiceStressImpacts.value.get(choice.id);
-  }
-  return 0; // Par défaut, pas d'impact
+  const nextChapter = findNextChapter(choice);
+  return nextChapter ? nextChapter.stress_impact || 0 : 0;
 };
 
-// Sauvegarder la progression dans localStorage
-const saveProgress = () => {
-  localStorage.setItem('storyProgress', JSON.stringify({
-    storyId: route.params.storyId,
-    chapterId: route.params.chapterId,
-    stressLevel: stressLevel.value
-  }));
+const getChoiceSleepImpact = (choice) => {
+  const nextChapter = findNextChapter(choice);
+  return nextChapter ? nextChapter.sleep_impact || 0 : 0;
 };
 
-// Charger la progression sauvegardée
-const loadProgress = () => {
-  const savedProgress = localStorage.getItem('storyProgress');
-  if (savedProgress) {
-    try {
-      const progress = JSON.parse(savedProgress);
-      if (progress.storyId && progress.chapterId) {
-        return progress;
-      }
-    } catch (e) {
-      console.error('Erreur lors du chargement de la progression:', e);
-    }
+const getChoiceGradesImpact = (choice) => {
+  const nextChapter = findNextChapter(choice);
+  return nextChapter ? nextChapter.grades_impact || 0 : 0;
+};
+
+const findNextChapter = (choice) => {
+  if (choice.next_chapter_id) {
+    // Trouvez le chapitre suivant dans les données de chapitre
+    const nextChapter = chapter.value;
+    return nextChapter;
   }
   return null;
 };
@@ -122,13 +130,11 @@ const retryFetch = () => {
 const fetchChapter = async () => {
   const { storyId, chapterId } = route.params;
   
-  loading.value = true; // Commencer le chargement
-  error.value = null; // Réinitialiser les erreurs
+  loading.value = true;
+  error.value = null;
   
   try {
-    console.log(`Fetching chapter: /api/story/${storyId}/chapter/${chapterId}`);
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
-    console.log('Chapter data received:', response.data);
     chapter.value = response.data;
     
     // Map choices with additional data
@@ -138,41 +144,29 @@ const fetchChapter = async () => {
       next_chapter_id: choice.next_chapter_id
     }));
     
-    // Si le serveur nous envoie un niveau de stress actuel, l'utiliser
+    // Set stress level from chapter data
     if (response.data.current_stress_level !== undefined) {
-      console.log('Setting stress level from chapter data:', response.data.current_stress_level);
       stressLevel.value = response.data.current_stress_level;
     } else {
-      // Sinon, obtenir le niveau de stress actuel via l'API
       await fetchCurrentStress();
     }
-
-    // Récupérer les valeurs d'impact de stress pour chaque choix
-    await fetchChoiceStressImpacts();
-    
-    // Sauvegarder la progression après chargement du chapitre
-    saveProgress();
     
   } catch (err) {
     console.error('Fetch chapter error details:', err);
     error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
-    console.error('Erreur de chargement du chapitre:', err);
   } finally {
-    loading.value = false; // Terminer le chargement
+    loading.value = false;
   }
 };
 
 // Récupérer le niveau de stress actuel
 const fetchCurrentStress = async () => {
   try {
-    console.log('Fetching current stress level from /api/stress');
     const response = await axios.get('/api/stress');
-    console.log('Stress API response:', response.data);
     stressLevel.value = response.data.stress_level || 0;
     
     // Si burnout détecté, rediriger
     if (response.data.is_burnout) {
-      console.log('Burnout detected, redirecting to failure page');
       router.push('/result/failure');
     }
   } catch (error) {
@@ -180,110 +174,61 @@ const fetchCurrentStress = async () => {
   }
 };
 
-// Fetch stress impacts for all choices in the current chapter
-const fetchChoiceStressImpacts = async () => {
-  const fetchedImpacts = new Map();
-  
-  try {
-    console.log('Fetching stress impacts for choices');
-    // Pour chaque choix, récupérer le chapitre suivant pour connaître son impact de stress
-    for (const choice of choices.value) {
-      if (choice.next_chapter_id) {
-        const nextChapter = await fetchChapterInfo(choice.next_chapter_id);
-        if (nextChapter && nextChapter.stress_impact !== undefined) {
-          console.log(`Choice ${choice.id} has stress impact: ${nextChapter.stress_impact}`);
-          fetchedImpacts.set(choice.id, nextChapter.stress_impact);
-        }
-      }
-    }
-    
-    choiceStressImpacts.value = fetchedImpacts;
-  } catch (error) {
-    console.error('Erreur de récupération des impacts de stress:', error);
-  }
-};
-
-// Fetch basic info about a chapter
-const fetchChapterInfo = async (chapterId) => {
-  try {
-    const { storyId } = route.params;
-    console.log(`Fetching chapter info: /api/story/${storyId}/chapter/${chapterId}`);
-    const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
-    return response.data;
-  } catch (error) {
-    console.error(`Erreur de récupération du chapitre ${chapterId}:`, error);
-    return null;
-  }
-};
-
 // Function to make a choice and update stress
 const makeChoice = async (choice) => {
   try {
-    loading.value = true; // Montrer le chargement pendant l'action
+    loading.value = true;
     
     if (!choice.id) {
       console.error('ID de choix manquant');
       return;
     }
     
-    console.log(`Making choice ${choice.id}`);
     // Mettre à jour le niveau de stress via l'API
     const response = await axios.post('/api/stress/update', {
       choice_id: choice.id
     });
-    
-    console.log('Choice update response:', response.data);
     
     // Mettre à jour le niveau de stress local
     stressLevel.value = response.data.stress_level || stressLevel.value;
     
     // Si burnout détecté, rediriger vers la page d'échec
     if (response.data.is_burnout) {
-      console.log('Burnout detected after choice, redirecting to failure page');
       router.push('/result/failure');
       return;
     }
     
     // Navigation vers le chapitre suivant
     if (!choice.next_chapter_id) {
-      console.log('No next chapter, determining outcome');
       // Si on est sur le chapitre burnout (99), toujours rediriger vers failure
       if (chapter.value.chapter_number === 99) {
-        console.log('Chapter 99 (burnout chapter), redirecting to failure');
         router.push('/result/failure');
       } else {
         // Sinon, c'est une fin normale basée sur le niveau de stress
         const outcome = stressLevel.value >= 8 ? 'warning' : 'success';
-        console.log(`Normal ending with outcome: ${outcome} (stress level: ${stressLevel.value})`);
         router.push(`/result/${outcome}`);
       }
     } else {
       // Sinon, aller au chapitre suivant
       const { storyId } = route.params;
-      console.log(`Navigating to next chapter: ${choice.next_chapter_id}`);
       router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
     }
   } catch (error) {
     console.error('Erreur lors du choix:', error);
     error.value = error.response?.data?.message || 'Erreur lors du choix';
   } finally {
-    loading.value = false; // Cacher le chargement
+    loading.value = false;
   }
 };
 
 // Récupérer le niveau de stress depuis la session au chargement
 onMounted(() => {
-  console.log('Chapter component mounted');
   loading.value = true;
   fetchCurrentStress()
-    .then(() => {
-      console.log('Stress level fetched, now fetching chapter');
-      return fetchChapter();
-    })
+    .then(() => fetchChapter())
     .then(() => {
       // Si c'est le chapitre 99, forcer le niveau de stress à 10
       if (chapter.value && chapter.value.chapter_number === 99) {
-        console.log('Chapter 99 detected, setting stress level to 10');
         stressLevel.value = 10;
       }
     })
@@ -296,31 +241,20 @@ onMounted(() => {
     });
 });
 
-// Surveiller les changements de route et sauvegarder la progression
+// Surveiller les changements de route
 watch(
   () => route.params,
   (newParams, oldParams) => {
-    console.log('Route params changed', newParams, oldParams);
     if (newParams.chapterId !== oldParams.chapterId) {
-      console.log('Chapter ID changed, fetching new chapter');
       fetchChapter();
     }
   },
   { deep: true }
 );
-
-// Surveiller les changements de niveau de stress pour sauvegarder la progression
-watch(
-  stressLevel,
-  (newValue) => {
-    console.log('Stress level changed to', newValue);
-    saveProgress();
-  }
-);
 </script>
 
 <style scoped>
-/* Styles pour l'indicateur de chargement */
+/* Styles existants précédemment dans Chapter.vue */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -355,7 +289,6 @@ watch(
   100% { transform: rotate(360deg); }
 }
 
-/* Styles pour l'affichage des erreurs */
 .error-container {
   background-color: #ffebee;
   border: 1px solid #ef9a9a;
@@ -420,50 +353,48 @@ watch(
   background-color: #81c784;
 }
 
-.stress-increase {
-  border-left: 4px solid #ef5350; /* Bordure rouge pour les choix qui augmentent le stress */
-}
-
-.stress-decrease {
-  border-left: 4px solid #66bb6a; /* Bordure verte pour les choix qui diminuent le stress */
+.choice-impact {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .stress-impact {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.8rem;
-  padding: 2px 6px;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.1);
+  color: #ef5350;
 }
 
-.info-section {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  position: relative;
+.sleep-impact {
+  color: #4caf50;
 }
 
-.info-icon {
-  font-size: 1.5rem;
-  color: #888;
-  cursor: help;
+.grades-impact {
+  color: #2196f3;
 }
 
-.info-tooltip {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px;
-  border-radius: 4px;
-  max-width: 300px;
-  text-align: center;
-  z-index: 10;
+.choice-button.stress-increase {
+  border-left: 4px solid #ef5350;
+}
+
+.choice-button.stress-decrease {
+  border-left: 4px solid #4caf50;
+}
+
+.choice-button.sleep-increase {
+  border-right: 4px solid #4caf50;
+}
+
+.choice-button.sleep-decrease {
+  border-right: 4px solid #ef5350;
+}
+
+.choice-button.grades-increase {
+  border-bottom: 4px solid #4caf50;
+}
+
+.choice-button.grades-decrease {
+  border-bottom: 4px solid #ef5350;
 }
 
 @keyframes heartbeat {
