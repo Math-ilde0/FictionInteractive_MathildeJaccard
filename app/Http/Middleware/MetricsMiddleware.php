@@ -41,7 +41,7 @@ class MetricsMiddleware
         }
         
         // Crise de sommeil (sommeil trop bas)
-        if (session('sleep_level') <= 1) {
+        if (session('sleep_level') <= 0) {
             // Si l'URL actuelle n'est pas déjà '/result/sleep-crisis'
             if ($request->path() !== 'result/sleep-crisis' && !$request->is('api/*')) {
                 return redirect('/result/sleep-crisis');
@@ -49,7 +49,7 @@ class MetricsMiddleware
         }
         
         // Crise académique (notes trop basses)
-        if (session('grades_level') <= 1) {
+        if (session('grades_level') <= 0) {
             // Si l'URL actuelle n'est pas déjà '/result/academic-crisis'
             if ($request->path() !== 'result/academic-crisis' && !$request->is('api/*')) {
                 return redirect('/result/academic-crisis');

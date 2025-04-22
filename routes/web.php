@@ -7,10 +7,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route for game result
+// Routes for different game results
 Route::get('/result/{outcome}', function () {
     return view('welcome');
-});
+})->where('outcome', 'success|failure|warning|sleep-crisis|academic-crisis');
 
 // Catch-all route for Vue router
 Route::get('/{any}', function () {

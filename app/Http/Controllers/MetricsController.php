@@ -13,6 +13,17 @@ class MetricsController extends Controller
      */
     public function updateMetrics(Request $request)
     {
+        // Si nous recevons directement un niveau de stress (pour la reprise d'une partie sauvegardée)
+        if ($request->has('stress_level') || $request->has('sleep_level') || $request->has('grades_level')) {
+            session([
+                'stress_level' => $request->stress_level ?? session('stress_level', 0),
+                'sleep_level' => $request->sleep_level ?? session('sleep_level', 10),
+                'grades_level' => $request->grades_level ?? session('grades_level', 7)
+            ]);
+            
+            return $this->getMetrics();
+        }
+        
         // Valider les données entrantes
         $validatedData = $request->validate([
             'choice_id' => 'required|exists:choices,id',
@@ -57,24 +68,26 @@ class MetricsController extends Controller
             }
             
             // Vérifier si le niveau de sommeil est trop bas
-            if ($newSleep <= 2) {
+            if ($newSleep <= 0) {
                 return response()->json([
                     'stress_level' => $newStress,
                     'sleep_level' => $newSleep,
                     'grades_level' => $newGrades,
                     'sleep_crisis' => true,
-                    'message' => 'Votre manque de sommeil affecte votre santé!'
+                    'message' => 'Votre manque de sommeil affecte votre santé!',
+                    'redirect_to' => '/result/sleep-crisis'
                 ]);
             }
             
             // Vérifier si les notes sont trop basses
-            if ($newGrades <= 2) {
+            if ($newGrades <= 0) {
                 return response()->json([
                     'stress_level' => $newStress,
                     'sleep_level' => $newSleep,
                     'grades_level' => $newGrades,
                     'academic_crisis' => true,
-                    'message' => 'Attention, vos notes sont en chute libre!'
+                    'message' => 'Attention, vos notes sont en chute libre!',
+                    'redirect_to' => '/result/academic-crisis'
                 ]);
             }
         }
@@ -83,7 +96,9 @@ class MetricsController extends Controller
             'stress_level' => session('stress_level', 0),
             'sleep_level' => session('sleep_level', 10),
             'grades_level' => session('grades_level', 7),
-            'is_burnout' => false
+            'is_burnout' => session('stress_level', 0) >= 10,
+            'sleep_crisis' => session('sleep_level', 10) <= 0,
+            'academic_crisis' => session('grades_level', 7) <= 0
         ]);
     }
     
@@ -96,7 +111,9 @@ class MetricsController extends Controller
             'stress_level' => session('stress_level', 0),
             'sleep_level' => session('sleep_level', 10),
             'grades_level' => session('grades_level', 7),
-            'is_burnout' => session('stress_level', 0) >= 10
+            'is_burnout' => session('stress_level', 0) >= 10,
+            'sleep_crisis' => session('sleep_level', 10) <= 0,
+            'academic_crisis' => session('grades_level', 7) <= 0
         ]);
     }
     
@@ -115,7 +132,9 @@ class MetricsController extends Controller
             'stress_level' => 0,
             'sleep_level' => 10,
             'grades_level' => 7,
-            'is_burnout' => false
+            'is_burnout' => false,
+            'sleep_crisis' => false,
+            'academic_crisis' => false
         ]);
     }
 }

@@ -14,11 +14,32 @@
     </div>
     
     <div v-else class="book-page" :style="pageEffects">
-      <StressMeter 
-        :level="stressLevel" 
-        :sleep-level="chapter?.current_sleep_level || 10" 
-        :grades-level="chapter?.current_grades_level || 7" 
-      />
+      <!-- Nouvelles jauges pour les 3 métriques -->
+      <div class="metrics-container">
+        <div class="metric">
+          <div class="metric-title">Charge Mentale</div>
+          <div class="metric-bar">
+            <div class="metric-fill charge-mental" :style="{ width: `${chargeMentale * 10}%` }"></div>
+          </div>
+          <div class="metric-value">{{ chargeMentale }}/10</div>
+        </div>
+        
+        <div class="metric">
+          <div class="metric-title">Sommeil</div>
+          <div class="metric-bar">
+            <div class="metric-fill sleep" :style="{ width: `${sommeil * 10}%` }"></div>
+          </div>
+          <div class="metric-value">{{ sommeil }}/10</div>
+        </div>
+        
+        <div class="metric">
+          <div class="metric-title">Notes</div>
+          <div class="metric-bar">
+            <div class="metric-fill grades" :style="{ width: `${notes * 10}%` }"></div>
+          </div>
+          <div class="metric-value">{{ notes }}/10</div>
+        </div>
+      </div>
       
       <h1>Chapitre {{ chapter?.chapter_number || '?' }}</h1>
       
@@ -30,35 +51,35 @@
           :key="index" 
           @click="makeChoice(choice)"
           class="choice-button"
-          :class="{
-            'stress-increase': getChoiceStressImpact(choice) > 0, 
-            'stress-decrease': getChoiceStressImpact(choice) < 0,
-            'sleep-increase': getChoiceSleepImpact(choice) > 0,
-            'sleep-decrease': getChoiceSleepImpact(choice) < 0,
-            'grades-increase': getChoiceGradesImpact(choice) > 0,
-            'grades-decrease': getChoiceGradesImpact(choice) < 0
-          }"
+          :class="getChoiceClasses(choice)"
         >
           {{ choice.text }}
-          <div class="choice-impact">
-            <span v-if="getChoiceStressImpact(choice) !== 0" class="stress-impact">
-              Stress: {{ getChoiceStressImpact(choice) > 0 ? '+' : '' }}{{ getChoiceStressImpact(choice) }}
-            </span>
-            <span v-if="getChoiceSleepImpact(choice) !== 0" class="sleep-impact">
-              Sommeil: {{ getChoiceSleepImpact(choice) > 0 ? '+' : '' }}{{ getChoiceSleepImpact(choice) }}
-            </span>
-            <span v-if="getChoiceGradesImpact(choice) !== 0" class="grades-impact">
-              Notes: {{ getChoiceGradesImpact(choice) > 0 ? '+' : '' }}{{ getChoiceGradesImpact(choice) }}
-            </span>
-          </div>
         </button>
       </div>
 
-      <AdviceTooltip 
-        :stress-advice="chapter?.stress_advice" 
-        :sleep-advice="chapter?.sleep_advice" 
-        :grades-advice="chapter?.grades_advice"
-      />
+      <div class="info-section">
+        <div class="advice-toggle" @click="toggleAdvice">
+          <i class="fas fa-info-circle"></i> 
+          <span>{{ showAdvice ? 'Masquer les conseils' : 'Voir les conseils' }}</span>
+        </div>
+        
+        <div v-if="showAdvice" class="advice-container">
+          <div v-if="chapter?.stress_advice" class="advice-item">
+            <h4>Conseil pour la charge mentale :</h4>
+            <p>{{ chapter.stress_advice }}</p>
+          </div>
+          
+          <div v-if="chapter?.sleep_advice" class="advice-item">
+            <h4>Conseil pour le sommeil :</h4>
+            <p>{{ chapter.sleep_advice }}</p>
+          </div>
+          
+          <div v-if="chapter?.grades_advice" class="advice-item">
+            <h4>Conseil pour les études :</h4>
+            <p>{{ chapter.grades_advice }}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -67,20 +88,26 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import StressMeter from './StressMeter.vue';
-import AdviceTooltip from './adviceTooltip.vue';
 
 const chapter = ref({});
 const choices = ref([]);
-const stressLevel = ref(0);
+const showAdvice = ref(false);
 const route = useRoute();
 const router = useRouter();
 const loading = ref(true);
 const error = ref(null);
 
-// Computed property for page visual effects based on stress
+// Métriques
+const chargeMentale = ref(0);
+const sommeil = ref(10);
+const notes = ref(7);
+
+// Map pour stocker les valeurs d'impact pour chaque choix
+const choiceImpacts = ref(new Map());
+
+// Computed property pour les effets visuels selon la charge mentale
 const pageEffects = computed(() => {
-  const level = stressLevel.value || 0;
+  const level = chargeMentale.value || 0;
   if (level <= 3) return {};
   if (level <= 6) return { 
     boxShadow: '0 8px 20px rgba(255, 213, 79, 0.2)'
@@ -95,27 +122,53 @@ const pageEffects = computed(() => {
   };
 });
 
-// Function to get choice impact methods
-const getChoiceStressImpact = (choice) => {
-  const nextChapter = findNextChapter(choice);
-  return nextChapter ? nextChapter.stress_impact || 0 : 0;
+// Fonction pour obtenir les classes CSS correspondant aux impacts du choix
+const getChoiceClasses = (choice) => {
+  if (!choiceImpacts.value.has(choice.id)) return {};
+  
+  const impacts = choiceImpacts.value.get(choice.id);
+  const classes = [];
+  
+  if (impacts.stress_impact > 0) classes.push('charge-increase');
+  if (impacts.stress_impact < 0) classes.push('charge-decrease');
+  
+  if (impacts.sleep_impact < 0) classes.push('sleep-decrease');
+  if (impacts.sleep_impact > 0) classes.push('sleep-increase');
+  
+  if (impacts.grades_impact < 0) classes.push('grades-decrease');
+  if (impacts.grades_impact > 0) classes.push('grades-increase');
+  
+  return classes;
 };
 
-const getChoiceSleepImpact = (choice) => {
-  const nextChapter = findNextChapter(choice);
-  return nextChapter ? nextChapter.sleep_impact || 0 : 0;
+// Toggle pour afficher/masquer les conseils
+const toggleAdvice = () => {
+  showAdvice.value = !showAdvice.value;
 };
 
-const getChoiceGradesImpact = (choice) => {
-  const nextChapter = findNextChapter(choice);
-  return nextChapter ? nextChapter.grades_impact || 0 : 0;
+// Sauvegarder la progression dans localStorage
+const saveProgress = () => {
+  localStorage.setItem('storyProgress', JSON.stringify({
+    storyId: route.params.storyId,
+    chapterId: route.params.chapterId,
+    chargeMentale: chargeMentale.value,
+    sommeil: sommeil.value,
+    notes: notes.value
+  }));
 };
 
-const findNextChapter = (choice) => {
-  if (choice.next_chapter_id) {
-    // Trouvez le chapitre suivant dans les données de chapitre
-    const nextChapter = chapter.value;
-    return nextChapter;
+// Charger la progression sauvegardée
+const loadProgress = () => {
+  const savedProgress = localStorage.getItem('storyProgress');
+  if (savedProgress) {
+    try {
+      const progress = JSON.parse(savedProgress);
+      if (progress.storyId && progress.chapterId) {
+        return progress;
+      }
+    } catch (e) {
+      console.error('Erreur lors du chargement de la progression:', e);
+    }
   }
   return null;
 };
@@ -134,7 +187,9 @@ const fetchChapter = async () => {
   error.value = null;
   
   try {
+    console.log(`Fetching chapter: /api/story/${storyId}/chapter/${chapterId}`);
     const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
+    console.log('Chapter data received:', response.data);
     chapter.value = response.data;
     
     // Map choices with additional data
@@ -144,12 +199,27 @@ const fetchChapter = async () => {
       next_chapter_id: choice.next_chapter_id
     }));
     
-    // Set stress level from chapter data
+    // Utiliser les métriques de la réponse si disponibles
     if (response.data.current_stress_level !== undefined) {
-      stressLevel.value = response.data.current_stress_level;
-    } else {
-      await fetchCurrentStress();
+      chargeMentale.value = response.data.current_stress_level;
     }
+    
+    if (response.data.current_sleep_level !== undefined) {
+      sommeil.value = response.data.current_sleep_level;
+    }
+    
+    if (response.data.current_grades_level !== undefined) {
+      notes.value = response.data.current_grades_level;
+    }
+    
+    // Récupérer les impacts des choix
+    await fetchChoiceImpacts();
+    
+    // Sauvegarder la progression
+    saveProgress();
+    
+    // Vérifier si des avertissements doivent être affichés
+    checkWarnings();
     
   } catch (err) {
     console.error('Fetch chapter error details:', err);
@@ -159,22 +229,77 @@ const fetchChapter = async () => {
   }
 };
 
-// Récupérer le niveau de stress actuel
-const fetchCurrentStress = async () => {
+// Récupérer les impacts des choix
+const fetchChoiceImpacts = async () => {
+  const impactsMap = new Map();
+  
   try {
-    const response = await axios.get('/api/stress');
-    stressLevel.value = response.data.stress_level || 0;
-    
-    // Si burnout détecté, rediriger
-    if (response.data.is_burnout) {
-      router.push('/result/failure');
+    for (const choice of choices.value) {
+      if (choice.next_chapter_id) {
+        const nextChapter = await fetchChapterInfo(choice.next_chapter_id);
+        if (nextChapter) {
+          impactsMap.set(choice.id, {
+            stress_impact: nextChapter.stress_impact || 0,
+            sleep_impact: nextChapter.sleep_impact || 0,
+            grades_impact: nextChapter.grades_impact || 0
+          });
+        }
+      }
     }
+    
+    choiceImpacts.value = impactsMap;
   } catch (error) {
-    console.error('Erreur de récupération du niveau de stress:', error);
+    console.error('Erreur de récupération des impacts:', error);
   }
 };
 
-// Function to make a choice and update stress
+// Fetch basic info about a chapter
+const fetchChapterInfo = async (chapterId) => {
+  try {
+    const { storyId } = route.params;
+    const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Erreur de récupération du chapitre ${chapterId}:`, error);
+    return null;
+  }
+};
+
+// Vérifier si des avertissements ou redirection sont nécessaires
+const checkWarnings = () => {
+  // Vérification de Burn-out (charge mentale à 10 ou plus)
+  if (chargeMentale.value >= 10) {
+    router.push('/result/failure');
+    return;
+  }
+  
+  // Vérification de fatigue extrême (sommeil à 0 ou moins)
+  if (sommeil.value <= 0) {
+    router.push('/result/sleep-crisis');
+    return;
+  }
+  
+  // Vérification d'échec académique (notes à 0 ou moins)
+  if (notes.value <= 0) {
+    router.push('/result/academic-crisis');
+    return;
+  }
+  
+  // Vérifier les contraintes de chapitre (le chapitre exige un certain niveau)
+  if (chapter.value.min_sleep_level && sommeil.value < chapter.value.min_sleep_level) {
+    // Afficher un avertissement sur le sommeil
+    alert(`Attention : Votre niveau de sommeil est trop bas pour ce chapitre. 
+           Votre personnage risque de s'endormir en cours !`);
+  }
+  
+  if (chapter.value.min_grades_level && notes.value < chapter.value.min_grades_level) {
+    // Afficher un avertissement sur les notes
+    alert(`Attention : Vos notes sont trop basses pour ce chapitre. 
+           Votre progression académique est en danger !`);
+  }
+};
+
+// Function to make a choice and update metrics
 const makeChoice = async (choice) => {
   try {
     loading.value = true;
@@ -184,32 +309,47 @@ const makeChoice = async (choice) => {
       return;
     }
     
-    // Mettre à jour le niveau de stress via l'API
-    const response = await axios.post('/api/stress/update', {
+    console.log(`Making choice ${choice.id}`);
+    // Mettre à jour les métriques via l'API
+    const response = await axios.post('/api/metrics/update', {
       choice_id: choice.id
     });
     
-    // Mettre à jour le niveau de stress local
-    stressLevel.value = response.data.stress_level || stressLevel.value;
+    console.log('Choice update response:', response.data);
     
-    // Si burnout détecté, rediriger vers la page d'échec
+    // Mettre à jour les métriques locales
+    chargeMentale.value = response.data.stress_level || chargeMentale.value;
+    sommeil.value = response.data.sleep_level || sommeil.value;
+    notes.value = response.data.grades_level || notes.value;
+    
+    // Vérification des situations spéciales
     if (response.data.is_burnout) {
       router.push('/result/failure');
       return;
     }
     
+    if (response.data.sleep_crisis) {
+      router.push('/result/sleep-crisis');
+      return;
+    }
+    
+    if (response.data.academic_crisis) {
+      router.push('/result/academic-crisis');
+      return;
+    }
+    
     // Navigation vers le chapitre suivant
     if (!choice.next_chapter_id) {
-      // Si on est sur le chapitre burnout (99), toujours rediriger vers failure
+      // Si on est sur le chapitre 99 (burnout), rediriger vers failure
       if (chapter.value.chapter_number === 99) {
         router.push('/result/failure');
       } else {
         // Sinon, c'est une fin normale basée sur le niveau de stress
-        const outcome = stressLevel.value >= 8 ? 'warning' : 'success';
+        const outcome = chargeMentale.value >= 8 ? 'warning' : 'success';
         router.push(`/result/${outcome}`);
       }
     } else {
-      // Sinon, aller au chapitre suivant
+      // Aller au chapitre suivant
       const { storyId } = route.params;
       router.push(`/story/${storyId}/chapter/${choice.next_chapter_id}`);
     }
@@ -221,20 +361,26 @@ const makeChoice = async (choice) => {
   }
 };
 
-// Récupérer le niveau de stress depuis la session au chargement
+// Récupérer les métriques au chargement
 onMounted(() => {
+  console.log('Chapter component mounted');
   loading.value = true;
-  fetchCurrentStress()
-    .then(() => fetchChapter())
-    .then(() => {
-      // Si c'est le chapitre 99, forcer le niveau de stress à 10
-      if (chapter.value && chapter.value.chapter_number === 99) {
-        stressLevel.value = 10;
-      }
+  
+  // Récupérer d'abord les métriques actuelles
+  axios.get('/api/metrics')
+    .then(response => {
+      console.log('Current metrics:', response.data);
+      chargeMentale.value = response.data.stress_level || 0;
+      sommeil.value = response.data.sleep_level || 10;
+      notes.value = response.data.grades_level || 7;
+      
+      // Ensuite charger le chapitre
+      return fetchChapter();
     })
     .catch(err => {
-      console.error('Error during initial data load:', err);
-      error.value = err.message || 'Une erreur s\'est produite';
+      console.error('Error getting metrics:', err);
+      // Charger quand même le chapitre en cas d'erreur
+      fetchChapter();
     })
     .finally(() => {
       loading.value = false;
@@ -251,10 +397,19 @@ watch(
   },
   { deep: true }
 );
+
+// Surveiller les changements de métriques pour sauvegarder la progression
+watch(
+  [chargeMentale, sommeil, notes],
+  () => {
+    saveProgress();
+    checkWarnings();
+  }
+);
 </script>
 
 <style scoped>
-/* Styles existants précédemment dans Chapter.vue */
+/* Styles pour l'indicateur de chargement */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -289,6 +444,7 @@ watch(
   100% { transform: rotate(360deg); }
 }
 
+/* Styles pour l'affichage des erreurs */
 .error-container {
   background-color: #ffebee;
   border: 1px solid #ef9a9a;
@@ -328,6 +484,61 @@ watch(
   position: relative;
 }
 
+/* Conteneur pour les métriques */
+.metrics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.metric-title {
+  width: 120px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.metric-bar {
+  flex-grow: 1;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.metric-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.metric-fill.charge-mental {
+  background-color: #ef5350;
+}
+
+.metric-fill.sleep {
+  background-color: #42a5f5;
+}
+
+.metric-fill.grades {
+  background-color: #66bb6a;
+}
+
+.metric-value {
+  width: 40px;
+  text-align: right;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
 .choice-list {
   display: flex;
   flex-direction: column;
@@ -347,54 +558,82 @@ watch(
   cursor: pointer;
   transition: background-color 0.3s ease;
   position: relative;
+  text-align: left;
 }
 
 .choice-button:hover {
   background-color: #81c784;
 }
 
-.choice-impact {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.stress-impact {
-  color: #ef5350;
-}
-
-.sleep-impact {
-  color: #4caf50;
-}
-
-.grades-impact {
-  color: #2196f3;
-}
-
-.choice-button.stress-increase {
+.charge-increase {
   border-left: 4px solid #ef5350;
 }
 
-.choice-button.stress-decrease {
-  border-left: 4px solid #4caf50;
+.charge-decrease {
+  border-left: 4px solid #66bb6a;
 }
 
-.choice-button.sleep-increase {
-  border-right: 4px solid #4caf50;
-}
-
-.choice-button.sleep-decrease {
+.sleep-decrease {
   border-right: 4px solid #ef5350;
 }
 
-.choice-button.grades-increase {
-  border-bottom: 4px solid #4caf50;
+.sleep-increase {
+  border-right: 4px solid #66bb6a;
 }
 
-.choice-button.grades-decrease {
-  border-bottom: 4px solid #ef5350;
+.grades-decrease::after {
+  content: "↓";
+  position: absolute;
+  right: 10px;
+  color: #ef5350;
+}
+
+.grades-increase::after {
+  content: "↑";
+  position: absolute;
+  right: 10px;
+  color: #66bb6a;
+}
+
+.advice-toggle {
+  cursor: pointer;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.advice-toggle:hover {
+  background-color: #e0e0e0;
+}
+
+.advice-container {
+  margin-top: 10px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.advice-item {
+  margin-bottom: 15px;
+}
+
+.advice-item h4 {
+  margin: 0 0 5px 0;
+  color: #555;
+}
+
+.advice-item p {
+  margin: 0;
+  font-style: italic;
+  font-size: 0.95rem;
 }
 
 @keyframes heartbeat {
