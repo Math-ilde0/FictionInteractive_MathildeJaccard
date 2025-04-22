@@ -15,6 +15,11 @@ class MetricsMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+
+        // Ignorer les routes API
+    if ($request->is('api/*')) {
+        return $next($request);
+    }
         // Récupérer les métriques depuis les cookies, ou utiliser les valeurs par défaut
         $stressLevel = $request->cookie('stress_level', 0);
         $sleepLevel = $request->cookie('sleep_level', 10);

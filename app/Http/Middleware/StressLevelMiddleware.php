@@ -15,6 +15,10 @@ class StressLevelMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Ignorer les routes API
+    if ($request->is('api/*')) {
+        return $next($request);
+    }
         // Utiliser les cookies au lieu des sessions
         $stressLevel = $request->cookie('stress_level', 0);
     

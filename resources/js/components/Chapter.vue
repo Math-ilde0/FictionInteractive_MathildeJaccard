@@ -188,8 +188,8 @@ const fetchChapter = async () => {
   error.value = null;
   
   try {
-    console.log(`Fetching chapter: /api/story/${storyId}/chapter/${chapterId}`);
-    const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
+    console.log(`Fetching chapter: /story/${storyId}/chapter/${chapterId}`);
+    const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
     console.log('Chapter data received:', response.data);
     chapter.value = response.data;
     
@@ -258,7 +258,7 @@ const fetchChoiceImpacts = async () => {
 const fetchChapterInfo = async (chapterId) => {
   try {
     const { storyId } = route.params;
-    const response = await axios.get(`/api/story/${storyId}/chapter/${chapterId}`);
+    const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
     return response.data;
   } catch (error) {
     console.error(`Erreur de récupération du chapitre ${chapterId}:`, error);

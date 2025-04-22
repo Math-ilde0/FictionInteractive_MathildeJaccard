@@ -138,7 +138,7 @@ export default {
       this.loading = true;
       this.error = null;
       
-      axios.get('/api/stories')
+      axios.get('/stories')
         .then(response => {
           this.stories = response.data;
           this.loading = false;

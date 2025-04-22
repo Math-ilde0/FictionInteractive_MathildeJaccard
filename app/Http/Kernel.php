@@ -40,10 +40,12 @@ class Kernel extends HttpKernel
         ],
     
         'api' => [
-            \Illuminate\Session\Middleware\StartSession::class, // Ajout de la session pour l'API
+            \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\TrustProxies::class,
+            \Illuminate\Http\Middleware\HandleCors::class,
         ],
     ];
 
