@@ -7,8 +7,9 @@ import { getCookie } from './utils/cookies';
 const routes = [
   {
     path: '/',
-    component: StoryList,
+    redirect: '/stories'
   },
+  
   {
     path: '/stories',
     name: 'StoryList',
