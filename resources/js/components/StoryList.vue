@@ -195,16 +195,19 @@ export default {
     },
     
     // Continuer la dernière histoire sauvegardée
-    continueLastStory() {
+    
+continueLastStory() {
   if (this.savedProgress) {
     this.loading = true;
-    
-    // Mettre à jour les métriques côté serveur
-    axios.post('/metrics/update', {
+
+    // 👇 Tu as probablement laissé une virgule ou une parenthèse ouverte ici quelque part :
+    axios.post('/metrics/update', { // ← CETTE LIGNE EST BONNE
       stress_level: this.savedProgress.chargeMentale,
       sleep_level: this.savedProgress.sommeil,
       grades_level: this.savedProgress.notes
-    })
+    }) // ← TU OUVRES RIEN ICI, TU FERME JUSTE
+
+
       .then(() => {
         this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
       })
@@ -233,6 +236,7 @@ export default {
     
     // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
     await axios.post('/metrics/reset');
+
     
     // Effacer la progression précédente
     localStorage.removeItem('storyProgress');

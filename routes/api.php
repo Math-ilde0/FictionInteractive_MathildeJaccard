@@ -15,5 +15,6 @@ Route::get('/metrics', [MetricsController::class, 'getMetrics']);
 Route::post('/metrics/update', [MetricsController::class, 'updateMetrics']);
 Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics']);
 
+
 // Choices
 Route::apiResource('/choices', ChoiceController::class);

@@ -138,21 +138,24 @@ public function updateMetrics(Request $request)
     /**
      * Réinitialiser toutes les métriques
      */
-    public function resetMetrics()
-    {
-        session([
-            'stress_level' => 0,
-            'sleep_level' => 10,
-            'grades_level' => 7
-        ]);
-        
-        return response()->json([
-            'stress_level' => 0,
-            'sleep_level' => 10,
-            'grades_level' => 7,
-            'is_burnout' => false,
-            'sleep_crisis' => false,
-            'academic_crisis' => false
-        ]);
-    }
+    public function resetMetrics(Request $request)
+{
+    \Log::info('resetMetrics appelé');
+
+    session([
+        'stress_level' => 0,
+        'sleep_level' => 10,
+        'grades_level' => 7
+    ]);
+    
+    return response()->json([
+        'stress_level' => 0,
+        'sleep_level' => 10,
+        'grades_level' => 7,
+        'is_burnout' => false,
+        'sleep_crisis' => false,
+        'academic_crisis' => false
+    ]);
+}
+
 }

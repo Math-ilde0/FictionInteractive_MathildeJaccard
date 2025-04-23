@@ -182,27 +182,27 @@ const retryFetch = () => {
 
 // Function to fetch chapter data
 const fetchChapter = async () => {
-    const { storyId, chapterId } = route.params;
-    
-    loading.value = true;
-    error.value = null;
-    
-    try {
-        console.log(`Fetching chapter: /story/${storyId}/chapter/${chapterId}`);
-        
-        const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
-        
-        console.log('Chapter data received:', response.data);
-        chapter.value = response.data;
-        
-        // Reste du code...
-    } catch (err) {
-        console.error('Fetch chapter error:', err);
-        error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
-    } finally {
-        loading.value = false;
-    }
+  const { storyId, chapterId } = route.params;
+
+  loading.value = true;
+  error.value = null;
+
+  try {
+    console.log(`Fetching chapter: /story/${storyId}/chapter/${chapterId}`);
+const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
+
+
+    console.log('Chapter data received:', response.data);
+    chapter.value = response.data;
+    choices.value = response.data.choices || []; // 🆕 pour afficher les boutons
+  } catch (err) {
+    console.error('Fetch chapter error:', err);
+    error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
+  } finally {
+    loading.value = false;
+  }
 };
+
 
 // Récupérer les impacts des choix
 const fetchChoiceImpacts = async () => {
@@ -244,6 +244,7 @@ const fetchChapterInfo = async (chapterId) => {
     return null;
   }
 };
+
 
 // Vérifier si des avertissements ou redirection sont nécessaires
 const checkWarnings = () => {
@@ -390,6 +391,8 @@ setCookie('grades_level', notes.value);
   }
 };
 
+
+
 // Surveiller les changements de route
 watch(
   () => route.params,
@@ -410,6 +413,10 @@ watch(
     checkWarnings();
   }
 );
+onMounted(() => {
+  fetchChapter();
+});
+
 </script>
 
 <style scoped>

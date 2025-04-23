@@ -14,6 +14,7 @@ const routes = [
     path: '/stories',
     name: 'StoryList',
     component: StoryList,
+    alias: '/'
   },
   {
     path: '/story/:storyId/chapter/:chapterId',

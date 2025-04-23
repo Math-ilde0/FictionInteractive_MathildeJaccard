@@ -13,11 +13,11 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->routes(function () {
-            // Routes API sans préfixe "api"
-            Route::middleware(['api']) // Retirez 'json.response' d'ici
+            // ✅ API sans préfixe, avec middleware json forcé
+            Route::middleware(['api', \App\Http\Middleware\ForceJsonResponse::class])
                 ->group(base_path('routes/api.php'));
 
-            // Routes web
+            // ✅ Routes Web classiques (SPA ou pages)
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
