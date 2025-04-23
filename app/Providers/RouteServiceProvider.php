@@ -11,13 +11,15 @@ class RouteServiceProvider extends ServiceProvider
      * Définir les routes de l'application.
      */
     public function boot()
-{
-    $this->routes(function () {
-        Route::middleware('api')
-            ->group(base_path('routes/api.php'));
+    {
+        $this->routes(function () {
+            // Routes API sans préfixe "api"
+            Route::middleware(['api']) // Retirez 'json.response' d'ici
+                ->group(base_path('routes/api.php'));
 
-        Route::middleware('web')
-            ->group(base_path('routes/web.php'));
-    });
-}
+            // Routes web
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
+        });
+    }
 }

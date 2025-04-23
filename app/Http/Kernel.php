@@ -48,6 +48,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\TrustProxies::class,
             \Illuminate\Http\Middleware\HandleCors::class,
         ],
+        'json.response' => \App\Http\Middleware\ForceJsonResponse::class,
     ];
 
     /**
@@ -71,5 +72,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'stress' => \App\Http\Middleware\StressLevelMiddleware::class, // Alias pour le middleware de stress
         'metrics' => \App\Http\Middleware\MetricsMiddleware::class,
+        'json.response' => \App\Http\Middleware\ForceJsonResponse::class,
     ];
 }

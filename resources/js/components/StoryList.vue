@@ -139,12 +139,22 @@ export default {
   this.loading = true;
   this.error = null;
   
-  axios.get('/stories')
+  axios.get('/stories', {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
     .then(response => {
-      console.log('Response from /stories:', response);
+      console.log('Response data type:', typeof response.data);
+      console.log('Response data:', response.data);
       
-      // S'assurer que nous avons un tableau valide
-      if (Array.isArray(response.data)) {
+      // Vérifiez le type de données reçu
+      if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+        console.error('Reçu du HTML au lieu du JSON');
+        this.error = 'Format de données incorrect reçu du serveur';
+        this.stories = [];
+      } else if (Array.isArray(response.data)) {
         this.stories = response.data;
       } else if (response.data && Array.isArray(response.data.data)) {
         this.stories = response.data.data;
