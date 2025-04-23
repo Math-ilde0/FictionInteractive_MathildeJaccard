@@ -14,32 +14,11 @@
     </div>
     
     <div v-else class="book-page" :style="pageEffects">
-      <!-- Nouvelles jauges pour les 3 métriques -->
-      <div class="metrics-container">
-        <div class="metric">
-          <div class="metric-title">Charge Mentale</div>
-          <div class="metric-bar">
-            <div class="metric-fill charge-mental" :style="{ width: `${chargeMentale * 10}%` }"></div>
-          </div>
-          <div class="metric-value">{{ chargeMentale }}/10</div>
-        </div>
-        
-        <div class="metric">
-          <div class="metric-title">Sommeil</div>
-          <div class="metric-bar">
-            <div class="metric-fill sleep" :style="{ width: `${sommeil * 10}%` }"></div>
-          </div>
-          <div class="metric-value">{{ sommeil }}/10</div>
-        </div>
-        
-        <div class="metric">
-          <div class="metric-title">Notes</div>
-          <div class="metric-bar">
-            <div class="metric-fill grades" :style="{ width: `${notes * 10}%` }"></div>
-          </div>
-          <div class="metric-value">{{ notes }}/10</div>
-        </div>
-      </div>
+      <MetricsDisplay 
+    :level="chargeMentale"
+    :sleepLevel="sommeil"
+    :gradesLevel="notes"
+  />
       
       <h1>Chapitre {{ chapter?.chapter_number || '?' }}</h1>
       
@@ -57,29 +36,11 @@
         </button>
       </div>
 
-      <div class="info-section">
-        <div class="advice-toggle" @click="toggleAdvice">
-          <i class="fas fa-info-circle"></i> 
-          <span>{{ showAdvice ? 'Masquer les conseils' : 'Voir les conseils' }}</span>
-        </div>
-        
-        <div v-if="showAdvice" class="advice-container">
-          <div v-if="chapter?.stress_advice" class="advice-item">
-            <h4>Conseil pour la charge mentale :</h4>
-            <p>{{ chapter.stress_advice }}</p>
-          </div>
-          
-          <div v-if="chapter?.sleep_advice" class="advice-item">
-            <h4>Conseil pour le sommeil :</h4>
-            <p>{{ chapter.sleep_advice }}</p>
-          </div>
-          
-          <div v-if="chapter?.grades_advice" class="advice-item">
-            <h4>Conseil pour les études :</h4>
-            <p>{{ chapter.grades_advice }}</p>
-          </div>
-        </div>
-      </div>
+      <AdviceTooltip 
+  :stressAdvice="chapter?.stress_advice"
+  :sleepAdvice="chapter?.sleep_advice"
+  :gradesAdvice="chapter?.grades_advice"
+/>
     </div>
   </main>
 </template>
@@ -89,6 +50,9 @@ import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { setCookie, getCookie } from '@/utils/cookies';
+import AdviceTooltip from '@/components/AdviceTooltip.vue';
+import MetricsDisplay from '@/components/MetricsDisplay.vue' 
+
 
 const chapter = ref({});
 const choices = ref([]);

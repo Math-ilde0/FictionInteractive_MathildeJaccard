@@ -1,8 +1,8 @@
 <template>
   <div class="metrics-container">
     <div class="metric-block">
-      <div class="metric-label">Stress</div>
-      <div class="stress-meter">
+      <div class="metric-line">
+        <div class="metric-label">🧠 Charge Mentale</div>
         <div class="stress-bar">
           <div 
             class="stress-fill" 
@@ -12,13 +12,12 @@
             }"
           ></div>
         </div>
-        <div class="metric-emoji">{{ stressEmoji }}</div>
       </div>
     </div>
 
     <div class="metric-block">
-      <div class="metric-label">Sommeil</div>
-      <div class="sleep-meter">
+      <div class="metric-line">
+        <div class="metric-label">😴 Sommeil</div>
         <div class="sleep-bar">
           <div 
             class="sleep-fill" 
@@ -28,13 +27,12 @@
             }"
           ></div>
         </div>
-        <div class="metric-emoji">{{ sleepEmoji }}</div>
       </div>
     </div>
 
     <div class="metric-block">
-      <div class="metric-label">Notes</div>
-      <div class="grades-meter">
+      <div class="metric-line">
+        <div class="metric-label">🎓 Notes</div>
         <div class="grades-bar">
           <div 
             class="grades-fill" 
@@ -44,7 +42,6 @@
             }"
           ></div>
         </div>
-        <div class="metric-emoji">{{ gradesEmoji }}</div>
       </div>
     </div>
   </div>
@@ -68,54 +65,27 @@ const props = defineProps({
   }
 });
 
-// Stress Color and Emoji Computation
 const stressColor = computed(() => {
   const level = props.level;
-  if (level <= 3) return '#a5d6a7'; // Vert pour stress faible
-  if (level <= 7) return '#ffd54f'; // Jaune pour stress moyen
-  return '#ef5350'; // Rouge pour stress élevé
+  if (level <= 3) return '#a5d6a7';
+  if (level <= 7) return '#ffd54f';
+  return '#ef5350';
 });
 
-const stressEmoji = computed(() => {
-  const level = props.level;
-  if (level <= 3) return '😌'; // Détendu
-  if (level <= 5) return '😐'; // Neutre
-  if (level <= 7) return '😓'; // Inquiet
-  if (level <= 9) return '😰'; // Très stressé
-  return '🤯'; // Burnout imminent
-});
-
-// Sleep Color and Emoji Computation
 const sleepColor = computed(() => {
   const level = props.sleepLevel;
-  if (level >= 8) return '#a5d6a7'; // Vert pour bien reposé
-  if (level >= 5) return '#ffd54f'; // Jaune pour moyen
-  return '#ef5350'; // Rouge pour mal reposé
+  if (level >= 8) return '#a5d6a7';
+  if (level >= 5) return '#ffd54f';
+  return '#ef5350';
 });
 
-const sleepEmoji = computed(() => {
-  const level = props.sleepLevel;
-  if (level >= 8) return '😴'; // Bien reposé
-  if (level >= 5) return '😑'; // Fatigué
-  return '🥱'; // Très fatigué
-});
-
-// Grades Color and Emoji Computation
 const gradesColor = computed(() => {
   const level = props.gradesLevel;
-  if (level >= 8) return '#a5d6a7'; // Vert pour très bon
-  if (level >= 5) return '#ffd54f'; // Jaune pour moyen
-  return '#ef5350'; // Rouge pour faible
+  if (level >= 8) return '#a5d6a7';
+  if (level >= 5) return '#ffd54f';
+  return '#ef5350';
 });
 
-const gradesEmoji = computed(() => {
-  const level = props.gradesLevel;
-  if (level >= 8) return '🏆'; // Excellent
-  if (level >= 5) return '📚'; // Correct
-  return '😱'; // En danger
-});
-
-// Percentage Computations
 const stressPercentage = computed(() => Math.min(props.level * 10, 100));
 const sleepPercentage = computed(() => Math.min(props.sleepLevel * 10, 100));
 const gradesPercentage = computed(() => Math.min(props.gradesLevel * 10, 100));
@@ -124,7 +94,7 @@ const gradesPercentage = computed(() => Math.min(props.gradesLevel * 10, 100));
 <style scoped>
 .metrics-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 15px;
   margin-bottom: 20px;
   background-color: #f9f9f9;
@@ -133,33 +103,30 @@ const gradesPercentage = computed(() => Math.min(props.gradesLevel * 10, 100));
 }
 
 .metric-block {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  width: 100%;
+}
+
+.metric-line {
+  display: flex;
   align-items: center;
+  gap: 15px;
 }
 
 .metric-label {
   font-weight: bold;
-  margin-bottom: 5px;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.stress-meter, .sleep-meter, .grades-meter {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  font-size: 1rem;
+  width: 30%;
+  white-space: nowrap;
 }
 
 .stress-bar, .sleep-bar, .grades-bar {
-  width: 100%;
-  height: 10px;
+  flex-grow: 1;
+  height: 12px;
   background-color: #e0e0e0;
-  border-radius: 5px;
+  border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 5px;
 }
 
 .stress-fill, .sleep-fill, .grades-fill {
@@ -167,13 +134,16 @@ const gradesPercentage = computed(() => Math.min(props.gradesLevel * 10, 100));
   transition: width 0.5s ease, background-color 0.5s ease;
 }
 
-.metric-emoji {
-  font-size: 1.2rem;
-}
-
 @media (max-width: 600px) {
   .metrics-container {
     flex-direction: column;
+  }
+  .metric-line {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .metric-label {
+    width: 100%;
   }
 }
 </style>

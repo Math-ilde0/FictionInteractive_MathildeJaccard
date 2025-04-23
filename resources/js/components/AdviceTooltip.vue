@@ -1,162 +1,136 @@
 <template>
-    <div class="advice-container">
-      <h3 class="advice-title">🧘 Conseils pour ton bien-être</h3>
-      
-      <div class="advice-icons">
-        <div 
-          class="advice-icon" 
-          @mouseover="showTooltip('stress')" 
-          @mouseleave="hideTooltip"
-        >
-          <i class="fas fa-brain stress-icon"></i>
-          <div v-if="currentTooltip === 'stress'" class="tooltip stress-tooltip">
-            {{ stressAdvice }}
-          </div>
-        </div>
-  
-        <div 
-          class="advice-icon" 
-          @mouseover="showTooltip('sleep')" 
-          @mouseleave="hideTooltip"
-        >
-          <i class="fas fa-bed sleep-icon"></i>
-          <div v-if="currentTooltip === 'sleep'" class="tooltip sleep-tooltip">
-            {{ sleepAdvice }}
-          </div>
-        </div>
-  
-        <div 
-          class="advice-icon" 
-          @mouseover="showTooltip('grades')" 
-          @mouseleave="hideTooltip"
-        >
-          <i class="fas fa-graduation-cap grades-icon"></i>
-          <div v-if="currentTooltip === 'grades'" class="tooltip grades-tooltip">
-            {{ gradesAdvice }}
-          </div>
-        </div>
+  <div class="advice-container">
+    <h3 class="advice-title">🧘 Conseils personnalisés</h3>
+
+    <div class="advice-icons">
+      <div 
+        class="advice-icon" 
+        @mouseover="showTooltip('stress')" 
+        @mouseleave="hideTooltip"
+      >
+        <i class="fas fa-brain"></i>
+        <span class="tooltip-text stress" v-if="currentTooltip === 'stress'">{{ stressAdvice }}</span>
+      </div>
+
+      <div 
+        class="advice-icon" 
+        @mouseover="showTooltip('sleep')" 
+        @mouseleave="hideTooltip"
+      >
+        <i class="fas fa-bed"></i>
+        <span class="tooltip-text sleep" v-if="currentTooltip === 'sleep'">{{ sleepAdvice }}</span>
+      </div>
+
+      <div 
+        class="advice-icon" 
+        @mouseover="showTooltip('grades')" 
+        @mouseleave="hideTooltip"
+      >
+        <i class="fas fa-graduation-cap"></i>
+        <span class="tooltip-text grades" v-if="currentTooltip === 'grades'">{{ gradesAdvice }}</span>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  
-  const props = defineProps({
-    stressAdvice: {
-      type: String,
-      default: 'Prenez du recul et respirez profondément. Le stress se gère, pas se subit.'
-    },
-    sleepAdvice: {
-      type: String,
-      default: 'Un sommeil de qualité est essentiel. Établissez une routine de sommeil et respectez-la.'
-    },
-    gradesAdvice: {
-      type: String,
-      default: 'Concentrez-vous sur la compréhension, pas uniquement sur la note. Chaque apprentissage compte.'
-    }
-  });
-  
-  const currentTooltip = ref(null);
-  
-  const showTooltip = (type) => {
-    currentTooltip.value = type;
-  };
-  
-  const hideTooltip = () => {
-    currentTooltip.value = null;
-  };
-  </script>
-  
-  <script>
-  export default {
-    name: 'AdviceTooltip'
-  }
-  </script>
-  
-  <style scoped>
-  .advice-container {
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .advice-title {
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-    color: #333;
-  }
-  
-  .advice-icons {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-  
-  .advice-icon {
-    position: relative;
-    cursor: help;
-    transition: transform 0.3s ease;
-  }
-  
-  .advice-icon:hover {
-    transform: scale(1.1);
-  }
-  
-  .advice-icon i {
-    font-size: 2rem;
-    transition: color 0.3s ease;
-  }
-  
-  .stress-icon {
-    color: #ef5350;
-  }
-  
-  .sleep-icon {
-    color: #4caf50;
-  }
-  
-  .grades-icon {
-    color: #2196f3;
-  }
-  
-  .tooltip {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    width: 250px;
-    text-align: center;
-    z-index: 10;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-  }
-  
-  .advice-icon:hover .tooltip {
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+
+const props = defineProps({
+  stressAdvice: String,
+  sleepAdvice: String,
+  gradesAdvice: String
+});
+
+const currentTooltip = ref(null);
+const showTooltip = (type) => currentTooltip.value = type;
+const hideTooltip = () => currentTooltip.value = null;
+</script>
+
+<style scoped>
+.advice-container {
+  background: linear-gradient(135deg, #f0f4f8, #e2f1f8); /* Bleu-gris pastel */
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 30px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #d0e6f2;
+}
+
+.advice-title {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+.advice-icons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.advice-icon {
+  position: relative;
+  font-size: 2.2rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.advice-icon:hover {
+  transform: scale(1.2);
+}
+
+.tooltip-text {
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  width: 240px;
+  font-size: 0.9rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  z-index: 10;
+  opacity: 0;
+  animation: fadeIn 0.4s forwards;
+  font-style: italic;
+  pointer-events: none;
+}
+
+.tooltip-text.stress {
+  background-color: #ef5350;
+}
+
+.tooltip-text.grades {
+  background-color: #66bb6a;
+}
+
+.tooltip-text.sleep {
+  background-color: #42a5f5;
+}
+
+@keyframes fadeIn {
+  to {
     opacity: 1;
-    visibility: visible;
   }
-  
-  @media (max-width: 600px) {
-    .advice-icons {
-      flex-direction: column;
-      gap: 20px;
-    }
-  
-    .tooltip {
-      position: static;
-      transform: none;
-      margin-top: 10px;
-      opacity: 1;
-      visibility: visible;
-    }
+}
+
+@media (max-width: 600px) {
+  .advice-icons {
+    flex-direction: column;
+    gap: 20px;
   }
-  </style>
+
+  .tooltip-text {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-top: 10px;
+    opacity: 1 !important;
+    animation: none;
+  }
+}
+</style>
