@@ -1,17 +1,32 @@
 <?php
-
+use App\Http\Controllers\TestimonyController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-// Pour les résultats (attention au conflit potentiel)
-Route::get('/result/{outcome}', function () {
-    return view('welcome');
-})->where('outcome', 'success|failure|warning|sleep-crisis|academic-crisis');
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Catch-all : tout sauf les routes API
-Route::get('/{any}', function () {
-    return view('welcome');
-})->where('any', '^(?!stories$|story/|choices|metrics|result/).*');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Routes pour les témoignages
+Route::resource('testimonies', TestimonyController::class);
+Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies'])->name('testimonies.my');
+
+
+require __DIR__.'/auth.php';

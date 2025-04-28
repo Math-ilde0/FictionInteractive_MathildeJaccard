@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\TestimonyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\ChapterController;
@@ -18,3 +19,15 @@ Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics']);
 
 // Choices
 Route::apiResource('/choices', ChoiceController::class);
+
+// Route API pour les témoignages (pour Vue.js)
+Route::prefix('api')->group(function () {
+    Route::get('/testimonies', [TestimonyController::class, 'index']);
+    Route::get('/testimonies/{testimony}', [TestimonyController::class, 'show']);
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/testimonies', [TestimonyController::class, 'store']);
+        Route::put('/testimonies/{testimony}', [TestimonyController::class, 'update']);
+        Route::delete('/testimonies/{testimony}', [TestimonyController::class, 'destroy']);
+        Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies']);
+    });
+});

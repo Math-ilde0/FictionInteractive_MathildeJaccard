@@ -1,6 +1,7 @@
 <template>
   <div>
     <router-view></router-view> <!-- Vue Router rendra le contenu ici -->
+    
   </div>
 </template>
 
