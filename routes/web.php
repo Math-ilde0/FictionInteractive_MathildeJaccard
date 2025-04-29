@@ -6,17 +6,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('StoryList');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -25,8 +18,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // Routes pour les témoignages
-Route::resource('testimonies', TestimonyController::class);
-Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies'])->name('testimonies.my');
+// Voir les témoignages publics (accessible à tous)
+Route::resource('testimonies', TestimonyController::class)->only(['index', 'show']);
+
+// Actions réservées aux utilisateurs connectés
+Route::middleware('auth')->group(function () {
+    Route::resource('testimonies', TestimonyController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies'])->name('testimonies.my');
+});
 
 
 require __DIR__.'/auth.php';

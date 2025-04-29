@@ -8,6 +8,12 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 class RouteServiceProvider extends ServiceProvider
 {
     /**
+     * L'itinéraire vers lequel les utilisateurs sont redirigés après l'authentification.
+     *
+     * @var string
+     */
+    public const HOME = '/testimonies';
+    /**
      * Définir les routes de l'application.
      */
     public function boot()
@@ -21,5 +27,6 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
+        
     }
 }

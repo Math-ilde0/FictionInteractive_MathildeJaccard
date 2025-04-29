@@ -35,12 +35,13 @@
           {{ choice.text }}
         </button>
       </div>
-
-      <AdviceTooltip 
-  :stressAdvice="chapter?.stress_advice"
-  :sleepAdvice="chapter?.sleep_advice"
-  :gradesAdvice="chapter?.grades_advice"
+      <AdviceTooltip
+  v-if="chapter && (chapter.stress_advice || chapter.sleep_advice || chapter.grades_advice)"
+  :stressAdvice="chapter.stress_advice || ''"
+  :sleepAdvice="chapter.sleep_advice || ''"
+  :gradesAdvice="chapter.grades_advice || ''"
 />
+
     </div>
   </main>
 </template>

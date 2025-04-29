@@ -1,0 +1,42 @@
+import { ref, computed } from 'vue';
+import axios from 'axios';
+
+// Données de l'utilisateur
+const user = ref(null);
+
+// Récupérer l'utilisateur connecté
+export async function fetchUser() {
+  try {
+    const response = await axios.get('/api/user');
+    user.value = response.data;
+  } catch (error) {
+    user.value = null;
+  }
+}
+
+// Vérifie si l'utilisateur est connecté
+export const isAuthenticated = computed(() => !!user.value);
+
+// Action de connexion
+export async function login(credentials) {
+  try {
+    await axios.get('/sanctum/csrf-cookie'); // Pour éviter les problèmes CSRF
+    await axios.post('/login', credentials);
+    await fetchUser();
+    return true;
+  } catch (error) {
+    console.error('Erreur de connexion:', error);
+    return false;
+  }
+}
+
+// Action de déconnexion
+export async function logout() {
+  try {
+    await axios.post('/logout');
+    user.value = null;
+    window.location.href = '/'; // Rediriger après déconnexion
+  } catch (error) {
+    console.error('Erreur lors de la déconnexion:', error);
+  }
+}

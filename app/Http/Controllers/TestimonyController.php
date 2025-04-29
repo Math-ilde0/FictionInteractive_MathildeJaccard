@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Testimony;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreTestimonyRequest;
+use App\Http\Controllers\Controller;
+
 
 class TestimonyController extends Controller
 {
@@ -14,7 +15,8 @@ class TestimonyController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth')->except(['index', 'show']);
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+
     }
 
     /**

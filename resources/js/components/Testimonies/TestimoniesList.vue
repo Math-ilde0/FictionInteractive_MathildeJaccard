@@ -7,11 +7,6 @@
           Partager mon témoignage
         </router-link>
       </div>
-      <div v-else class="auth-message">
-        <router-link to="/login" class="auth-link">Connectez-vous</router-link> ou 
-        <router-link to="/register" class="auth-link">inscrivez-vous</router-link> 
-        pour partager votre témoignage.
-      </div>
       
       <div v-if="loading" class="loading-indicator">
         Chargement des témoignages...
@@ -61,12 +56,12 @@
   
   <script>
   import { ref, onMounted, computed } from 'vue';
-  import { useAuth } from '@/composables/useAuth';
+  import { isAuthenticated, login, logout, fetchUser } from '/resources/js/auth.js';
+
   import axios from 'axios';
   
   export default {
     setup() {
-      const { isAuthenticated } = useAuth();
       const testimonies = ref([]);
       const loading = ref(true);
       const error = ref(null);
@@ -83,7 +78,8 @@
           currentPage.value = response.data.current_page;
           totalPages.value = response.data.last_page;
         } catch (err) {
-          error.value = "Une erreur est survenue lors du chargement des témoignages.";
+            error.value = "Aucun témoignage trouvé.";
+
           console.error(err);
         } finally {
           loading.value = false;

@@ -1,14 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import StoryList from './components/StoryList.vue';
+import StoryList from '/resources/js/Pages/StoryList.vue';
 import Chapter from './components/Chapter.vue';
 import Result from './components/Result.vue';
 import { getCookie } from './utils/cookies';
+import Login from '@/Pages/Auth/Login.vue';
+import Register from '@/Pages/Auth/Register.vue';
+import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
 
 const routes = [
   {
     path: '/',
     redirect: '/stories'
   },
+  { path: '/login', component: Login },
+  { path: '/register', component: Register },
+  { path: '/testimonies', component: Testimonies },
   
   {
     path: '/stories',
