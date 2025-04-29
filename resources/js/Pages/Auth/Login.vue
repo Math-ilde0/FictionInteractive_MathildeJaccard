@@ -20,14 +20,23 @@
   const router = useRouter();
   
   const submitLogin = async () => {
-    try {
-      await login(email.value, password.value);
-      // ✅ Une fois connecté, redirige vers testimonies
+  try {
+    const credentials = {
+      email: email.value,
+      password: password.value
+    };
+
+    const success = await login(credentials);
+    if (success) {
       router.push('/testimonies');
-    } catch (error) {
-      console.error('Erreur de connexion', error);
+    } else {
       alert('Erreur lors de la connexion');
     }
-  };
+  } catch (error) {
+    console.error('Erreur de connexion', error);
+    alert('Erreur lors de la connexion');
+  }
+};
+
   </script>
   

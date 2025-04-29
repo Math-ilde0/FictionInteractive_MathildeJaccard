@@ -20,7 +20,8 @@ class Testimony extends Model
      * Get the user that owns the testimony.
      */
     public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+{
+    return $this->belongsTo(User::class);
+}
+
 }

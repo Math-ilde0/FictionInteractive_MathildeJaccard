@@ -6,10 +6,12 @@ use App\Models\Testimony;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
 class TestimonyController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Constructeur avec middleware d'authentification
      */
@@ -36,56 +38,48 @@ class TestimonyController extends Controller
      * Afficher le formulaire de création de témoignage.
      */
     public function create()
-    {
-        return view('testimonies.create');
-    }
+{
+    return response()->json(['message' => 'Formulaire de création disponible.']);
+}
+
 
     /**
      * Enregistrer un nouveau témoignage.
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|min:5|max:255',
-            'content' => 'required|min:20',
-        ]);
+{
+    $validated = $request->validate([
+        'title' => 'required|min:5|max:255',
+        'content' => 'required|min:20',
+    ]);
 
-        $testimony = Auth::user()->testimonies()->create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'status' => 'draft', // Les témoignages sont d'abord en mode brouillon
-        ]);
+    $testimony = Auth::user()->testimonies()->create([
+        'title' => $validated['title'],
+        'content' => $validated['content'],
+        'status' => 'draft',
+    ]);
 
-        if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'Témoignage créé avec succès.',
-                'testimony' => $testimony
-            ], 201);
-        }
+    return response()->json([
+        'message' => 'Témoignage créé avec succès et sera examiné avant publication.',
+        'testimony' => $testimony
+    ], 201);
+}
 
-        return redirect()->route('testimonies.show', $testimony)
-            ->with('success', 'Votre témoignage a été soumis avec succès et sera examiné avant publication.');
-    }
 
     /**
      * Afficher un témoignage spécifique.
      */
     public function show(Testimony $testimony)
-    {
-        // Vérifier si le témoignage est publié ou appartient à l'utilisateur connecté
-        if ($testimony->status !== 'published' && 
-            (Auth::guest() || Auth::id() !== $testimony->user_id)) {
-            abort(403, 'Ce témoignage n\'est pas encore publié.');
-        }
-
-        $testimony->load('user:id,name');
-        
-        if (request()->wantsJson()) {
-            return response()->json($testimony);
-        }
-        
-        return view('testimonies.show', compact('testimony'));
+{
+    if ($testimony->status !== 'published' && (Auth::guest() || Auth::id() !== $testimony->user_id)) {
+        abort(403, 'Ce témoignage n\'est pas encore publié.');
     }
+
+    $testimony->load('user:id,name');
+    
+    return response()->json($testimony);
+}
+
 
     /**
      * Afficher le formulaire d'édition d'un témoignage.
@@ -94,7 +88,11 @@ class TestimonyController extends Controller
     {
         $this->authorize('update', $testimony);
         
-        return view('testimonies.edit', compact('testimony'));
+        return response()->json([
+            'message' => 'Formulaire d\'édition disponible.',
+            'testimony' => $testimony
+        ]);
+        
     }
 
     /**
@@ -121,10 +119,8 @@ class TestimonyController extends Controller
                 'testimony' => $testimony
             ]);
         }
-
-        return redirect()->route('testimonies.show', $testimony)
-            ->with('success', 'Votre témoignage a été mis à jour avec succès.');
     }
+
 
     /**
      * Supprimer un témoignage.
@@ -135,16 +131,12 @@ class TestimonyController extends Controller
         
         $testimony->delete();
 
-        if (request()->wantsJson()) {
-            return response()->json([
-                'message' => 'Témoignage supprimé avec succès.'
-            ]);
-        }
-
-        return redirect()->route('testimonies.index')
-            ->with('success', 'Témoignage supprimé avec succès.');
+        return response()->json([
+            'message' => 'Témoignage supprimé avec succès.'
+        ]);
+        
+        
     }
-
     /**
      * Afficher les témoignages de l'utilisateur connecté.
      */
@@ -156,6 +148,7 @@ class TestimonyController extends Controller
             return response()->json($testimonies);
         }
         
-        return view('testimonies.my-testimonies', compact('testimonies'));
+        return response()->json($testimonies);
+
     }
 }

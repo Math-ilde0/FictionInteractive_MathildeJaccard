@@ -7,7 +7,7 @@ const user = ref(null);
 // Récupérer l'utilisateur connecté
 export async function fetchUser() {
   try {
-    const response = await axios.get('/api/user');
+    const response = await axios.get('/user');
     user.value = response.data;
   } catch (error) {
     user.value = null;
@@ -19,16 +19,20 @@ export const isAuthenticated = computed(() => !!user.value);
 
 // Action de connexion
 export async function login(credentials) {
-  try {
-    await axios.get('/sanctum/csrf-cookie'); // Pour éviter les problèmes CSRF
-    await axios.post('/login', credentials);
-    await fetchUser();
-    return true;
-  } catch (error) {
-    console.error('Erreur de connexion:', error);
-    return false;
+    try {
+      await axios.get('/sanctum/csrf-cookie'); // Important pour Sanctum
+      await axios.post('/login', {
+        email: credentials.email,
+        password: credentials.password
+      });
+      await fetchUser();
+      return true;
+    } catch (error) {
+      console.error('Erreur de connexion:', error.response?.data?.message || error.message);
+      return false;
+    }
   }
-}
+  
 
 // Action de déconnexion
 export async function logout() {

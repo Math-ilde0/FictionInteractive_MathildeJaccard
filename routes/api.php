@@ -1,26 +1,28 @@
 <?php
-use App\Http\Controllers\TestimonyController;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\MetricsController;
 
-// Ces routes renverront du JSON grâce au middleware json.response
+// ✅ API classique
 Route::get('/stories', [StoryController::class, 'index']);
 Route::get('/story/{id}', [StoryController::class, 'show']);
 Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show']);
-
-// Metrics
 Route::get('/metrics', [MetricsController::class, 'getMetrics']);
 Route::post('/metrics/update', [MetricsController::class, 'updateMetrics']);
 Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics']);
-
-
-// Choices
 Route::apiResource('/choices', ChoiceController::class);
 
-// Route API pour les témoignages (pour Vue.js)
+// ✅ Route USER (EN DEHORS DU prefix('api'))
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+// ✅ Routes pour témoignages
 Route::prefix('api')->group(function () {
     Route::get('/testimonies', [TestimonyController::class, 'index']);
     Route::get('/testimonies/{testimony}', [TestimonyController::class, 'show']);
