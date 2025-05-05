@@ -7,13 +7,14 @@ use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\MetricsController;
 use Illuminate\Support\Facades\Route;
 
-// API routes - define these BEFORE the catch-all route
-Route::get('/stories', [StoryController::class, 'index'])->middleware('json.response');
-Route::get('/story/{id}', [StoryController::class, 'show'])->middleware('json.response');
-Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show'])->middleware('json.response');
-Route::get('/metrics', [MetricsController::class, 'getMetrics'])->middleware('json.response');
-Route::post('/metrics/update', [MetricsController::class, 'updateMetrics'])->middleware('json.response');
-Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics'])->middleware('json.response');
+// Public routes
+Route::get('/stories', [StoryController::class, 'index']);
+Route::get('/story/{id}', [StoryController::class, 'show']);
+Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show']);
+Route::get('/metrics', [MetricsController::class, 'getMetrics']);
+Route::post('/metrics/update', [MetricsController::class, 'updateMetrics']);
+Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics']);
+Route::apiResource('/choices', ChoiceController::class);
 
 // Authentication routes
 require __DIR__.'/auth.php';
