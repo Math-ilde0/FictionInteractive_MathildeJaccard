@@ -26,13 +26,19 @@ class TestimonyController extends Controller
      */
     public function index()
     {
-        $testimonies = Testimony::where('status', 'published')
+        $testimonies = Testimony::where('is_approved', true)
             ->with('user:id,name')
             ->latest()
             ->paginate(10);
-            
-        return response()->json($testimonies);
+        
+        return response()->json([
+            'data' => $testimonies->items(),
+            'current_page' => $testimonies->currentPage(),
+            'last_page' => $testimonies->lastPage(),
+            'total' => $testimonies->total()
+        ]);
     }
+    
 
     /**
      * Afficher le formulaire de création de témoignage.
@@ -120,6 +126,22 @@ class TestimonyController extends Controller
             ]);
         }
     }
+// Liste des témoignages en attente
+public function pending()
+{
+    $testimonies = Testimony::where('is_approved', false)->get();
+    return response()->json($testimonies);
+}
+
+// Valider un témoignage
+public function approve($id)
+{
+    $testimony = Testimony::findOrFail($id);
+    $testimony->is_approved = true;
+    $testimony->save();
+
+    return response()->json(['message' => 'Témoignage approuvé']);
+}
 
 
     /**

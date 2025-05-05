@@ -6,13 +6,14 @@ const user = ref(null);
 
 // Récupérer l'utilisateur connecté
 export async function fetchUser() {
-  try {
-    const response = await axios.get('/user');
-    user.value = response.data;
-  } catch (error) {
-    user.value = null;
+    try {
+      const response = await axios.get('/api/user');
+      user.value = response.data;
+    } catch (error) {
+      user.value = null;
+      console.error('Failed to fetch user', error);
+    }
   }
-}
 
 // Vérifie si l'utilisateur est connecté
 export const isAuthenticated = computed(() => !!user.value);

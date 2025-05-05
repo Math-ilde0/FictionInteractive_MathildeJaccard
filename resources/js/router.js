@@ -6,6 +6,8 @@ import { getCookie } from './utils/cookies';
 import Login from '@/Pages/Auth/Login.vue';
 import Register from '@/Pages/Auth/Register.vue';
 import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
+import TestimonyModeration from '@/Pages/Admin/TestimonyModeration.vue';
+
 
 const routes = [
   {
@@ -15,6 +17,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/testimonies', component: Testimonies },
+  { path: '/admin/testimonies', component: TestimonyModeration, name: 'AdminTestimonies' },
   
   {
     path: '/stories',

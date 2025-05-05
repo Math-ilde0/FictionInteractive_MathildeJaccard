@@ -14,7 +14,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('content');
-            $table->enum('status', ['draft', 'published', 'rejected'])->default('draft');
+            $table->boolean('is_approved')->default(false);
+            $table->string('status')->default('draft');
             $table->timestamps();
         });
     }

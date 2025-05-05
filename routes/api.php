@@ -33,3 +33,9 @@ Route::prefix('api')->group(function () {
         Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies']);
     });
 });
+
+// Liste des témoignages non validés
+Route::get('/admin/testimonies/pending', [TestimonyController::class, 'pending'])->middleware('auth');
+
+// Approuver un témoignage
+Route::patch('/admin/testimonies/{id}/approve', [TestimonyController::class, 'approve'])->middleware('auth');

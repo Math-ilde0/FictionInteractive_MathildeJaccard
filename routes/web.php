@@ -3,6 +3,8 @@ use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+
 
 Route::get('/', function () {
     return view('app');

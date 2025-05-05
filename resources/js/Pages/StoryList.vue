@@ -1,115 +1,90 @@
 <template>
-  <main>
-    <div v-if="loading" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <div class="loading-text">Chargement des histoires...</div>
+  <main class="min-h-screen bg-gray-50 py-10 px-4">
+    <!-- Loading -->
+    <div v-if="loading" class="fixed inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
+      <div class="w-12 h-12 border-4 border-gray-200 border-t-green-300 rounded-full animate-spin"></div>
+      <div class="mt-4 text-lg text-gray-700">Chargement des histoires...</div>
     </div>
 
-    <div v-else-if="error" class="error-container">
-      <div class="error-icon">⚠️</div>
-      <div class="error-message">{{ error }}</div>
-      <button @click="loadStories" class="retry-button">Réessayer</button>
+    <!-- Error -->
+    <div v-else-if="error" class="max-w-lg mx-auto p-6 bg-red-100 border border-red-300 rounded-lg text-center">
+      <div class="text-4xl mb-4">⚠️</div>
+      <div class="text-red-700 font-semibold mb-4">{{ error }}</div>
+      <button @click="loadStories" class="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+        Réessayer
+      </button>
     </div>
 
-    <div v-else class="book-page">
-      <h1>Batterie Mentale</h1>
-      <p class="intro-text">
-        Cette histoire interactive vous place dans la peau d'un étudiant en ingénierie des médias à la HEIG-VD.
-        Naviguez entre projets, cours et vie personnelle en faisant des choix qui influenceront votre charge mentale,
-        votre niveau de sommeil et vos résultats académiques.
-      </p>
-      
-      <!-- Section pour continuer la progression sauvegardée -->
-      <div v-if="savedProgress" class="continue-story">
-        <h3>Continuer votre aventure</h3>
-        <div class="metrics-preview">
-          <div class="metric-preview">
-            <div class="metric-title">Charge Mentale</div>
-            <div class="metric-bar">
-              <div class="metric-fill charge-mental" :style="{ width: `${savedProgress.chargeMentale * 10}%` }"></div>
+
+      <!-- Saved Progress -->
+      <div v-if="savedProgress" class="mb-10 bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
+        <h3 class="text-green-700 font-bold text-xl mb-4 text-center">Continuer votre aventure</h3>
+
+        <div class="space-y-4">
+          <div v-for="metric in metrics" :key="metric.name" class="flex items-center gap-4">
+            <div class="w-32 text-gray-700 font-semibold">{{ metric.label }}</div>
+            <div class="flex-1 bg-gray-200 h-3 rounded overflow-hidden">
+              <div :class="metric.color" class="h-3" :style="{ width: `${metric.value * 10}%` }"></div>
             </div>
-            <div class="metric-value">{{ savedProgress.chargeMentale }}/10</div>
-          </div>
-          
-          <div class="metric-preview">
-            <div class="metric-title">Sommeil</div>
-            <div class="metric-bar">
-              <div class="metric-fill sleep" :style="{ width: `${savedProgress.sommeil * 10}%` }"></div>
-            </div>
-            <div class="metric-value">{{ savedProgress.sommeil }}/10</div>
-          </div>
-          
-          <div class="metric-preview">
-            <div class="metric-title">Notes</div>
-            <div class="metric-bar">
-              <div class="metric-fill grades" :style="{ width: `${savedProgress.notes * 10}%` }"></div>
-            </div>
-            <div class="metric-value">{{ savedProgress.notes }}/10</div>
+            <div class="w-10 text-right text-gray-700">{{ metric.value }}/10</div>
           </div>
         </div>
-        
-        <div class="continue-buttons">
-          <button @click="continueLastStory" class="continue-button">
-            <i class="fas fa-play-circle"></i> Reprendre où vous avez arrêté
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+          <button @click="continueLastStory" class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center gap-2 justify-center">
+            ▶️ Reprendre
           </button>
-          <button @click="clearSavedProgress" class="clear-button">
-            <i class="fas fa-trash"></i> Effacer la sauvegarde
+          <button @click="clearSavedProgress" class="px-6 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 flex items-center gap-2 justify-center">
+            🗑️ Effacer
           </button>
         </div>
       </div>
-      
-      <!-- Liste des histoires -->
-      <div class="stories-list">
-        <h2>Choisir une nouvelle histoire</h2>
-        <p v-if="stories.length === 0 && !loading">Aucune histoire disponible.</p>
 
-        <div 
-          v-for="story in stories" 
-          :key="story.id" 
-          class="story-item"
-        >
-          <h3>{{ story.title }}</h3>
-          <p class="story-summary">{{ story.summary }}</p>
-          <button @click="startStory(story.id)" class="start-button">
-            <i class="fas fa-book-open"></i> Commencer cette histoire
+      <!-- List of Stories -->
+      <div>
+        <h2 class="text-2xl font-bold text-center mb-6">Choisir une nouvelle histoire</h2>
+
+        <div v-if="stories.length === 0" class="text-center text-gray-500">Aucune histoire disponible.</div>
+
+        <div v-for="story in stories" :key="story.id" class="mb-6 p-6 border rounded-lg hover:shadow-md transition">
+          <h3 class="text-xl font-bold text-gray-800 mb-2">{{ story.title }}</h3>
+          <p class="text-gray-600 mb-4">{{ story.summary }}</p>
+          <button @click="startStory(story.id)" class="w-full bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 flex items-center justify-center gap-2">
+            📖 Commencer
           </button>
         </div>
       </div>
-      
-      <!-- Section d'aide et d'explication -->
-      <div class="info-section">
-        <h3>À propos du jeu</h3>
-        <p>
-          Dans cette aventure interactive, vous devrez gérer trois aspects de votre vie étudiante :
-        </p>
-        <ul class="info-list">
-          <li>
-            <span class="info-icon charge">🧠</span>
+
+      <!-- Info Section -->
+      <div class="mt-10 p-6 bg-gray-100 rounded-lg">
+        <h3 class="text-2xl font-bold text-center mb-4">À propos du jeu</h3>
+        <ul class="space-y-6">
+          <li class="flex items-start gap-4">
+            <span class="bg-red-100 text-red-500 rounded-full p-2 text-xl">🧠</span>
             <div>
-              <strong>Charge Mentale</strong>
-              <p>Représente votre niveau de stress et d'anxiété. Si elle atteint 10, vous risquez un burn-out.</p>
+              <strong class="text-gray-700">Charge Mentale</strong>
+              <p class="text-gray-600">Votre stress. À 10, c'est le burn-out.</p>
             </div>
           </li>
-          <li>
-            <span class="info-icon sleep">😴</span>
+          <li class="flex items-start gap-4">
+            <span class="bg-blue-100 text-blue-500 rounded-full p-2 text-xl">😴</span>
             <div>
-              <strong>Sommeil</strong>
-              <p>Représente votre niveau de repos. S'il tombe à 0, vous vous effondrerez d'épuisement.</p>
+              <strong class="text-gray-700">Sommeil</strong>
+              <p class="text-gray-600">Votre énergie. À 0, c'est l'épuisement.</p>
             </div>
           </li>
-          <li>
-            <span class="info-icon grades">📚</span>
+          <li class="flex items-start gap-4">
+            <span class="bg-green-100 text-green-500 rounded-full p-2 text-xl">📚</span>
             <div>
-              <strong>Notes</strong>
-              <p>Représente votre réussite académique. Si elles tombent à 0, vous risquez d'échouer votre semestre.</p>
+              <strong class="text-gray-700">Notes</strong>
+              <p class="text-gray-600">Votre réussite académique. À 0, c'est l'échec.</p>
             </div>
           </li>
         </ul>
-        <p class="info-footer">
-          Chaque choix que vous ferez aura un impact sur ces trois aspects. Trouvez le bon équilibre !
+        <p class="text-center italic text-gray-600 mt-6">
+          Chaque décision impacte votre progression. Trouvez le bon équilibre !
         </p>
       </div>
-    </div>
   </main>
 </template>
 
@@ -125,6 +100,17 @@ export default {
       error: null,
       savedProgress: null
     };
+  },
+  computed: {
+    metrics() {
+      if (!this.savedProgress) return [];
+
+      return [
+        { name: 'chargeMentale', label: 'Charge Mentale', value: this.savedProgress.chargeMentale, color: 'bg-red-400' },
+        { name: 'sommeil', label: 'Sommeil', value: this.savedProgress.sommeil, color: 'bg-blue-400' },
+        { name: 'notes', label: 'Notes', value: this.savedProgress.notes, color: 'bg-green-400' }
+      ];
+    }
   },
   mounted() {
     // Charger la progression sauvegardée
@@ -252,369 +238,5 @@ continueLastStory() {
 
   }
 };
+
 </script>
-
-<style scoped>
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #a5d6a7;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.loading-text {
-  margin-top: 20px;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Styles pour l'affichage des erreurs */
-.error-container {
-  background-color: #ffebee;
-  border: 1px solid #ef9a9a;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 500px;
-  margin: 40px auto;
-  text-align: center;
-}
-
-.error-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
-}
-
-.error-message {
-  color: #c62828;
-  margin-bottom: 20px;
-}
-
-.retry-button {
-  background-color: #ef5350;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.retry-button:hover {
-  background-color: #d32f2f;
-}
-
-.book-page {
-  background-color: white;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  font-size: 2.5rem;
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.intro-text {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #555;
-  text-align: center;
-  margin-bottom: 30px;
-  font-style: italic;
-}
-
-/* Styles pour la section de reprise */
-.continue-story {
-  background-color: #e8f5e9;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  text-align: center;
-  border-left: 4px solid #66bb6a;
-}
-
-.continue-story h3 {
-  margin-top: 0;
-  color: #2e7d32;
-}
-
-.metrics-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 15px 0;
-}
-
-.metric-preview {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.metric-title {
-  width: 120px;
-  font-weight: bold;
-  font-size: 0.9rem;
-  text-align: left;
-}
-
-.metric-bar {
-  flex-grow: 1;
-  height: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.metric-fill {
-  height: 100%;
-  transition: width 0.5s ease;
-}
-
-.metric-fill.charge-mental {
-  background-color: #ef5350;
-}
-
-.metric-fill.sleep {
-  background-color: #42a5f5;
-}
-
-.metric-fill.grades {
-  background-color: #66bb6a;
-}
-
-.metric-value {
-  width: 40px;
-  text-align: right;
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-
-.continue-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.continue-button {
-  background-color: #66bb6a;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 1rem;
-}
-
-.continue-button:hover {
-  background-color: #4caf50;
-}
-
-.clear-button {
-  background-color: #bdbdbd;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 1rem;
-}
-
-.clear-button:hover {
-  background-color: #9e9e9e;
-}
-
-/* Styles pour la liste d'histoires */
-.stories-list {
-  margin-top: 40px;
-}
-
-.stories-list h2 {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.story-item {
-  border: 1px solid #e0e0e0;
-  padding: 20px;
-  border-radius: 8px;
-  transition: transform 0.3s, box-shadow 0.3s;
-  margin-bottom: 20px;
-}
-
-.story-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.story-item h3 {
-  margin-top: 0;
-  color: #333;
-  font-size: 1.5rem;
-}
-
-.story-summary {
-  color: #666;
-  margin-bottom: 15px;
-  line-height: 1.5;
-}
-
-.start-button {
-  display: block;
-  width: 100%;
-  padding: 12px 20px;
-  font-size: 1.1rem;
-  background-color: #a5d6a7;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.start-button:hover {
-  background-color: #81c784;
-}
-
-/* Section d'information */
-.info-section {
-  margin-top: 40px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.info-section h3 {
-  text-align: center;
-  color: #333;
-  margin-top: 0;
-  margin-bottom: 15px;
-}
-
-.info-list {
-  list-style: none;
-  padding: 0;
-}
-
-.info-list li {
-  display: flex;
-  margin-bottom: 15px;
-  align-items: flex-start;
-}
-
-.info-icon {
-  font-size: 1.5rem;
-  margin-right: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-
-.info-icon.charge {
-  background-color: rgba(239, 83, 80, 0.1);
-  color: #ef5350;
-}
-
-.info-icon.sleep {
-  background-color: rgba(66, 165, 245, 0.1);
-  color: #42a5f5;
-}
-
-.info-icon.grades {
-  background-color: rgba(102, 187, 106, 0.1);
-  color: #66bb6a;
-}
-
-.info-list li div {
-  flex: 1;
-}
-
-.info-list li div strong {
-  display: block;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.info-list li div p {
-  margin: 0;
-  color: #666;
-  font-size: 0.95rem;
-}
-
-.info-footer {
-  text-align: center;
-  font-style: italic;
-  margin-top: 20px;
-  color: #555;
-}
-
-/* Styles responsifs */
-@media (max-width: 768px) {
-  .book-page {
-    padding: 20px;
-    max-width: 90%;
-  }
-  
-  h1 {
-    font-size: 2rem;
-  }
-  
-  .continue-story {
-    padding: 15px;
-  }
-  
-  .continue-buttons {
-    flex-direction: column;
-  }
-  
-  .continue-button, .clear-button {
-    width: 100%;
-  }
-  
-  .info-list li {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .info-icon {
-    margin-right: 0;
-    margin-bottom: 10px;
-  }
-}
-</style>

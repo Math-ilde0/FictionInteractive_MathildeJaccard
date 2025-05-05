@@ -1,47 +1,47 @@
 <template>
   <main>
     <!-- Indicateur de chargement -->
-    <div v-if="loading" class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <div class="loading-text">Chargement du chapitre...</div>
+    <div v-if="loading" class="fixed inset-0 bg-white/80 flex flex-col justify-center items-center z-50">
+      <div class="w-12 h-12 border-4 border-gray-200 border-t-green-300 rounded-full animate-spin"></div>
+      <div class="mt-4 text-lg text-gray-700">Chargement du chapitre...</div>
     </div>
-    
+
     <!-- Affichage des erreurs -->
-    <div v-else-if="error" class="error-container">
-      <div class="error-icon">⚠️</div>
-      <div class="error-message">{{ error }}</div>
-      <button @click="retryFetch" class="retry-button">Réessayer</button>
+    <div v-else-if="error" class="max-w-lg mx-auto mt-20 p-6 bg-red-100 border border-red-300 rounded-lg text-center">
+      <div class="text-4xl mb-4">⚠️</div>
+      <div class="text-red-700 font-semibold mb-4">{{ error }}</div>
+      <button @click="retryFetch" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+        Réessayer
+      </button>
     </div>
-    
-    <div v-else class="book-page" :style="pageEffects">
-      <MetricsDisplay 
-    :level="chargeMentale"
-    :sleepLevel="sommeil"
-    :gradesLevel="notes"
-  />
+
+    <!-- Page du chapitre -->
+    <div v-else class="transition-all p-6 relative" :style="pageEffects">
+      <MetricsDisplay :level="chargeMentale" :sleepLevel="sommeil" :gradesLevel="notes" />
+
+      <h1 class="text-3xl font-bold text-center mb-6">Chapitre {{ chapter?.chapter_number || '?' }}</h1>
       
-      <h1>Chapitre {{ chapter?.chapter_number || '?' }}</h1>
-      
-      <p>{{ chapter?.content }}</p>
-    
-      <div class="choice-list">
-        <button 
-          v-for="(choice, index) in choices" 
-          :key="index" 
+      <p class="text-gray-700 leading-relaxed mb-8 whitespace-pre-line">{{ chapter?.content }}</p>
+
+      <div class="flex flex-col items-center gap-4">
+        <button
+          v-for="(choice, index) in choices"
+          :key="index"
           @click="makeChoice(choice)"
-          class="choice-button"
+          class="w-full max-w-md px-6 py-3 bg-green-300 text-white rounded-lg hover:bg-green-400 transition relative text-left"
           :class="getChoiceClasses(choice)"
         >
           {{ choice.text }}
         </button>
       </div>
-      <AdviceTooltip
-  v-if="chapter && (chapter.stress_advice || chapter.sleep_advice || chapter.grades_advice)"
-  :stressAdvice="chapter.stress_advice || ''"
-  :sleepAdvice="chapter.sleep_advice || ''"
-  :gradesAdvice="chapter.grades_advice || ''"
-/>
 
+      <AdviceTooltip
+        v-if="chapter && (chapter.stress_advice || chapter.sleep_advice || chapter.grades_advice)"
+        :stressAdvice="chapter.stress_advice || ''"
+        :sleepAdvice="chapter.sleep_advice || ''"
+        :gradesAdvice="chapter.grades_advice || ''"
+        class="mt-10"
+      />
     </div>
   </main>
 </template>
@@ -385,232 +385,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Styles pour l'indicateur de chargement */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
 
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #a5d6a7;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.loading-text {
-  margin-top: 20px;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Styles pour l'affichage des erreurs */
-.error-container {
-  background-color: #ffebee;
-  border: 1px solid #ef9a9a;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 500px;
-  margin: 40px auto;
-  text-align: center;
-}
-
-.error-icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
-}
-
-.error-message {
-  color: #c62828;
-  margin-bottom: 20px;
-}
-
-.retry-button {
-  background-color: #ef5350;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.retry-button:hover {
-  background-color: #d32f2f;
-}
-
-.book-page {
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-/* Conteneur pour les métriques */
-.metrics-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-  background-color: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.metric {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.metric-title {
-  width: 120px;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-
-.metric-bar {
-  flex-grow: 1;
-  height: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.metric-fill {
-  height: 100%;
-  transition: width 0.5s ease;
-}
-
-.metric-fill.charge-mental {
-  background-color: #ef5350;
-}
-
-.metric-fill.sleep {
-  background-color: #42a5f5;
-}
-
-.metric-fill.grades {
-  background-color: #66bb6a;
-}
-
-.metric-value {
-  width: 40px;
-  text-align: right;
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-
-.choice-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.choice-button {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px;
-  background-color: #a5d6a7;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  position: relative;
-  text-align: left;
-}
-
-.choice-button:hover {
-  background-color: #81c784;
-}
-
-.charge-increase {
-  border-left: 4px solid #ef5350;
-}
-
-.charge-decrease {
-  border-left: 4px solid #66bb6a;
-}
-
-.sleep-decrease {
-  border-right: 4px solid #ef5350;
-}
-
-.sleep-increase {
-  border-right: 4px solid #66bb6a;
-}
-
-.grades-decrease::after {
-  content: "↓";
-  position: absolute;
-  right: 10px;
-  color: #ef5350;
-}
-
-.grades-increase::after {
-  content: "↑";
-  position: absolute;
-  right: 10px;
-  color: #66bb6a;
-}
-
-.advice-toggle {
-  cursor: pointer;
-  color: #555;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 20px 0;
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.advice-toggle:hover {
-  background-color: #e0e0e0;
-}
-
-.advice-container {
-  margin-top: 10px;
-  padding: 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.advice-item {
-  margin-bottom: 15px;
-}
-
-.advice-item h4 {
-  margin: 0 0 5px 0;
-  color: #555;
-}
-
-.advice-item p {
-  margin: 0;
-  font-style: italic;
-  font-size: 0.95rem;
-}
 
 @keyframes heartbeat {
   0% { transform: scale(1); }

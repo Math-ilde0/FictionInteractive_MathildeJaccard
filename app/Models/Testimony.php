@@ -13,7 +13,8 @@ class Testimony extends Model
         'user_id',
         'title',
         'content',
-        'status'
+        'status',
+        'is_approved',
     ];
 
     /**
