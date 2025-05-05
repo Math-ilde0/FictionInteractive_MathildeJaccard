@@ -6,6 +6,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 // Pour les résultats (attention au conflit potentiel)
 Route::get('/result/{outcome}', function () {
     return view('welcome');
