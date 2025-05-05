@@ -17,16 +17,15 @@ class RouteServiceProvider extends ServiceProvider
      * Définir les routes de l'application.
      */
     public function boot()
-    {
-        $this->routes(function () {
-            // ✅ API sans préfixe, avec middleware json forcé
-            Route::middleware(['api', \App\Http\Middleware\ForceJsonResponse::class])
-                ->group(base_path('routes/api.php'));
+{
+    $this->routes(function () {
+        // API routes without 'api' prefix
+        Route::middleware(['api', \App\Http\Middleware\ForceJsonResponse::class])
+            ->group(base_path('routes/api.php'));
 
-            // ✅ Routes Web classiques (SPA ou pages)
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
-        });
-        
-    }
+        // Web routes
+        Route::middleware('web')
+            ->group(base_path('routes/web.php'));
+    });
+}
 }

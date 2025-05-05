@@ -8,7 +8,7 @@ const isAuthenticated = computed(() => !!user.value);
 // Get the current user
 async function fetchUser() {
     try {
-        const response = await axios.get('/api/user');
+        const response = await axios.get('/user');
         user.value = response.data;
         return user.value;
     } catch (error) {

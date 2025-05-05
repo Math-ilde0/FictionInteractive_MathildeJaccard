@@ -1,32 +1,24 @@
 <?php
 use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\StoryController;
+use App\Http\Controllers\ChapterController;
+use App\Http\Controllers\ChoiceController;
+use App\Http\Controllers\MetricsController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
+// API routes - define these BEFORE the catch-all route
+Route::get('/stories', [StoryController::class, 'index'])->middleware('json.response');
+Route::get('/story/{id}', [StoryController::class, 'show'])->middleware('json.response');
+Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show'])->middleware('json.response');
+Route::get('/metrics', [MetricsController::class, 'getMetrics'])->middleware('json.response');
+Route::post('/metrics/update', [MetricsController::class, 'updateMetrics'])->middleware('json.response');
+Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics'])->middleware('json.response');
 
-Route::get('/', function () {
-    return view('app');
-});
-
-
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-// Routes pour les témoignages
-// Voir les témoignages publics (accessible à tous)
-Route::resource('testimonies', TestimonyController::class)->only(['index', 'show']);
-
-// Actions réservées aux utilisateurs connectés
-Route::middleware('auth')->group(function () {
-    Route::resource('testimonies', TestimonyController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
-    Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies'])->name('testimonies.my');
-});
-
-
+// Authentication routes
 require __DIR__.'/auth.php';
+
+// Catch-all route for SPA - must be LAST
+Route::get('/{any?}', function () {
+    return view('app');
+})->where('any', '.*');
