@@ -1,8 +1,14 @@
 <script setup>
 import { isAuthenticated, logout } from '/resources/js/auth.js';
+import { useRouter } from 'vue-router';
 
-function handleLogout() {
-  logout();
+const router = useRouter();
+
+async function handleLogout() {
+  const success = await logout();
+  if (success) {
+    router.push('/login');
+  }
 }
 </script>
 
@@ -16,12 +22,11 @@ function handleLogout() {
       Se déconnecter
     </button>
     <router-link
-  v-else
-  to="/login"
-  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow"
->
-  Se connecter
-</router-link>
-
+      v-else
+      to="/login"
+      class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow"
+    >
+      Se connecter
+    </router-link>
   </div>
 </template>

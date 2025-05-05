@@ -3,10 +3,13 @@
       <h1 class="testimonies-title">Témoignages sur la charge mentale</h1>
       
       <div v-if="isAuthenticated" class="add-testimony-button">
-        <router-link to="/testimonies/create" class="button primary">
-          Partager mon témoignage
-        </router-link>
-      </div>
+  <router-link 
+    to="/testimonies/create" 
+    class="button primary"
+  >
+    Partager mon témoignage
+  </router-link>
+</div>
       
       <div v-if="loading" class="loading-indicator">
         Chargement des témoignages...

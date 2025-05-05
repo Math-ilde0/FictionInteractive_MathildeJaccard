@@ -8,6 +8,7 @@ import Register from '@/Pages/Auth/Register.vue';
 import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
 import TestimonyModeration from '@/Pages/Admin/TestimonyModeration.vue';
 import { isAuthenticated } from './auth'; 
+import TestimonyCreate from './components/Testimonies/TestimonyCreate.vue'; 
 
 const routes = [
   {
@@ -18,7 +19,11 @@ const routes = [
   { path: '/register', component: Register },
   { path: '/testimonies', component: Testimonies, meta: {requiresAuth: true} },
   { path: '/admin/testimonies', component: TestimonyModeration, name: 'AdminTestimonies' },
-  
+  { 
+    path: '/testimonies/create', 
+    component: TestimonyCreate,
+    meta: { requiresAuth: true } 
+  },
   {
     path: '/stories',
     name: 'StoryList',
@@ -48,35 +53,37 @@ router.beforeEach((to, from, next) => {
     next();
     return;
   }
-  
+
   // Vérifier le niveau de stress dans les cookies (si disponible)
   const stress = parseInt(getCookie('stress_level')) || 0;
   const sleep = parseInt(getCookie('sleep_level')) || 10;
   const grades = parseInt(getCookie('grades_level')) || 7;
-  
 
   // Rediriger en fonction des métriques
   if (stress >= 10) {
     next('/result/failure');
+    return;
   } else if (sleep <= 0) {
     next('/result/sleep-crisis');
+    return;
   } else if (grades <= 0) {
     next('/result/academic-crisis');
-  } else {
-    next();
+    return;
   }
-  // Add navigation guard for authenticated routes
-router.beforeEach((to, from, next) => {
+
   // Check for routes that require authentication
   if (to.meta.requiresAuth && !isAuthenticated.value) {
     next('/login');
-  } else if ((to.path === '/login' || to.path === '/register') && isAuthenticated.value) {
-    // Redirect to home if user is already logged in
-    next('/');
-  } else {
-    next();
+    return;
   }
-});
+
+  // Redirect to home if user is already logged in and tries to access login/register
+  if ((to.path === '/login' || to.path === '/register') && isAuthenticated.value) {
+    next('/');
+    return;
+  }
+
+  next();
 });
 
 export default router;

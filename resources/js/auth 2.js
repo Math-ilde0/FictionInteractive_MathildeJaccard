@@ -43,15 +43,13 @@ async function login(credentials) {
 // Logout function
 async function logout() {
     try {
-      await axios.post('/logout');
-      user.value = null;
-      return true;
+        await axios.post('/logout');
+        user.value = null;
+        return true;
     } catch (error) {
-      console.error('Logout failed:', error);
-      // Force reset user state even if logout request fails
-      user.value = null;
-      return false;
+        console.error('Logout failed:', error);
+        return false;
     }
-  }
+}
 
 export { user, isAuthenticated, fetchUser, login, logout };

@@ -24,17 +24,37 @@
   const router = useRouter();
   
   const submit = async () => {
-    try {
-      await axios.post('/register', { name: name.value, email: email.value, password: password.value, password_confirmation: password_confirmation.value });
-      router.push('/stories');
-    } catch (error) {
-      alert('Erreur lors de la création du compte');
-      console.error(error);
+  try {
+    await axios.post('/register', {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      password_confirmation: password_confirmation.value
+    });
+    router.push('/testimonies');
+  } catch (error) {
+    // More detailed error handling
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      const errors = error.response.data.errors;
+      if (errors) {
+        // Laravel validation errors
+        let errorMessage = Object.values(errors).flat().join('\n');
+        alert(errorMessage);
+      } else {
+        // Generic server error
+        alert(error.response.data.message || 'Erreur lors de la création du compte');
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      alert('Pas de réponse du serveur. Vérifiez votre connexion.');
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      alert('Erreur lors de la préparation de la requête');
     }
-  };
+    console.error('Registration error:', error);
+  }
+};
   </script>
-  
-  <style scoped>
-  /* Ajoute du style propre ici si besoin */
-  </style>
   
