@@ -1,14 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import StoryList from './components/StoryList.vue';
+import StoryList from '/resources/js/Pages/StoryList.vue';
 import Chapter from './components/Chapter.vue';
 import Result from './components/Result.vue';
 import { getCookie } from './utils/cookies';
+import Login from '@/Pages/Auth/Login.vue';
+import Register from '@/Pages/Auth/Register.vue';
+import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
+import TestimonyModeration from '@/Pages/Admin/TestimonyModeration.vue';
+import { isAuthenticated } from './auth'; 
 
 const routes = [
   {
     path: '/',
     redirect: '/stories'
   },
+  { path: '/login', component: Login },
+  { path: '/register', component: Register },
+  { path: '/testimonies', component: Testimonies, meta: {requiresAuth: true} },
+  { path: '/admin/testimonies', component: TestimonyModeration, name: 'AdminTestimonies' },
   
   {
     path: '/stories',
@@ -45,6 +54,7 @@ router.beforeEach((to, from, next) => {
   const sleep = parseInt(getCookie('sleep_level')) || 10;
   const grades = parseInt(getCookie('grades_level')) || 7;
   
+
   // Rediriger en fonction des métriques
   if (stress >= 10) {
     next('/result/failure');
@@ -55,6 +65,18 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+  // Add navigation guard for authenticated routes
+router.beforeEach((to, from, next) => {
+  // Check for routes that require authentication
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
+    next('/login');
+  } else if ((to.path === '/login' || to.path === '/register') && isAuthenticated.value) {
+    // Redirect to home if user is already logged in
+    next('/');
+  } else {
+    next();
+  }
+});
 });
 
 export default router;

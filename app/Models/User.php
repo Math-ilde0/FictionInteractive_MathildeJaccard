@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function testimonies()
+{
+    return $this->hasMany(Testimony::class);
+}
+
 }
