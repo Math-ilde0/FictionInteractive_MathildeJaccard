@@ -1,115 +1,121 @@
 <template>
-  <main class="min-h-screen py-10 px-4 bg-gray-50">
-    <!-- Résultat en fonction de l'outcome -->
-    <div v-if="outcome" class="max-w-4xl mx-auto p-8 rounded-lg shadow-md bg-white">
-      <div :class="resultClasses">
-        <h2 class="text-3xl font-bold text-center mb-6">{{ title }}</h2>
-        <p class="text-gray-700 text-center mb-6">{{ message }}</p>
-
-        <template v-if="outcome === 'success'">
-          <div class="bg-green-100 text-green-800 rounded-lg p-4 text-center font-semibold mb-6">
-            🌟 Déverrouillé : Maître de la Sérénité
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Techniques à retenir</h3>
-            <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Planification et organisation des tâches</li>
-              <li>Priorisation des activités importantes</li>
-              <li>Pauses régulières pour maintenir l'équilibre</li>
-              <li>Communication de vos limites</li>
-              <li>Soin de votre santé physique et mentale</li>
-            </ul>
-          </div>
-        </template>
-
-        <template v-else-if="outcome === 'warning'">
-          <div class="bg-yellow-100 text-yellow-800 rounded-lg p-4 text-center font-semibold mb-6">
-            ⚠️ Vous avez évité le pire !
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Conseils pour la suite</h3>
-            <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Identifiez les signes avant-coureurs du stress</li>
-              <li>Établissez des limites plus claires</li>
-              <li>Pratiquez la pleine conscience quotidiennement</li>
-              <li>Consultez un professionnel si nécessaire</li>
-              <li>Prévoyez des périodes de récupération</li>
-            </ul>
-          </div>
-        </template>
-
-        <template v-else-if="outcome === 'failure'">
-          <div class="bg-red-100 text-red-800 rounded-lg p-4 text-center font-semibold mb-6">
-            🔥 Burn-out détecté
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
-            <div>
-              <h3 class="text-lg font-semibold mb-2">📚 Trouver de l'aide</h3>
-              <ul class="list-disc list-inside text-gray-600 space-y-2">
-                <li><a href="https://www.147.ch" target="_blank" class="text-blue-600 hover:underline">147.ch</a> – Ligne gratuite 24h/24 pour les jeunes.</li>
-                <li><a href="https://www.ontecoute.ch" target="_blank" class="text-blue-600 hover:underline">Ontecoute.ch</a> – Aide psychologique anonyme.</li>
-              </ul>
-            </div>
-            <div>
-              <h4 class="font-semibold">🏥 Associations de soutien</h4>
-              <ul class="list-disc list-inside text-gray-600 space-y-2">
-                <li><a href="https://www.santepsy.ch" target="_blank" class="text-blue-600 hover:underline">SantéPsy.ch</a></li>
-                <li><a href="https://www.noburnout.ch" target="_blank" class="text-blue-600 hover:underline">NoBurnout.ch</a></li>
-              </ul>
-            </div>
-          </div>
-        </template>
-
-        <template v-else-if="outcome === 'sleep-crisis'">
-          <div class="bg-blue-100 text-blue-800 rounded-lg p-4 text-center font-semibold mb-6">
-            😴 Épuisement physique
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <p class="italic mb-6 text-gray-600">
-              Vous vous êtes endormi(e) en cours à cause du manque de sommeil...
-            </p>
-            <h3 class="text-xl font-semibold mb-4">Pourquoi le sommeil est vital :</h3>
-            <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Consolidation de la mémoire</li>
-              <li>Capacité de concentration</li>
-              <li>Renforcement du système immunitaire</li>
-              <li>Gestion du stress</li>
-            </ul>
-          </div>
-        </template>
-
-        <template v-else-if="outcome === 'academic-crisis'">
-          <div class="bg-purple-100 text-purple-800 rounded-lg p-4 text-center font-semibold mb-6">
-            📉 Échec académique
-          </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Comment rebondir :</h3>
-            <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Analyser les causes de l'échec</li>
-              <li>Demander conseil à l'orientation</li>
-              <li>Redéfinir ses objectifs personnels</li>
-              <li>Améliorer ses méthodes d'apprentissage</li>
-              <li>Garder confiance en soi</li>
-            </ul>
-          </div>
-        </template>
-
-        <template v-else>
-          <div class="text-center text-gray-500">
-            ⚠️ Une erreur est survenue.
-          </div>
-        </template>
+  <main>
+    <!-- Résultat de succès -->
+    <div v-if="outcome === 'success'" class="result result-success">
+      <h2>🏆 Félicitations !</h2>
+      <p>Vous avez brillamment géré votre charge mentale et maintenu votre équilibre pour réussir votre semestre !</p>
+      <div class="achievement">
+        <span>🌟 Déverrouillé : Maître de la Sérénité</span>
       </div>
-
-      <!-- Boutons -->
-      <div class="flex justify-center gap-4 mt-10">
-        <router-link to="/" class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-center">
-          Retour à l'accueil
-        </router-link>
-        <button @click="restartGame" class="px-6 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
-          Réessayer
-        </button>
+      <div class="advice-box">
+        <h3>Techniques à retenir</h3>
+        <ul>
+          <li>Planification et organisation des tâches</li>
+          <li>Priorisation des activités importantes</li>
+          <li>Pauses régulières pour maintenir l'équilibre</li>
+          <li>Communication de vos limites</li>
+          <li>Soin de votre santé physique et mentale</li>
+        </ul>
       </div>
+    </div>
+
+    <!-- Résultat intermédiaire (proche du burn-out) -->
+    <div v-else-if="outcome === 'warning'" class="result result-warning">
+      <h2>⚠️ Vous avez évité le pire !</h2>
+      <p>Vous avez frôlé l'épuisement. Bien que vous ayez terminé votre semestre, votre santé mentale en a souffert.</p>
+      <div class="advice-box">
+        <h3>Conseils pour la suite</h3>
+        <ul>
+          <li>Identifiez les signes avant-coureurs du stress</li>
+          <li>Établissez des limites plus claires</li>
+          <li>Pratiquez la pleine conscience quotidiennement</li>
+          <li>Consultez un professionnel si les symptômes persistent</li>
+          <li>Prévoyez des périodes de récupération</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Burn-out (charge mentale à 10) -->
+    <div v-else-if="outcome === 'failure'" class="result result-failure">
+      <h2>🔥 Burn-out détecté</h2>
+      <p>Votre charge mentale a atteint un niveau critique. Il est essentiel de faire une pause et de chercher du soutien.</p>
+
+      <div class="emergency-resources">
+        <h3>📚 Trouver de l'aide</h3>
+
+        <h4>🧠 Permanences en ligne et téléphoniques</h4>
+        <ul>
+          <li><strong><a href="https://www.147.ch" target="_blank">147.ch</a></strong> – Ligne gratuite 24h/24 pour les jeunes (téléphone, chat, SMS, e-mail).</li>
+          <li><strong><a href="https://www.ontecoute.ch" target="_blank">Ontecoute.ch</a></strong> – Questions anonymes aux professionnel·le·s, forum, adresses utiles.</li>
+        </ul>
+
+        <h4>🏥 Associations romandes de soutien</h4>
+        <ul>
+          <li><strong><a href="https://www.santepsy.ch" target="_blank">SantéPsy</a></strong> – Infos et outils pour mieux gérer les difficultés psychiques.</li>
+          <li><strong><a href="https://www.noburnout.ch" target="_blank">No burnout</a></strong> – Évaluation personnelle et prévention de l'épuisement professionnel.</li>
+        </ul>
+
+        <h4>🎓 Ressources étudiantes à la HEIG-VD</h4>
+        <ul>
+          <li><strong>Service de santé</strong> – Infirmières disponibles pour vous accueillir, évaluer et orienter.</li>
+          <li><strong>Aumônerie</strong> – Service d'écoute et de dialogue interreligieux/interculturel.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Crise de sommeil (sommeil à 0) -->
+    <div v-else-if="outcome === 'sleep-crisis'" class="result result-sleep">
+      <h2>😴 Épuisement physique</h2>
+      <p>Vous vous êtes littéralement endormi(e) en cours. Le manque de sommeil a eu raison de vous.</p>
+      
+      <div class="scenario-description">
+        <p>Lundi, 10h30. Au milieu du cours de programmation, votre tête s'est mise à dodeliner. Malgré vos efforts, vos paupières sont devenues trop lourdes. Vous vous êtes effondré(e) sur votre clavier, sous le regard inquiet de vos camarades.</p>
+        <p>L'infirmière de l'école vous a placé(e) en observation à l'infirmerie. Verdict : épuisement sévère dû à un manque chronique de sommeil.</p>
+      </div>
+      
+      <div class="advice-box">
+        <h3>Importance du sommeil pour les étudiants</h3>
+        <ul>
+          <li><strong>Consolidation de la mémoire</strong> - Le sommeil est essentiel pour intégrer les connaissances acquises pendant la journée</li>
+          <li><strong>Capacité de concentration</strong> - La privation de sommeil diminue considérablement vos facultés d'attention</li>
+          <li><strong>Système immunitaire</strong> - Un sommeil insuffisant vous rend plus vulnérable aux maladies</li>
+          <li><strong>Gestion du stress</strong> - Dormir permet de réguler les hormones du stress</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Crise académique (notes à 0) -->
+    <div v-else-if="outcome === 'academic-crisis'" class="result result-academic">
+      <h2>📉 Échec académique</h2>
+      <p>Vos notes se sont effondrées au point que vous ne pouvez plus valider votre semestre.</p>
+      
+      <div class="scenario-description">
+        <p>Le conseil des professeurs vient de se réunir pour examiner votre situation académique. Le verdict est sans appel : vos résultats sont insuffisants pour continuer.</p>
+        <p>Une réorientation ou un redoublement sont désormais à envisager. Le conseiller aux études vous invite à le rencontrer pour discuter des options.</p>
+      </div>
+      
+      <div class="advice-box">
+        <h3>Rebondir après un échec académique</h3>
+        <ul>
+          <li><strong>Analyser les causes</strong> - Identifier ce qui a conduit à cette situation</li>
+          <li><strong>Demander de l'aide</strong> - Consulter les services d'orientation et les conseillers académiques</li>
+          <li><strong>Redéfinir ses objectifs</strong> - Parfois, un échec est l'occasion de repenser son parcours</li>
+          <li><strong>Améliorer sa méthode</strong> - Revoir ses techniques d'apprentissage et d'organisation</li>
+          <li><strong>Garder confiance</strong> - Un échec n'est pas une fatalité mais une étape d'apprentissage</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Message d'erreur par défaut -->
+    <div v-else class="result result-error">
+      <h2>⚠️ Une erreur s'est produite</h2>
+      <p>Nous ne pouvons pas afficher le résultat demandé.</p>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="result-actions">
+      <router-link to="/" class="button primary">Retour à l'accueil</router-link>
+      <button @click="restartGame" class="button secondary">Réessayer</button>
     </div>
   </main>
 </template>

@@ -1,24 +1,17 @@
 <?php
-use App\Http\Controllers\TestimonyController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\StoryController;
-use App\Http\Controllers\ChapterController;
-use App\Http\Controllers\ChoiceController;
-use App\Http\Controllers\MetricsController;
+
 use Illuminate\Support\Facades\Route;
 
-// API routes - define these BEFORE the catch-all route
-Route::get('/stories', [StoryController::class, 'index'])->middleware('json.response');
-Route::get('/story/{id}', [StoryController::class, 'show'])->middleware('json.response');
-Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show'])->middleware('json.response');
-Route::get('/metrics', [MetricsController::class, 'getMetrics'])->middleware('json.response');
-Route::post('/metrics/update', [MetricsController::class, 'updateMetrics'])->middleware('json.response');
-Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics'])->middleware('json.response');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// Authentication routes
-require __DIR__.'/auth.php';
+// Pour les résultats (attention au conflit potentiel)
+Route::get('/result/{outcome}', function () {
+    return view('welcome');
+})->where('outcome', 'success|failure|warning|sleep-crisis|academic-crisis');
 
-// Catch-all route for SPA - must be LAST
-Route::get('/{any?}', function () {
-    return view('app');
-})->where('any', '.*');
+// Catch-all : tout sauf les routes API
+Route::get('/{any}', function () {
+    return view('welcome');
+})->where('any', '^(?!stories$|story/|choices|metrics|result/).*');

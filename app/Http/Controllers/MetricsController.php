@@ -127,10 +127,10 @@ public function updateMetrics(Request $request)
     {
         return response()->json([
             'stress_level' => request()->cookie('stress_level', 0),
-            'sleep_level' => request()->cookie('sleep_level', 7),
+            'sleep_level' => request()->cookie('sleep_level', 10),
             'grades_level' => request()->cookie('grades_level', 7),
             'is_burnout' => request()->cookie('stress_level', 0) >= 10,
-            'sleep_crisis' => request()->cookie('sleep_level', 7) <= 0,
+            'sleep_crisis' => request()->cookie('sleep_level', 10) <= 0,
             'academic_crisis' => request()->cookie('grades_level', 7) <= 0
         ]);
     }
@@ -144,13 +144,13 @@ public function updateMetrics(Request $request)
 
     session([
         'stress_level' => 0,
-        'sleep_level' => 7,
+        'sleep_level' => 10,
         'grades_level' => 7
     ]);
     
     return response()->json([
         'stress_level' => 0,
-        'sleep_level' => 7,
+        'sleep_level' => 10,
         'grades_level' => 7,
         'is_burnout' => false,
         'sleep_crisis' => false,

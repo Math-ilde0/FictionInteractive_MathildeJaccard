@@ -1,13 +1,7 @@
-import '../css/app.css';
-import './bootstrap';
-
 import { createApp } from 'vue';
-import router from './router'; // Ton fichier router.js
-import App from './components/App.vue';
+import App from './components/App.vue';  // Le composant App qui contient les routes
+import router from './router';  // Le routeur
 
-// Créer l'application Vue et utiliser Vue Router
-const app = createApp(App);
-
-app.use(router);
-
-app.mount('#app');
+const app = createApp(App);  // Crée l'instance de l'application Vue
+app.use(router);  // Utilise Vue Router pour la navigation
+app.mount('#app');  // Monte Vue.js dans l'élément avec l'ID `app`

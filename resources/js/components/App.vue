@@ -1,18 +1,12 @@
 <template>
   <div>
-    <AuthButton />
     <router-view></router-view> <!-- Vue Router rendra le contenu ici -->
-    
   </div>
 </template>
 
 <script>
-import AuthButton from './AuthComponent.vue';
 export default {
   name: 'App',
-  components: {
-    AuthButton
-  }
 };
 </script>
 
