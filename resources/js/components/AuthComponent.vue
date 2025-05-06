@@ -1,8 +1,10 @@
 <script setup>
-import { isAuthenticated, logout } from '/resources/js/auth.js';
+import { ref, computed } from 'vue';
+import { user, logout } from '/resources/js/auth.js';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const isAuthenticated = computed(() => !!user.value);
 
 async function handleLogout() {
   const success = await logout();

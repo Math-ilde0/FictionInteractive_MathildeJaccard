@@ -25,8 +25,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/testimonies/{testimony}', [TestimonyController::class, 'update']);
     Route::delete('/testimonies/{testimony}', [TestimonyController::class, 'destroy']);
     Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies']);
-    
-    // Admin routes
-    Route::get('/admin/testimonies/pending', [TestimonyController::class, 'pending']);
-    Route::patch('/admin/testimonies/{id}/approve', [TestimonyController::class, 'approve']);
 });

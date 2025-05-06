@@ -11,15 +11,15 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
-  import { login } from '@/auth'; // adapte si besoin selon ton chemin
-  import { useRouter } from 'vue-router';
-  
-  const email = ref('');
-  const password = ref('');
-  const router = useRouter();
-  
-  const submitLogin = async () => {
+import { ref } from 'vue';
+import { login } from '/resources/js/auth.js'; // Fix this path
+import { useRouter } from 'vue-router';
+
+const email = ref('');
+const password = ref('');
+const router = useRouter();
+
+const submitLogin = async () => {
   try {
     const credentials = {
       email: email.value,
@@ -37,6 +37,5 @@
     alert('Erreur lors de la connexion');
   }
 };
-
-  </script>
+</script>
   

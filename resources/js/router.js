@@ -6,8 +6,7 @@ import { getCookie } from './utils/cookies';
 import Login from '@/Pages/Auth/Login.vue';
 import Register from '@/Pages/Auth/Register.vue';
 import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
-import TestimonyModeration from '@/Pages/Admin/TestimonyModeration.vue';
-import { isAuthenticated } from './auth'; 
+import { user } from './auth';
 import TestimonyCreate from './components/Testimonies/TestimonyCreate.vue'; 
 
 const routes = [
@@ -18,7 +17,6 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/testimonies', component: Testimonies, meta: {requiresAuth: true} },
-  { path: '/admin/testimonies', component: TestimonyModeration, name: 'AdminTestimonies' },
   { 
     path: '/testimonies/create', 
     component: TestimonyCreate,
@@ -72,13 +70,13 @@ router.beforeEach((to, from, next) => {
   }
 
   // Check for routes that require authentication
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
+  if (to.meta.requiresAuth && !user.value) {
     next('/login');
     return;
   }
 
   // Redirect to home if user is already logged in and tries to access login/register
-  if ((to.path === '/login' || to.path === '/register') && isAuthenticated.value) {
+  if ((to.path === '/login' || to.path === '/register') && user.value) {
     next('/');
     return;
   }

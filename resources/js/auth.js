@@ -7,15 +7,15 @@ const isAuthenticated = computed(() => !!user.value);
 
 // Get the current user
 async function fetchUser() {
-    try {
-        const response = await axios.get('/user');
-        user.value = response.data;
-        return user.value;
-    } catch (error) {
-        user.value = null;
-        console.error('Failed to fetch user:', error);
-        return null;
-    }
+  try {
+    const response = await axios.get('/user');
+    user.value = response.data;
+    return user.value;
+  } catch (error) {
+    user.value = null;
+    console.error('Failed to fetch user:', error);
+    return null;
+  }
 }
 
 // Try to fetch the user when the app loads
@@ -23,35 +23,35 @@ fetchUser();
 
 // Login function
 async function login(credentials) {
-    try {
-        // Get CSRF cookie
-        await axios.get('/sanctum/csrf-cookie');
-        
-        // Attempt login
-        const response = await axios.post('/login', credentials);
-        
-        // Fetch the authenticated user
-        await fetchUser();
-        
-        return true;
-    } catch (error) {
-        console.error('Login failed:', error.response?.data?.message || error.message);
-        return false;
-    }
+  try {
+    // Get CSRF cookie first - this is critical!
+    await axios.get('/sanctum/csrf-cookie');
+    
+    // Attempt login with the CSRF token now in cookies
+    const response = await axios.post('/login', credentials);
+    
+    // Fetch the authenticated user
+    await fetchUser();
+    
+    return true;
+  } catch (error) {
+    console.error('Login failed:', error);
+    user.value = null;
+    return false;
+  }
 }
 
 // Logout function
 async function logout() {
-    try {
-      await axios.post('/logout');
-      user.value = null;
-      return true;
-    } catch (error) {
-      console.error('Logout failed:', error);
-      // Force reset user state even if logout request fails
-      user.value = null;
-      return false;
-    }
+  try {
+    await axios.post('/logout');
+    user.value = null;
+    return true;
+  } catch (error) {
+    console.error('Logout failed:', error);
+    user.value = null;
+    return false;
   }
+}
 
 export { user, isAuthenticated, fetchUser, login, logout };

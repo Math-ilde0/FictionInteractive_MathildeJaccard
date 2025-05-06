@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Testimony extends Model
 {
     use HasFactory;
-
+    public $timestamps = false; // This disables created_at and updated_at
     protected $fillable = [
         'user_id',
         'title',
         'content',
-        'status',
-        'is_approved',
+        
     ];
 
     /**
