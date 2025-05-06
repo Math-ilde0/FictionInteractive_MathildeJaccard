@@ -1,5 +1,15 @@
 <template>
   <main class="min-h-screen bg-gray-50 py-10 px-4">
+    <!-- Bouton Lire des témoignages -->
+    <div class="fixed top-5 right-5 z-50">
+      <button 
+        @click="goToTestimonies" 
+        class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow"
+      >
+        Lire des témoignages
+      </button>
+    </div>
+
     <!-- Loading -->
     <div v-if="loading" class="fixed inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
       <div class="w-12 h-12 border-4 border-gray-200 border-t-green-300 rounded-full animate-spin"></div>
@@ -15,76 +25,75 @@
       </button>
     </div>
 
+    <!-- Saved Progress -->
+    <div v-if="savedProgress" class="mb-10 bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
+      <h3 class="text-green-700 font-bold text-xl mb-4 text-center">Continuer votre aventure</h3>
 
-      <!-- Saved Progress -->
-      <div v-if="savedProgress" class="mb-10 bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
-        <h3 class="text-green-700 font-bold text-xl mb-4 text-center">Continuer votre aventure</h3>
-
-        <div class="space-y-4">
-          <div v-for="metric in metrics" :key="metric.name" class="flex items-center gap-4">
-            <div class="w-32 text-gray-700 font-semibold">{{ metric.label }}</div>
-            <div class="flex-1 bg-gray-200 h-3 rounded overflow-hidden">
-              <div :class="metric.color" class="h-3" :style="{ width: `${metric.value * 10}%` }"></div>
-            </div>
-            <div class="w-10 text-right text-gray-700">{{ metric.value }}/10</div>
+      <div class="space-y-4">
+        <div v-for="metric in metrics" :key="metric.name" class="flex items-center gap-4">
+          <div class="w-32 text-gray-700 font-semibold">{{ metric.label }}</div>
+          <div class="flex-1 bg-gray-200 h-3 rounded overflow-hidden">
+            <div :class="metric.color" class="h-3" :style="{ width: `${metric.value * 10}%` }"></div>
           </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-          <button @click="continueLastStory" class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center gap-2 justify-center">
-            ▶️ Reprendre
-          </button>
-          <button @click="clearSavedProgress" class="px-6 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 flex items-center gap-2 justify-center">
-            🗑️ Effacer
-          </button>
+          <div class="w-10 text-right text-gray-700">{{ metric.value }}/10</div>
         </div>
       </div>
 
-      <!-- List of Stories -->
-      <div>
-        <h2 class="text-2xl font-bold text-center mb-6">Choisir une nouvelle histoire</h2>
-
-        <div v-if="stories.length === 0" class="text-center text-gray-500">Aucune histoire disponible.</div>
-
-        <div v-for="story in stories" :key="story.id" class="mb-6 p-6 border rounded-lg hover:shadow-md transition">
-          <h3 class="text-xl font-bold text-gray-800 mb-2">{{ story.title }}</h3>
-          <p class="text-gray-600 mb-4">{{ story.summary }}</p>
-          <button @click="startStory(story.id)" class="w-full bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 flex items-center justify-center gap-2">
-            📖 Commencer
-          </button>
-        </div>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+        <button @click="continueLastStory" class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center gap-2 justify-center">
+          ▶️ Reprendre
+        </button>
+        <button @click="clearSavedProgress" class="px-6 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 flex items-center gap-2 justify-center">
+          🗑️ Effacer
+        </button>
       </div>
+    </div>
 
-      <!-- Info Section -->
-      <div class="mt-10 p-6 bg-gray-100 rounded-lg">
-        <h3 class="text-2xl font-bold text-center mb-4">À propos du jeu</h3>
-        <ul class="space-y-6">
-          <li class="flex items-start gap-4">
-            <span class="bg-red-100 text-red-500 rounded-full p-2 text-xl">🧠</span>
-            <div>
-              <strong class="text-gray-700">Charge Mentale</strong>
-              <p class="text-gray-600">Votre stress. À 10, c'est le burn-out.</p>
-            </div>
-          </li>
-          <li class="flex items-start gap-4">
-            <span class="bg-blue-100 text-blue-500 rounded-full p-2 text-xl">😴</span>
-            <div>
-              <strong class="text-gray-700">Sommeil</strong>
-              <p class="text-gray-600">Votre énergie. À 0, c'est l'épuisement.</p>
-            </div>
-          </li>
-          <li class="flex items-start gap-4">
-            <span class="bg-green-100 text-green-500 rounded-full p-2 text-xl">📚</span>
-            <div>
-              <strong class="text-gray-700">Notes</strong>
-              <p class="text-gray-600">Votre réussite académique. À 0, c'est l'échec.</p>
-            </div>
-          </li>
-        </ul>
-        <p class="text-center italic text-gray-600 mt-6">
-          Chaque décision impacte votre progression. Trouvez le bon équilibre !
-        </p>
+    <!-- List of Stories -->
+    <div>
+      <h2 class="text-2xl font-bold text-center mb-6">Choisir une nouvelle histoire</h2>
+
+      <div v-if="stories.length === 0" class="text-center text-gray-500">Aucune histoire disponible.</div>
+
+      <div v-for="story in stories" :key="story.id" class="mb-6 p-6 border rounded-lg hover:shadow-md transition">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ story.title }}</h3>
+        <p class="text-gray-600 mb-4">{{ story.summary }}</p>
+        <button @click="startStory(story.id)" class="w-full bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 flex items-center justify-center gap-2">
+          📖 Commencer
+        </button>
       </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="mt-10 p-6 bg-gray-100 rounded-lg">
+      <h3 class="text-2xl font-bold text-center mb-4">À propos du jeu</h3>
+      <ul class="space-y-6">
+        <li class="flex items-start gap-4">
+          <span class="bg-red-100 text-red-500 rounded-full p-2 text-xl">🧠</span>
+          <div>
+            <strong class="text-gray-700">Charge Mentale</strong>
+            <p class="text-gray-600">Votre stress. À 10, c'est le burn-out.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-4">
+          <span class="bg-blue-100 text-blue-500 rounded-full p-2 text-xl">😴</span>
+          <div>
+            <strong class="text-gray-700">Sommeil</strong>
+            <p class="text-gray-600">Votre énergie. À 0, c'est l'épuisement.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-4">
+          <span class="bg-green-100 text-green-500 rounded-full p-2 text-xl">📚</span>
+          <div>
+            <strong class="text-gray-700">Notes</strong>
+            <p class="text-gray-600">Votre réussite académique. À 0, c'est l'échec.</p>
+          </div>
+        </li>
+      </ul>
+      <p class="text-center italic text-gray-600 mt-6">
+        Chaque décision impacte votre progression. Trouvez le bon équilibre !
+      </p>
+    </div>
   </main>
 </template>
 
@@ -120,43 +129,50 @@ export default {
     this.loadStories();
   },
   methods: {
+    // Méthode pour rediriger vers la page des témoignages
+    goToTestimonies() {
+      console.log("Redirection vers les témoignages");
+      // Utilisation de location.href pour éviter les problèmes de routage Vue
+      window.location.href = '/testimonies';
+    },
+    
     // Charger les histoires disponibles
     loadStories() {
-  this.loading = true;
-  this.error = null;
-  
-  axios.get('/stories', {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => {
-      console.log('Response data type:', typeof response.data);
-      console.log('Response data:', response.data);
+      this.loading = true;
+      this.error = null;
       
-      // Vérifiez le type de données reçu
-      if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
-        console.error('Reçu du HTML au lieu du JSON');
-        this.error = 'Format de données incorrect reçu du serveur';
-        this.stories = [];
-      } else if (Array.isArray(response.data)) {
-        this.stories = response.data;
-      } else if (response.data && Array.isArray(response.data.data)) {
-        this.stories = response.data.data;
-      } else {
-        this.stories = [];
-        console.error('Format de données inattendu:', response.data);
-      }
-      
-      this.loading = false;
-    })
-    .catch(error => {
-      console.error('Error loading stories:', error);
-      this.error = error.response?.data?.message || 'Erreur lors du chargement des histoires';
-      this.loading = false;
-    });
-},
+      axios.get('/stories', {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => {
+          console.log('Response data type:', typeof response.data);
+          console.log('Response data:', response.data);
+          
+          // Vérifiez le type de données reçu
+          if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+            console.error('Reçu du HTML au lieu du JSON');
+            this.error = 'Format de données incorrect reçu du serveur';
+            this.stories = [];
+          } else if (Array.isArray(response.data)) {
+            this.stories = response.data;
+          } else if (response.data && Array.isArray(response.data.data)) {
+            this.stories = response.data.data;
+          } else {
+            this.stories = [];
+            console.error('Format de données inattendu:', response.data);
+          }
+          
+          this.loading = false;
+        })
+        .catch(error => {
+          console.error('Error loading stories:', error);
+          this.error = error.response?.data?.message || 'Erreur lors du chargement des histoires';
+          this.loading = false;
+        });
+    },
     
     // Charger la progression sauvegardée depuis localStorage
     loadSavedProgress() {
@@ -181,32 +197,28 @@ export default {
     },
     
     // Continuer la dernière histoire sauvegardée
+    continueLastStory() {
+      if (this.savedProgress) {
+        this.loading = true;
+
+        axios.post('/metrics/update', {
+          stress_level: this.savedProgress.chargeMentale,
+          sleep_level: this.savedProgress.sommeil,
+          grades_level: this.savedProgress.notes
+        })
+          .then(() => {
+            this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
+          })
+          .catch(error => {
+            console.error('Erreur lors de la reprise de la partie:', error);
+            this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
+    },
     
-continueLastStory() {
-  if (this.savedProgress) {
-    this.loading = true;
-
-    // 👇 Tu as probablement laissé une virgule ou une parenthèse ouverte ici quelque part :
-    axios.post('/metrics/update', { // ← CETTE LIGNE EST BONNE
-      stress_level: this.savedProgress.chargeMentale,
-      sleep_level: this.savedProgress.sommeil,
-      grades_level: this.savedProgress.notes
-    }) // ← TU OUVRES RIEN ICI, TU FERME JUSTE
-
-
-      .then(() => {
-        this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
-      })
-      .catch(error => {
-        console.error('Erreur lors de la reprise de la partie:', error);
-        this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
-      })
-      .finally(() => {
-        this.loading = false;
-      });
-  }
-    
-},  
     // Effacer la progression sauvegardée
     clearSavedProgress() {
       if (confirm('Êtes-vous sûr de vouloir effacer votre progression ? Cette action est irréversible.')) {
@@ -217,26 +229,23 @@ continueLastStory() {
     
     // Démarrer une nouvelle histoire
     async startStory(storyId) {
-  try {
-    this.loading = true;
-    
-    // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
-    await axios.post('/metrics/reset');
-
-    
-    // Effacer la progression précédente
-    localStorage.removeItem('storyProgress');
-    
-    // Naviguer vers le premier chapitre de l'histoire sélectionnée
-    this.$router.push(`/story/${storyId}/chapter/1`);
-  } catch (error) {
-    console.error('Error starting story:', error);
-    this.error = error.response?.data?.message || 'Erreur lors du démarrage de l\'histoire';
-    this.loading = false;
-  }
-},
-
+      try {
+        this.loading = true;
+        
+        // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
+        await axios.post('/metrics/reset');
+        
+        // Effacer la progression précédente
+        localStorage.removeItem('storyProgress');
+        
+        // Naviguer vers le premier chapitre de l'histoire sélectionnée
+        this.$router.push(`/story/${storyId}/chapter/1`);
+      } catch (error) {
+        console.error('Error starting story:', error);
+        this.error = error.response?.data?.message || 'Erreur lors du démarrage de l\'histoire';
+        this.loading = false;
+      }
+    }
   }
 };
-
 </script>

@@ -6,7 +6,9 @@ use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\MetricsController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 // Public routes
 Route::get('/stories', [StoryController::class, 'index']);
 Route::get('/story/{id}', [StoryController::class, 'show']);

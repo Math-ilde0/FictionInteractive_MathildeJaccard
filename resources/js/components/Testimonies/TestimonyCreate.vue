@@ -62,10 +62,11 @@
       isSubmitting.value = true;
       
       // Use the correct endpoint - remove /api prefix if needed based on your API setup
+      await axios.get('/sanctum/csrf-cookie');
       await axios.post('/testimonies', {
-        title: title.value,
-        content: content.value
-      });
+  title: title.value,
+  content: content.value
+});
       
       // Success! Redirect to testimonies list
       router.push('/testimonies');

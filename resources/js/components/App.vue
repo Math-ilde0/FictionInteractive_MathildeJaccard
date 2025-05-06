@@ -2,17 +2,14 @@
   <div
     class="font-[Dancing_Script] bg-[#f4f1e3] text-[#333] leading-relaxed min-h-screen pt-10 overflow-y-auto"
   >
-    <AuthButton />
     <router-view />
   </div>
 </template>
 
 <script>
-import AuthButton from './AuthComponent.vue';
 export default {
   name: 'App',
   components: {
-    AuthButton
   }
 };
 </script>
