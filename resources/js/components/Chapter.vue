@@ -64,9 +64,9 @@ const loading = ref(true);
 const error = ref(null);
 
 // Métriques
-const chargeMentale = ref(0);
-const sommeil = ref(10);
-const notes = ref(7);
+const chargeMentale = ref(3);
+const sommeil = ref(7);
+const notes = ref(6);
 
 // Map pour stocker les valeurs d'impact pour chaque choix
 const choiceImpacts = ref(new Map());
@@ -230,19 +230,6 @@ const checkWarnings = () => {
     router.push('/result/academic-crisis');
     return;
   }
-  
-  // Vérifier les contraintes de chapitre (le chapitre exige un certain niveau)
-  if (chapter.value.min_sleep_level && sommeil.value < chapter.value.min_sleep_level) {
-    // Afficher un avertissement sur le sommeil
-    alert(`Attention : Votre niveau de sommeil est trop bas pour ce chapitre. 
-           Votre personnage risque de s'endormir en cours !`);
-  }
-  
-  if (chapter.value.min_grades_level && notes.value < chapter.value.min_grades_level) {
-    // Afficher un avertissement sur les notes
-    alert(`Attention : Vos notes sont trop basses pour ce chapitre. 
-           Votre progression académique est en danger !`);
-  }
 };
 // Function to make a choice and update metrics
 // Function to make a choice and update metrics
@@ -380,7 +367,20 @@ watch(
 );
 onMounted(() => {
   fetchChapter();
+
+  // 🆕 Récupérer les métriques initiales
+  axios.get('/api/metrics')
+    .then(response => {
+      console.log('Métriques initiales récupérées:', response.data);
+      chargeMentale.value = response.data.stress_level;
+      sommeil.value = response.data.sleep_level;
+      notes.value = response.data.grades_level;
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération des métriques:', error);
+    });
 });
+
 
 </script>
 

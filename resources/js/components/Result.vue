@@ -1,99 +1,106 @@
 <template>
   <main class="min-h-screen py-10 px-4 bg-gray-50">
-    <!-- Résultat en fonction de l'outcome -->
     <div v-if="outcome" class="max-w-4xl mx-auto p-8 rounded-lg shadow-md bg-white">
       <div :class="resultClasses">
-        <h2 class="text-3xl font-bold text-center mb-6">{{ title }}</h2>
+        <h2 class="text-3xl font-bold text-center mb-4">{{ title }}</h2>
+        <p class="text-gray-500 italic text-center mb-6">{{ introText }}</p>
         <p class="text-gray-700 text-center mb-6">{{ message }}</p>
 
+        <!-- Succès -->
         <template v-if="outcome === 'success'">
           <div class="bg-green-100 text-green-800 rounded-lg p-4 text-center font-semibold mb-6">
-            🌟 Déverrouillé : Maître de la Sérénité
+            🌟 Tu franchis la ligne d'arrivée, équilibré et fier.
           </div>
           <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Techniques à retenir</h3>
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">🌱 Ce que tu as appris en chemin :</h3>
             <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Planification et organisation des tâches</li>
-              <li>Priorisation des activités importantes</li>
-              <li>Pauses régulières pour maintenir l'équilibre</li>
-              <li>Communication de vos limites</li>
-              <li>Soin de votre santé physique et mentale</li>
+              <li>Planifier sans tout contrôler</li>
+              <li>Dire non quand c’est nécessaire</li>
+              <li>Prioriser l’essentiel sans culpabilité</li>
+              <li>Demander de l’aide au bon moment</li>
+              <li>Respecter ton corps et ton esprit</li>
             </ul>
           </div>
         </template>
 
+        <!-- Avertissement -->
         <template v-else-if="outcome === 'warning'">
           <div class="bg-yellow-100 text-yellow-800 rounded-lg p-4 text-center font-semibold mb-6">
-            ⚠️ Vous avez évité le pire !
+            ⚠️ Tu termines sur les genoux, mais debout.
           </div>
           <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Conseils pour la suite</h3>
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">⚠️ Avant la prochaine fois, retiens cela :</h3>
             <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Identifiez les signes avant-coureurs du stress</li>
-              <li>Établissez des limites plus claires</li>
-              <li>Pratiquez la pleine conscience quotidiennement</li>
-              <li>Consultez un professionnel si nécessaire</li>
-              <li>Prévoyez des périodes de récupération</li>
+              <li>Repérer les signes d’alerte du stress</li>
+              <li>Faire des pauses plus tôt, pas quand il est trop tard</li>
+              <li>Ne pas confondre performance et épuisement</li>
+              <li>Mettre des limites même quand c’est difficile</li>
             </ul>
           </div>
         </template>
 
+        <!-- Échec épuisement -->
         <template v-else-if="outcome === 'failure'">
           <div class="bg-red-100 text-red-800 rounded-lg p-4 text-center font-semibold mb-6">
-            🔥 Burn-out détecté
+            🔥 Tu te réveilles sur le canapé d’un ami, vidé, incapable de retourner en cours.
           </div>
           <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
-            <div>
-              <h3 class="text-lg font-semibold mb-2">📚 Trouver de l'aide</h3>
-              <ul class="list-disc list-inside text-gray-600 space-y-2">
-                <li><a href="https://www.147.ch" target="_blank" class="text-blue-600 hover:underline">147.ch</a> – Ligne gratuite 24h/24 pour les jeunes.</li>
-                <li><a href="https://www.ontecoute.ch" target="_blank" class="text-blue-600 hover:underline">Ontecoute.ch</a> – Aide psychologique anonyme.</li>
-              </ul>
-            </div>
-            <div>
-              <h4 class="font-semibold">🏥 Associations de soutien</h4>
-              <ul class="list-disc list-inside text-gray-600 space-y-2">
-                <li><a href="https://www.santepsy.ch" target="_blank" class="text-blue-600 hover:underline">SantéPsy.ch</a></li>
-                <li><a href="https://www.noburnout.ch" target="_blank" class="text-blue-600 hover:underline">NoBurnout.ch</a></li>
-              </ul>
-            </div>
+            <p class="text-gray-600 italic">
+              Cette fois, ton corps a tiré la sonnette d’alarme avant toi. Les semaines sans repos ont eu raison de ton énergie.
+            </p>
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">🔥 Il est temps de t’entourer :</h3>
+            <ul class="list-disc list-inside text-gray-600 space-y-2">
+              <li><a href="https://www.147.ch" target="_blank" class="text-blue-600 hover:underline">147.ch</a> – Ligne gratuite 24h/24</li>
+              <li><a href="https://www.ontecoute.ch" target="_blank" class="text-blue-600 hover:underline">Ontecoute.ch</a> – Soutien anonyme</li>
+            </ul>
+            <h4 class="font-semibold">🏥 Associations utiles</h4>
+            <ul class="list-disc list-inside text-gray-600 space-y-2">
+              <li><a href="https://www.santepsy.ch" target="_blank" class="text-blue-600 hover:underline">SantéPsy.ch</a></li>
+              <li><a href="https://www.noburnout.ch" target="_blank" class="text-blue-600 hover:underline">NoBurnout.ch</a></li>
+            </ul>
           </div>
         </template>
 
+        <!-- Crise de sommeil -->
         <template v-else-if="outcome === 'sleep-crisis'">
           <div class="bg-blue-100 text-blue-800 rounded-lg p-4 text-center font-semibold mb-6">
-            😴 Épuisement physique
+            😴 Tu t’es endormi sur le clavier, les pages de code restées incomplètes.
           </div>
           <div class="bg-white p-6 rounded-lg shadow-md">
-            <p class="italic mb-6 text-gray-600">
-              Vous vous êtes endormi(e) en cours à cause du manque de sommeil...
+            <p class="text-gray-600 italic mb-4">
+              Ton esprit et ton corps ont choisi le sommeil pour toi. Le professeur t’a doucement réveillé à la fin du cours.
             </p>
-            <h3 class="text-xl font-semibold mb-4">Pourquoi le sommeil est vital :</h3>
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">😴 Pourquoi le sommeil n’est jamais du temps perdu :</h3>
             <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Consolidation de la mémoire</li>
-              <li>Capacité de concentration</li>
-              <li>Renforcement du système immunitaire</li>
-              <li>Gestion du stress</li>
+              <li>Consolider les apprentissages de la journée</li>
+              <li>Garder une mémoire vive</li>
+              <li>Réguler tes émotions</li>
+              <li>Préparer ton cerveau à résoudre des problèmes</li>
             </ul>
           </div>
         </template>
 
+        <!-- Échec académique -->
         <template v-else-if="outcome === 'academic-crisis'">
           <div class="bg-purple-100 text-purple-800 rounded-lg p-4 text-center font-semibold mb-6">
-            📉 Échec académique
+            📉 Les résultats sont tombés, et ils piquent.
           </div>
           <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Comment rebondir :</h3>
+            <p class="text-gray-600 italic mb-4">
+              Les notes ne reflètent pas toujours tout le chemin parcouru. Mais elles t’indiquent qu’un ajustement est nécessaire.
+            </p>
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">📉 Comment rebondir plus fort :</h3>
             <ul class="list-disc list-inside space-y-2 text-gray-600">
-              <li>Analyser les causes de l'échec</li>
-              <li>Demander conseil à l'orientation</li>
-              <li>Redéfinir ses objectifs personnels</li>
-              <li>Améliorer ses méthodes d'apprentissage</li>
-              <li>Garder confiance en soi</li>
+              <li>Analyser ce qui n’a pas fonctionné</li>
+              <li>Demander des feedbacks aux professeurs</li>
+              <li>Améliorer tes méthodes, pas juste le temps passé</li>
+              <li>Revoir tes objectifs personnels</li>
+              <li>Ne pas laisser les notes définir ta valeur</li>
             </ul>
           </div>
         </template>
 
+        <!-- Erreur inconnue -->
         <template v-else>
           <div class="text-center text-gray-500">
             ⚠️ Une erreur est survenue.
@@ -103,11 +110,11 @@
 
       <!-- Boutons -->
       <div class="flex justify-center gap-4 mt-10">
-        <router-link to="/" class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-center">
-          Retour à l'accueil
+        <router-link :to="'/'" class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-center">
+          {{ buttonText }}
         </router-link>
         <button @click="restartGame" class="px-6 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
-          Réessayer
+          Rejouer
         </button>
       </div>
     </div>

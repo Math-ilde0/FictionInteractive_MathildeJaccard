@@ -26,9 +26,9 @@ public function updateMetrics(Request $request)
             'grades_level' => $request->grades_level
         ]);
         
-        $stressLevel = $request->stress_level ?? $request->cookie('stress_level', 0);
-        $sleepLevel = $request->sleep_level ?? $request->cookie('sleep_level', 10);
-        $gradesLevel = $request->grades_level ?? $request->cookie('grades_level', 7);
+        $stressLevel = $request->stress_level ?? $request->cookie('stress_level', 3);
+        $sleepLevel = $request->sleep_level ?? $request->cookie('sleep_level', 7);
+        $gradesLevel = $request->grades_level ?? $request->cookie('grades_level', 6);
         
         $minutes = 60 * 24 * 30; // Cookie valide 30 jours
         
@@ -65,9 +65,9 @@ public function updateMetrics(Request $request)
     }
     
     // Récupérer les métriques actuelles depuis les cookies
-    $currentStress = $request->cookie('stress_level', 0);
-    $currentSleep = $request->cookie('sleep_level', 10);
-    $currentGrades = $request->cookie('grades_level', 7);
+    $currentStress = $request->cookie('stress_level', 3);
+    $currentSleep = $request->cookie('sleep_level', 7);
+    $currentGrades = $request->cookie('grades_level', 6);
     
     \Log::info('Métriques actuelles depuis les cookies:', [
         'stress_level' => $currentStress,
@@ -126,13 +126,13 @@ public function updateMetrics(Request $request)
     public function getMetrics()
     {
         return response()->json([
-            'stress_level' => request()->cookie('stress_level', 0),
+            'stress_level' => request()->cookie('stress_level', 3), // ← ici changer 0 → 3
             'sleep_level' => request()->cookie('sleep_level', 7),
-            'grades_level' => request()->cookie('grades_level', 7),
-            'is_burnout' => request()->cookie('stress_level', 0) >= 10,
+            'grades_level' => request()->cookie('grades_level', 6), // ← ici changer 7 → 6
+            'is_burnout' => request()->cookie('stress_level', 3) >= 10,
             'sleep_crisis' => request()->cookie('sleep_level', 7) <= 0,
-            'academic_crisis' => request()->cookie('grades_level', 7) <= 0
-        ]);
+            'academic_crisis' => request()->cookie('grades_level', 6) <= 0
+        ]);        
     }
     
     /**
@@ -143,15 +143,15 @@ public function updateMetrics(Request $request)
     \Log::info('resetMetrics appelé');
 
     session([
-        'stress_level' => 0,
+        'stress_level' => 3,
         'sleep_level' => 7,
-        'grades_level' => 7
+        'grades_level' => 6
     ]);
     
     return response()->json([
-        'stress_level' => 0,
+        'stress_level' => 3,
         'sleep_level' => 7,
-        'grades_level' => 7,
+        'grades_level' => 6,
         'is_burnout' => false,
         'sleep_crisis' => false,
         'academic_crisis' => false

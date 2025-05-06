@@ -51,44 +51,36 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-  level: {
-    type: Number,
-    default: 0
-  },
-  sleepLevel: {
-    type: Number, 
-    default: 10
-  },
-  gradesLevel: {
-    type: Number, 
-    default: 7
-  }
+  level: Number,
+  sleepLevel: Number,
+  gradesLevel: Number
 });
 
 const stressColor = computed(() => {
-  const level = props.level;
+  const level = props.level ?? 3;  // 👈 valeur par défaut si undefined
   if (level <= 3) return '#a5d6a7';
   if (level <= 7) return '#ffd54f';
   return '#ef5350';
 });
 
 const sleepColor = computed(() => {
-  const level = props.sleepLevel;
+  const level = props.sleepLevel ?? 7;
   if (level >= 8) return '#a5d6a7';
   if (level >= 5) return '#ffd54f';
   return '#ef5350';
 });
 
 const gradesColor = computed(() => {
-  const level = props.gradesLevel;
+  const level = props.gradesLevel ?? 6;
   if (level >= 8) return '#a5d6a7';
   if (level >= 5) return '#ffd54f';
   return '#ef5350';
 });
 
-const stressPercentage = computed(() => Math.min(props.level * 10, 100));
-const sleepPercentage = computed(() => Math.min(props.sleepLevel * 10, 100));
-const gradesPercentage = computed(() => Math.min(props.gradesLevel * 10, 100));
+const stressPercentage = computed(() => Math.min((props.level ?? 3) * 10, 100));
+const sleepPercentage = computed(() => Math.min((props.sleepLevel ?? 7) * 10, 100));
+const gradesPercentage = computed(() => Math.min((props.gradesLevel ?? 6) * 10, 100));
+
 </script>
 
 <style scoped>

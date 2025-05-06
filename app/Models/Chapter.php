@@ -10,13 +10,9 @@ class Chapter extends Model
         'story_id', 
         'chapter_number', 
         'content', 
-        'stress_level', 
         'stress_impact', 
         'sleep_impact',
         'grades_impact',
-        'min_sleep_level',
-        'min_grades_level',
-        'is_recovery_point', 
         'stress_advice',
         'sleep_advice',
         'grades_advice'

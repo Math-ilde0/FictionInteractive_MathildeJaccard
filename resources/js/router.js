@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import StoryList from '/resources/js/Pages/StoryList.vue';
+import StoryList from '/resources/js/components/StoryList.vue';
 import Chapter from './components/Chapter.vue';
 import Result from './components/Result.vue';
 import { getCookie } from './utils/cookies';
-import Login from '@/Pages/Auth/Login.vue';
-import Register from '@/Pages/Auth/Register.vue';
+import Login from '/resources/js/components/Auth/Login.vue';
+import Register from '/resources/js/components/Auth/Register.vue';
 import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
 import { user } from './auth';
 import TestimonyCreate from './components/Testimonies/TestimonyCreate.vue'; 
