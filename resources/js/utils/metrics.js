@@ -1,9 +1,10 @@
-const setMetric = (name, value) => {
+// resources/js/utils/
+export const setMetric = (name, value) => {
   localStorage.setItem(name, value);
   console.log(`Métrique ${name} définie à ${value} dans localStorage`);
 };
 
-const getMetric = (name, defaultValue) => {
+export const getMetric = (name, defaultValue) => {
   const value = localStorage.getItem(name);
   return value !== null ? parseInt(value) : defaultValue;
 };

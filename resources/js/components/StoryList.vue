@@ -99,7 +99,7 @@
 
 <script>
 import axios from 'axios';
-import { setCookie, getCookie } from '@/utils/cookies';
+import { setMetric, getMetric } from '/resources/js/utils/metrics.js';
 
 export default {
   data() {

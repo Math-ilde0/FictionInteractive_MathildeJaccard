@@ -52,6 +52,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import AdviceTooltip from '@/components/AdviceTooltip.vue';
 import MetricsDisplay from '@/components/MetricsDisplay.vue' 
+import { setMetric, getMetric } from '@/utils/metrics';
 
 
 const chapter = ref({});
@@ -248,10 +249,13 @@ const makeChoice = async (choice) => {
       notes: notes.value
     });
     
-    // Mettre à jour les métriques via l'API
+    // Mettre à jour les métriques via l'API avec les valeurs de localStorage
     console.log('Envoi de la requête à /metrics/update');
     const response = await axios.post('/metrics/update', {
-      choice_id: choice.id
+      choice_id: choice.id,
+      stress_level: chargeMentale.value,
+      sleep_level: sommeil.value, 
+      grades_level: notes.value
     });
     
     console.log('Response received:', response);
