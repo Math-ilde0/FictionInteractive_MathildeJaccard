@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import StoryList from '/resources/js/components/StoryList.vue';
 import Chapter from './components/Chapter.vue';
 import Result from './components/Result.vue';
-import { getCookie } from './utils/cookies';
 import Login from '/resources/js/components/Auth/Login.vue';
 import Register from '/resources/js/components/Auth/Register.vue';
 import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
@@ -52,10 +51,6 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
-  // Vérifier le niveau de stress dans les cookies (si disponible)
-  const stress = parseInt(getCookie('stress_level')) || 0;
-  const sleep = parseInt(getCookie('sleep_level')) || 10;
-  const grades = parseInt(getCookie('grades_level')) || 7;
 
   // Rediriger en fonction des métriques
   if (stress >= 10) {

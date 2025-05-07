@@ -15,9 +15,9 @@ class MetricsMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Récupérer les métriques depuis les cookies, ou utiliser les valeurs par défaut
-        $stressLevel = $request->cookie('stress_level', 0);
-        $sleepLevel = $request->cookie('sleep_level', 10);
-        $gradesLevel = $request->cookie('grades_level', 7);
+        $stressLevel = $request->cookie('stress_level', 3);
+        $sleepLevel = $request->cookie('sleep_level', 7);
+        $gradesLevel = $request->cookie('grades_level', 6);
 
         $response = $next($request);
 

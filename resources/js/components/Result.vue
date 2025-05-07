@@ -132,15 +132,64 @@ const router = useRouter();
 // Récupère le type de résultat depuis les paramètres de route
 const outcome = computed(() => route.params.outcome);
 
+// Classes CSS selon le type de résultat
+const resultClasses = computed(() => {
+  const type = outcome.value;
+  if (type === 'success') return 'result-success';
+  if (type === 'warning') return 'result-warning';
+  if (type === 'failure') return 'result-failure';
+  if (type === 'sleep-crisis') return 'result-sleep';
+  if (type === 'academic-crisis') return 'result-academic';
+  return 'result-error';
+});
+
+// Titres selon le résultat
+const title = computed(() => {
+  const type = outcome.value;
+  if (type === 'success') return 'Félicitations !';
+  if (type === 'warning') return 'Mission accomplie... mais à quel prix ?';
+  if (type === 'failure') return 'Burn-out !';
+  if (type === 'sleep-crisis') return 'Épuisement total !';
+  if (type === 'academic-crisis') return 'Échec académique !';
+  return 'Fin de partie';
+});
+
+// Sous-titre introductif
+const introText = computed(() => {
+  const type = outcome.value;
+  if (type === 'success') return 'Tu as réussi à maintenir un équilibre sain.';
+  if (type === 'warning') return 'Tu as atteint tes objectifs, mais ta santé mentale en a souffert.';
+  if (type === 'failure') return 'Tu as poussé ton esprit au-delà de ses limites.';
+  if (type === 'sleep-crisis') return 'Le manque de sommeil t\'a rattrapé.';
+  if (type === 'academic-crisis') return 'Tes notes ont trop chuté.';
+  return 'Le jeu est terminé.';
+});
+
+// Message principal
+const message = computed(() => {
+  const type = outcome.value;
+  if (type === 'success') return 'Tu as trouvé le juste équilibre entre tes études et ton bien-être.';
+  if (type === 'warning') return 'Attention à ne pas reproduire ces schémas à l\'avenir.';
+  if (type === 'failure') return 'Il est temps de prendre soin de toi et de demander de l\'aide.';
+  if (type === 'sleep-crisis') return 'Le sommeil est essentiel pour ton corps et ton esprit.';
+  if (type === 'academic-crisis') return 'Apprendre de ses erreurs est aussi important que réussir.';
+  return 'Merci d\'avoir joué !';
+});
+
+// Texte du bouton de retour
+const buttonText = computed(() => {
+  return 'Retourner à l\'accueil';
+});
+
 // Fonction pour recommencer le jeu
 const restartGame = async () => {
   try {
     // Réinitialiser toutes les métriques
     await axios.post('/api/metrics/reset');
-    
+
     // Effacer la progression sauvegardée
     localStorage.removeItem('storyProgress');
-    
+
     // Retourner à la liste des histoires
     router.push('/');
   } catch (error) {
@@ -150,6 +199,7 @@ const restartGame = async () => {
   }
 };
 </script>
+
 
 <style scoped>
 .result {

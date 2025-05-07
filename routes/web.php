@@ -13,7 +13,7 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 Route::get('/stories', [StoryController::class, 'index']);
 Route::get('/story/{id}', [StoryController::class, 'show']);
 Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show']);
-Route::get('/metrics', [MetricsController::class, 'getMetrics']);
+Route::get('/metrics', [MetricsController::class, 'getAllMetrics']);
 Route::post('/metrics/update', [MetricsController::class, 'updateMetrics']);
 Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics']);
 Route::apiResource('/choices', ChoiceController::class);

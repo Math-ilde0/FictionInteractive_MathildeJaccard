@@ -50,7 +50,6 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { setCookie, getCookie } from '@/utils/cookies';
 import AdviceTooltip from '@/components/AdviceTooltip.vue';
 import MetricsDisplay from '@/components/MetricsDisplay.vue' 
 
@@ -278,25 +277,33 @@ const makeChoice = async (choice) => {
       grades: notes.value - oldGrades  
     });
     
+    // Définir les cookies avec les nouvelles valeurs
+    setMetric('stress_level', chargeMentale.value);
+setMetric('sleep_level', sommeil.value);
+setMetric('grades_level', notes.value);
     
-    setCookie('stress_level', chargeMentale.value);
-setCookie('sleep_level', sommeil.value);
-setCookie('grades_level', notes.value);
+    // Attendre un court instant pour s'assurer que les cookies sont bien définis
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+   
+    
+    // Sauvegarder la progression dans localStorage
+    saveProgress();
     
     // Vérification des situations spéciales
-    if (response.data.is_burnout) {
+    if (response.data.is_burnout || chargeMentale.value >= 10) {
       console.log('Burnout détecté, redirection vers /result/failure');
       router.push('/result/failure');
       return;
     }
     
-    if (response.data.sleep_crisis) {
+    if (response.data.sleep_crisis || sommeil.value <= 0) {
       console.log('Crise de sommeil détectée, redirection vers /result/sleep-crisis');
       router.push('/result/sleep-crisis');
       return;
     }
     
-    if (response.data.academic_crisis) {
+    if (response.data.academic_crisis || notes.value <= 0) {
       console.log('Crise académique détectée, redirection vers /result/academic-crisis');
       router.push('/result/academic-crisis');
       return;
@@ -365,20 +372,26 @@ watch(
     checkWarnings();
   }
 );
-onMounted(() => {
+onMounted(async () => {
+  // Si c'est le premier chapitre, réinitialiser les métriques
+  if (route.params.chapterId === '1') {
+    await axios.post('/metrics/reset');
+    
+    // Définir manuellement les métriques par défaut
+    chargeMentale.value = 3;
+    sommeil.value = 7;
+    notes.value = 6;
+    
+    // Sauvegarder dans localStorage
+    setMetric('stress_level', chargeMentale.value);
+    setMetric('sleep_level', sommeil.value);
+    setMetric('grades_level', notes.value);
+    
+    console.log('Métriques réinitialisées pour un nouveau jeu');
+  }
+  
+  // Puis charger le chapitre
   fetchChapter();
-
-  // 🆕 Récupérer les métriques initiales
-  axios.get('/api/metrics')
-    .then(response => {
-      console.log('Métriques initiales récupérées:', response.data);
-      chargeMentale.value = response.data.stress_level;
-      sommeil.value = response.data.sleep_level;
-      notes.value = response.data.grades_level;
-    })
-    .catch(error => {
-      console.error('Erreur lors de la récupération des métriques:', error);
-    });
 });
 
 
