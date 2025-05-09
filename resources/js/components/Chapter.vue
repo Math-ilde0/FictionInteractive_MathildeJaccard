@@ -153,7 +153,6 @@ const fetchChapter = async () => {
   error.value = null;
 
   try {
-    console.log(`Fetching chapter: /story/${storyId}/chapter/${chapterId}`);
 const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
 
 

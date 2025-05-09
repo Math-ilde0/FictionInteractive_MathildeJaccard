@@ -131,7 +131,6 @@ export default {
   methods: {
     // Méthode pour rediriger vers la page des témoignages
     goToTestimonies() {
-      console.log("Redirection vers les témoignages");
       // Utilisation de location.href pour éviter les problèmes de routage Vue
       window.location.href = '/testimonies';
     },
@@ -148,8 +147,6 @@ export default {
         }
       })
         .then(response => {
-          console.log('Response data type:', typeof response.data);
-          console.log('Response data:', response.data);
           
           // Vérifiez le type de données reçu
           if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
