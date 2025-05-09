@@ -1,66 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Fiction Interactive - Batterie Mentale
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Une application web de fiction interactive développée avec Laravel et Vue.js qui simule les défis de santé mentale d'un étudiant universitaire.
 
-## About Laravel
+## Présentation du projet
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+"Batterie Mentale" est un serious game de fiction interactive conçu pour sensibiliser aux problèmes de santé mentale universitaire. Les joueurs suivent le parcours d'un étudiant en ingénierie des médias à la HEIG-VD, prenant des décisions qui affectent son bien-être mental, son sommeil et ses performances académiques.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prérequis
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.1+
+- Composer
+- Node.js et npm
+- MySQL ou SQLite
+- Git
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+# 1. Cloner le dépôt
+git clone <https://github.com/votre-nom/batterie-mentale.git>
+cd batterie-mentale
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# 2. Installer les dépendances PHP et JavaScript
+composer install
+npm install
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# 3. Configurer l'environnement
+cp .env.example .env
+php artisan key:generate
+# Configurer la base de données dans .env
 
-## Laravel Sponsors
+# 4. Créer la base de données et charger les données d'exemple
+php artisan migrate --seed
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 5. Compiler les assets et lancer le serveur
+npm run dev
+php artisan serve
 
-### Premium Partners
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Le seeder crée automatiquement l'histoire interactive avec tous ses chapitres et choix.
 
-## Contributing
+## Mécaniques du jeu
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Métriques principales
 
-## Code of Conduct
+Le jeu suit trois métriques clés qui déterminent la progression et les fins possibles :
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **🧠 Charge Mentale** (0-10) : Représente le niveau de stress. À 10, déclenche un burn-out.
+- **😴 Sommeil** (0-10) : Représente la qualité du repos. À 0, provoque un effondrement physique.
+- **🎓 Notes** (0-10) : Représente les performances académiques. À 0, mène à l'échec scolaire.
 
-## Security Vulnerabilities
+### Déroulement du jeu
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Choisissez l'histoire "Batterie Mentale" sur la page d'accueil
+2. Lisez chaque chapitre et faites des choix
+3. Chaque décision influence les métriques (indiquées visuellement)
+4. Des conseils thématiques s'affichent pour chaque situation (icônes survolables)
+5. Votre progression est automatiquement sauvegardée
 
-## License
+### Fins possibles
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Succès** : Équilibre atteint entre bien-être et performance
+- **Burn-out** : Charge mentale trop élevée
+- **Épuisement** : Niveau de sommeil à zéro
+- **Échec académique** : Notes insuffisantes
+
+## Fonctionnalités principales
+
+- **Narration interactive** avec des conséquences significatives
+- **Visualisation des métriques** en temps réel
+- **Sauvegarde automatique** de la progression
+- **Plateforme de témoignages** pour partager des expériences réelles
+- **Système d'authentification** pour la gestion des témoignages
+- **Interface réactive** adaptée aux mobiles et tablettes
+
+## Architecture technique
+
+### Frontend (Vue.js 3)
+
+- **Components/** : Composants Vue réutilisables (Chapter.vue, MetricsDisplay.vue, etc.)
+- **Auth/** : Composants d'authentification (Login.vue, Register.vue)
+- **Utils/** : Utilitaires JavaScript (metrics.js pour la gestion locale des métriques)
+- **Router/** : Configuration du routage Vue
+
+### Backend (Laravel 10)
+
+- **Controllers/** : Logique métier (ChapterController, MetricsController, etc.)
+- **Models/** : Modèles Eloquent (Story, Chapter, Choice, Testimony)
+- **Migrations/** : Structure de la base de données
+- **Seeders/** : Données de test et contenu narratif
+
+### Base de données
+
+- **Stories** : Récits disponibles
+- **Chapters** : Segments narratifs avec impacts sur les métriques
+- **Choices** : Options de décision avec liens vers les chapitres suivants
+- **Testimonies** : Expériences partagées par les utilisateurs
+
+
+
+Développé dans le cadre d'un projet éducatif pour sensibiliser à la gestion du stress et à la prévention du burn-out chez les étudiants.
