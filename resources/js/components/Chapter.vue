@@ -1,5 +1,14 @@
 <template>
   <main>
+    <!-- Bouton retour à l'accueil -->
+    <div class="fixed top-5 right-5 z-50">
+      <button 
+        @click="confirmReturnHome" 
+        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow flex items-center gap-2"
+      >
+        <span>🏠</span> Accueil
+      </button>
+    </div>
     <!-- Indicateur de chargement -->
     <div v-if="loading" class="fixed inset-0 bg-white/80 flex flex-col justify-center items-center z-50">
       <div class="w-12 h-12 border-4 border-gray-200 border-t-green-300 rounded-full animate-spin"></div>
@@ -144,7 +153,15 @@ const retryFetch = () => {
   error.value = null;
   fetchChapter();
 };
-
+// Fonction pour confirmer le retour à l'accueil
+const confirmReturnHome = () => {
+  if (confirm("Êtes-vous sûr de vouloir retourner à l'accueil ? Votre progression sera sauvegardée mais vous quitterez le chapitre actuel.")) {
+    // Sauvegarder la progression avant de quitter
+    saveProgress();
+    // Rediriger vers la page d'accueil
+    router.push('/');
+  }
+};
 // Function to fetch chapter data
 const fetchChapter = async () => {
   const { storyId, chapterId } = route.params;
@@ -156,7 +173,7 @@ const fetchChapter = async () => {
 const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
 
 
-    console.log('Chapter data received:', response.data);
+    
     chapter.value = response.data;
     choices.value = response.data.choices || []; // 🆕 pour afficher les boutons
   } catch (err) {
@@ -231,7 +248,7 @@ const checkWarnings = () => {
   }
 };
 // Function to make a choice and update metrics
-// Function to make a choice and update metrics
+// Modification de la méthode makeChoice dans resources/js/components/Chapter.vue
 const makeChoice = async (choice) => {
   try {
     loading.value = true;
@@ -248,23 +265,23 @@ const makeChoice = async (choice) => {
       notes: notes.value
     });
     
-    // Mettre à jour les métriques via l'API avec les valeurs de localStorage
-    console.log('Envoi de la requête à /metrics/update');
+    // Obtenir les métriques stockées dans localStorage
+    const currentStress = getMetric('stress_level', chargeMentale.value);
+    const currentSleep = getMetric('sleep_level', sommeil.value);
+    const currentGrades = getMetric('grades_level', notes.value);
+    
+    // Envoyer l'ID du choix ET les métriques actuelles depuis localStorage
     const response = await axios.post('/metrics/update', {
       choice_id: choice.id,
-      stress_level: chargeMentale.value,
-      sleep_level: sommeil.value, 
-      grades_level: notes.value
+      stress_level: currentStress,
+      sleep_level: currentSleep,
+      grades_level: currentGrades
     });
     
     console.log('Response received:', response);
     console.log('Choice update response data:', response.data);
     
-    // Mettre à jour les métriques locales
-    const oldStress = chargeMentale.value;
-    const oldSleep = sommeil.value;
-    const oldGrades = notes.value;
-    
+    // Mettre à jour les métriques locales avec les valeurs renvoyées par le serveur
     chargeMentale.value = response.data.stress_level;
     sommeil.value = response.data.sleep_level;
     notes.value = response.data.grades_level;
@@ -274,21 +291,11 @@ const makeChoice = async (choice) => {
       sommeil: sommeil.value, 
       notes: notes.value
     });
-    console.log('Différences:', {
-      stress: chargeMentale.value - oldStress,
-      sleep: sommeil.value - oldSleep,
-      grades: notes.value - oldGrades  
-    });
     
-    // Définir les cookies avec les nouvelles valeurs
+    // Mettre à jour localStorage avec les nouvelles valeurs
     setMetric('stress_level', chargeMentale.value);
-setMetric('sleep_level', sommeil.value);
-setMetric('grades_level', notes.value);
-    
-    // Attendre un court instant pour s'assurer que les cookies sont bien définis
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-   
+    setMetric('sleep_level', sommeil.value);
+    setMetric('grades_level', notes.value);
     
     // Sauvegarder la progression dans localStorage
     saveProgress();
@@ -352,9 +359,6 @@ setMetric('grades_level', notes.value);
     loading.value = false;
   }
 };
-
-
-
 // Surveiller les changements de route
 watch(
   () => route.params,
@@ -389,8 +393,6 @@ onMounted(async () => {
     setMetric('stress_level', chargeMentale.value);
     setMetric('sleep_level', sommeil.value);
     setMetric('grades_level', notes.value);
-    
-    console.log('Métriques réinitialisées pour un nouveau jeu');
   }
   
   // Puis charger le chapitre

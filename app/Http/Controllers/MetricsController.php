@@ -11,21 +11,59 @@ class MetricsController extends Controller
     /**
      * Mettre à jour les métriques basées sur un choix
      */
-/**
- * Mettre à jour les métriques basées sur un choix
- */
+// Modification de la méthode updateMetrics dans app/Http/Controllers/MetricsController.php
 public function updateMetrics(Request $request)
 {
     \Log::info('updateMetrics appelé avec:', $request->all());
     
-    // Si nous recevons directement un niveau de stress (pour la reprise d'une partie sauvegardée)
+    // Si nous recevons directement des niveaux de métriques (depuis localStorage)
     if ($request->has('stress_level') || $request->has('sleep_level') || $request->has('grades_level')) {
-        $stressLevel = $request->stress_level ?? session('stress_level', 3);
-        $sleepLevel = $request->sleep_level ?? session('sleep_level', 7);
-        $gradesLevel = $request->grades_level ?? session('grades_level', 6);
+        // Utiliser les valeurs reçues ou les valeurs par défaut
+        $stressLevel = $request->stress_level ?? 3;
+        $sleepLevel = $request->sleep_level ?? 7;
+        $gradesLevel = $request->grades_level ?? 6;
         
-        // Stocker dans la session
+        // Seulement si choice_id est aussi présent, appliquer les impacts
+        if ($request->has('choice_id')) {
+            // Trouver le choix
+            $choice = Choice::findOrFail($request->choice_id);
+            
+            // Récupérer le chapitre suivant pour obtenir les impacts
+            $nextChapter = null;
+            if ($choice->next_chapter_id) {
+                $nextChapter = Chapter::find($choice->next_chapter_id);
+            }
+            
+            // Appliquer les impacts si le chapitre suivant existe
+            if ($nextChapter) {
+                // Limiter les impacts à ±2
+                $stressImpact = min(max($nextChapter->stress_impact ?? 0, -2), 2);
+                $sleepImpact = min(max($nextChapter->sleep_impact ?? 0, -2), 2);
+                $gradesImpact = min(max($nextChapter->grades_impact ?? 0, -2), 2);
+                
+                // Log des impacts pour débogage
+                \Log::info('Impacts calculés:', [
+                    'stress_impact' => $stressImpact,
+                    'sleep_impact' => $sleepImpact,
+                    'grades_impact' => $gradesImpact
+                ]);
+                
+                // Appliquer les impacts avec limites
+                $stressLevel = max(0, min(10, $stressLevel + $stressImpact));
+                $sleepLevel = max(0, min(10, $sleepLevel + $sleepImpact));
+                $gradesLevel = max(0, min(10, $gradesLevel + $gradesImpact));
+            }
+        }
+        
+        // Stocker dans la session pour compatibilité avec les middlewares
         session([
+            'stress_level' => $stressLevel,
+            'sleep_level' => $sleepLevel,
+            'grades_level' => $gradesLevel
+        ]);
+        
+        // Log des nouvelles valeurs
+        \Log::info('Nouvelles valeurs après impacts:', [
             'stress_level' => $stressLevel,
             'sleep_level' => $sleepLevel,
             'grades_level' => $gradesLevel
@@ -41,6 +79,7 @@ public function updateMetrics(Request $request)
         ]);
     }
     
+    // Code original (pour compatibilité)
     // Trouver le choix
     $choice = Choice::findOrFail($request->choice_id);
     
