@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
         // Appel des seeders individuels pour remplir les tables de la base
         $this->call([
             StoriesTableSeeder::class,  // Remplit la table `stories`
-            UserSeeder::class,          // Remplit la table `users`
             TestimonySeeder::class,     // Remplit la table `testimonies`
         ]);
     }
