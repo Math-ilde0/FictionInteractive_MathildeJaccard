@@ -47,9 +47,6 @@ class RegisteredUserController extends Controller
     Auth::login($user);
 
     // Retourner JSON au lieu de rediriger
-    return response()->json([
-        'user' => $user,
-        'message' => 'Registration successful'
-    ]);
+    return response()->json(['user' => $user], 201);
 }
 }

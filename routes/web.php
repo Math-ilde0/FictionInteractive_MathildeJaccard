@@ -9,6 +9,9 @@ use App\Http\Controllers\MetricsController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
+
+    Route::post('/testimonies', [TestimonyController::class, 'store']);
+
 // Route pour le CSRF token
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 

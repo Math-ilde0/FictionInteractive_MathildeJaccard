@@ -8,9 +8,7 @@ use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\MetricsController;
 
-
-// Public testimony routes
-Route::get('/testimonies', [TestimonyController::class, 'index']);
+Route::middleware('auth:sanctum')->post('/testimonies', [TestimonyController::class, 'store']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
