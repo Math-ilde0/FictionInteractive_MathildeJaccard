@@ -11,6 +11,9 @@ class DatabaseSeeder extends Seeder
         // Appeler les seeders spécifiques
         $this->call([
             StoriesTableSeeder::class,
+            UserSeeder::class,
+            TestimonySeeder::class,
+            
         ]);
     }
 }

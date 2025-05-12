@@ -8,12 +8,15 @@ use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\MetricsController;
 
-Route::middleware('auth:sanctum')->post('/testimonies', [TestimonyController::class, 'store']);
-
-// Protected routes
+// Route publique pour obtenir les témoignages
+Route::get('/testimonies', [TestimonyController::class, 'index']);
+// Routes nécessitant une authentification
 Route::middleware('auth:sanctum')->group(function () {
-    // User route
+    // Route utilisateur
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    
+    // Route pour enregistrer un témoignage
+    Route::post('/testimonies', [TestimonyController::class, 'store']);
 });

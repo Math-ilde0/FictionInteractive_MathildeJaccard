@@ -12,25 +12,19 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class TestimonyController extends Controller
 {
     use AuthorizesRequests;
-    /**
-     * Constructeur avec middleware d'authentification
-     */
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum')->except(['index', 'show']);
 
-    }
 
     /**
      * Afficher la liste des témoignages publiés.
      */
     public function index()
     {
-        $testimonies = Testimony::where('is_approved', true)
+        $testimonies = Testimony::where('status', 'published')
+
             ->with('user:id,name')
             ->latest()
             ->paginate(10);
-        
+    
         return response()->json([
             'data' => $testimonies->items(),
             'current_page' => $testimonies->currentPage(),
@@ -48,11 +42,10 @@ class TestimonyController extends Controller
     return response()->json(['message' => 'Formulaire de création disponible.']);
 }
 
-
-    /**
-     * Enregistrer un nouveau témoignage.
-     */
-    public function store(Request $request)
+/**
+ * Enregistrer un nouveau témoignage.
+ */
+public function store(Request $request)
 {
     $validated = $request->validate([
         'title' => 'required|min:5|max:255',
@@ -100,6 +93,14 @@ class TestimonyController extends Controller
         ]);
         
     }
+    public function all()
+{
+    return Testimony::where('status', 'published')
+        ->with('user:id,name')
+        ->latest()
+        ->get();
+}
+
 
     /**
      * Mettre à jour un témoignage existant.
@@ -126,23 +127,6 @@ class TestimonyController extends Controller
             ]);
         }
     }
-// Liste des témoignages en attente
-public function pending()
-{
-    $testimonies = Testimony::where('is_approved', false)->get();
-    return response()->json($testimonies);
-}
-
-// Valider un témoignage
-public function approve($id)
-{
-    $testimony = Testimony::findOrFail($id);
-    $testimony->is_approved = true;
-    $testimony->save();
-
-    return response()->json(['message' => 'Témoignage approuvé']);
-}
-
 
     /**
      * Supprimer un témoignage.
