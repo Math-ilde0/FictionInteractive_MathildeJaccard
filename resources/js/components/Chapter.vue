@@ -9,23 +9,15 @@
         <span>🏠</span> Accueil
       </button>
     </div>
+    
     <!-- Indicateur de chargement -->
     <div v-if="loading" class="fixed inset-0 bg-white/80 flex flex-col justify-center items-center z-50">
       <div class="w-12 h-12 border-4 border-gray-200 border-t-green-300 rounded-full animate-spin"></div>
       <div class="mt-4 text-lg text-gray-700">Chargement du chapitre...</div>
     </div>
 
-    <!-- Affichage des erreurs -->
-    <div v-else-if="error" class="max-w-lg mx-auto mt-20 p-6 bg-red-100 border border-red-300 rounded-lg text-center">
-      <div class="text-4xl mb-4">⚠️</div>
-      <div class="text-red-700 font-semibold mb-4">{{ error }}</div>
-      <button @click="retryFetch" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-        Réessayer
-      </button>
-    </div>
-
     <!-- Page du chapitre -->
-    <div v-else class="transition-all p-6 relative" :style="pageEffects">
+    <div v-else-if="!error" class="transition-all p-6 relative" :style="pageEffects">
       <MetricsDisplay :level="chargeMentale" :sleepLevel="sommeil" :gradesLevel="notes" />
 
       <h1 class="text-3xl font-bold text-center mb-6">Chapitre {{ chapter?.chapter_number || '?' }}</h1>
@@ -60,9 +52,9 @@ import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import AdviceTooltip from '@/components/AdviceTooltip.vue';
-import MetricsDisplay from '@/components/MetricsDisplay.vue' 
+import MetricsDisplay from '@/components/MetricsDisplay.vue';
 import { setMetric, getMetric } from '@/utils/metrics';
-
+import { showNotification } from '@/stores/notificationStore';
 
 const chapter = ref({});
 const choices = ref([]);
@@ -153,15 +145,26 @@ const retryFetch = () => {
   error.value = null;
   fetchChapter();
 };
+
 // Fonction pour confirmer le retour à l'accueil
 const confirmReturnHome = () => {
-  if (confirm("Êtes-vous sûr de vouloir retourner à l'accueil ? Votre progression sera sauvegardée mais vous quitterez le chapitre actuel.")) {
-    // Sauvegarder la progression avant de quitter
-    saveProgress();
-    // Rediriger vers la page d'accueil
-    router.push('/');
-  }
+  showNotification({
+    type: 'warning',
+    title: 'Quitter le chapitre',
+    message: 'Êtes-vous sûr de vouloir retourner à l\'accueil ? Votre progression sera sauvegardée.',
+    action: true,
+    actionText: 'Quitter',
+    position: 'top-4 inset-x-0 mx-auto'
+  }).then(result => {
+    if (result === 'action') {
+      // Sauvegarder la progression avant de quitter
+      saveProgress();
+      // Rediriger vers la page d'accueil
+      router.push('/');
+    }
+  });
 };
+
 // Function to fetch chapter data
 const fetchChapter = async () => {
   const { storyId, chapterId } = route.params;
@@ -170,20 +173,31 @@ const fetchChapter = async () => {
   error.value = null;
 
   try {
-const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
-
-
-    
+    const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
     chapter.value = response.data;
-    choices.value = response.data.choices || []; // 🆕 pour afficher les boutons
+    choices.value = response.data.choices || [];
+    fetchChoiceImpacts();
   } catch (err) {
     console.error('Fetch chapter error:', err);
     error.value = err.response?.data?.message || 'Erreur lors du chargement du chapitre';
+    
+    showNotification({
+      type: 'error',
+      title: 'Erreur de chargement',
+      message: error.value,
+      action: true,
+      actionText: 'Réessayer',
+      position: 'top-4 inset-x-0 mx-auto',
+      duration: 0
+    }).then(result => {
+      if (result === 'action') {
+        retryFetch();
+      }
+    });
   } finally {
     loading.value = false;
   }
 };
-
 
 // Récupérer les impacts des choix
 const fetchChoiceImpacts = async () => {
@@ -211,6 +225,11 @@ const fetchChoiceImpacts = async () => {
     choiceImpacts.value = impactsMap;
   } catch (error) {
     console.error('Erreur de récupération des impacts:', error);
+    showNotification({
+      type: 'warning',
+      message: 'Certaines informations sur les choix n\'ont pas pu être chargées.',
+      duration: 4000
+    });
   }
 };
 
@@ -225,7 +244,6 @@ const fetchChapterInfo = async (chapterId) => {
     return null;
   }
 };
-
 
 // Vérifier si des avertissements ou redirection sont nécessaires
 const checkWarnings = () => {
@@ -247,14 +265,18 @@ const checkWarnings = () => {
     return;
   }
 };
+
 // Function to make a choice and update metrics
-// Modification de la méthode makeChoice dans resources/js/components/Chapter.vue
 const makeChoice = async (choice) => {
   try {
     loading.value = true;
     
     if (!choice.id) {
-      console.error('ID de choix manquant');
+      showNotification({
+        type: 'error',
+        message: 'Ce choix n\'est pas valide. Veuillez réessayer.',
+        duration: 3000
+      });
       return;
     }
     
@@ -354,11 +376,25 @@ const makeChoice = async (choice) => {
       console.error('Erreur lors de la configuration de la requête:', error.message);
     }
     
-    error.value = error.response?.data?.message || 'Erreur lors du choix';
+    const errorMessage = error.response?.data?.message || 'Une erreur est survenue lors de ce choix. Veuillez réessayer.';
+    
+    showNotification({
+      type: 'error',
+      title: 'Erreur de progression',
+      message: errorMessage,
+      action: true,
+      actionText: 'Réessayer',
+      duration: 0
+    }).then(result => {
+      if (result === 'action') {
+        makeChoice(choice);
+      }
+    });
   } finally {
     loading.value = false;
   }
 };
+
 // Surveiller les changements de route
 watch(
   () => route.params,
@@ -370,7 +406,6 @@ watch(
   { deep: true }
 );
 
-
 // Surveiller les changements de métriques pour sauvegarder la progression
 watch(
   [chargeMentale, sommeil, notes],
@@ -379,32 +414,38 @@ watch(
     checkWarnings();
   }
 );
+
 onMounted(async () => {
   // Si c'est le premier chapitre, réinitialiser les métriques
   if (route.params.chapterId === '1') {
-    await axios.post('/metrics/reset');
-    
-    // Définir manuellement les métriques par défaut
-    chargeMentale.value = 3;
-    sommeil.value = 7;
-    notes.value = 6;
-    
-    // Sauvegarder dans localStorage
-    setMetric('stress_level', chargeMentale.value);
-    setMetric('sleep_level', sommeil.value);
-    setMetric('grades_level', notes.value);
+    try {
+      await axios.post('/metrics/reset');
+      
+      // Définir manuellement les métriques par défaut
+      chargeMentale.value = 3;
+      sommeil.value = 7;
+      notes.value = 6;
+      
+      // Sauvegarder dans localStorage
+      setMetric('stress_level', chargeMentale.value);
+      setMetric('sleep_level', sommeil.value);
+      setMetric('grades_level', notes.value);
+    } catch (error) {
+      console.error('Erreur lors de la réinitialisation des métriques:', error);
+      showNotification({
+        type: 'warning',
+        message: 'Impossible de réinitialiser les métriques. Les valeurs par défaut seront utilisées.',
+        duration: 3000
+      });
+    }
   }
   
   // Puis charger le chapitre
   fetchChapter();
 });
-
-
 </script>
 
 <style scoped>
-
-
 @keyframes heartbeat {
   0% { transform: scale(1); }
   10% { transform: scale(1.01); }

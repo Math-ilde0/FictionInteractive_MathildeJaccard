@@ -11,7 +11,6 @@ use App\Http\Controllers\MetricsController;
 
 // Public testimony routes
 Route::get('/testimonies', [TestimonyController::class, 'index']);
-Route::get('/testimonies/{testimony}', [TestimonyController::class, 'show']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -19,10 +18,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
-    // Testimony management
-    Route::post('/testimonies', [TestimonyController::class, 'store']);
-    Route::put('/testimonies/{testimony}', [TestimonyController::class, 'update']);
-    Route::delete('/testimonies/{testimony}', [TestimonyController::class, 'destroy']);
-    Route::get('/my-testimonies', [TestimonyController::class, 'myTestimonies']);
 });

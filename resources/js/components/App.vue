@@ -3,13 +3,16 @@
     class="font-[Dancing_Script] bg-[#f4f1e3] text-[#333] leading-relaxed min-h-screen pt-10 overflow-y-auto"
   >
     <router-view />
+    <NotificationContainer />
   </div>
 </template>
 
 <script>
+import NotificationContainer from './error/NotificationContainer.vue';
 export default {
   name: 'App',
   components: {
+    NotificationContainer
   }
 };
 </script>
