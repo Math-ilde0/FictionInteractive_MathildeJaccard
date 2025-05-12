@@ -17,7 +17,15 @@ class ChapterController extends Controller
                           ->first();
     
         if (!$chapter) {
-            return response()->json(['error' => 'Chapter not found'], 404);
+            // Try to find by chapter_number in case id doesn't match
+            $chapter = Chapter::where('story_id', $storyId)
+                              ->where('chapter_number', $chapterId)
+                              ->with('choices')
+                              ->first();
+            
+            if (!$chapter) {
+                return response()->json(['error' => 'Chapter not found'], 404);
+            }
         }
     
         // Récupération des métriques actuelles
@@ -31,9 +39,6 @@ class ChapterController extends Controller
         $chapter->current_grades_level = $gradesLevel;
     
         $chapter->is_burnout = $stressLevel >= 10;
-    
-        // ✅ SUPPRIMÉ : pas besoin d'avertissements sur min_sleep_level ou min_grades_level
-        // ✅ SUPPRIMÉ : pas besoin de manipuler stress_level stocké en base
 
         // Conseils (toujours utiles)
         $chapter->stress_tip = $chapter->stress_advice;

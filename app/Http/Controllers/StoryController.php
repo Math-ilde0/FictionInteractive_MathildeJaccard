@@ -18,7 +18,7 @@ class StoryController extends Controller
         return response()->json($stories);
     }
 
-    // Display a single story by ID
+    // Display a single story by ID with its chapters
     public function show($id)
     {
         $story = Story::with('chapters')->find($id);

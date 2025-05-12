@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-gradient-to-br from-white via-gray-50 to-indigo-50 py-10 px-4">
+  <main>
 
 <!-- Bouton Témoignages (jaune chaleureux) -->
 <div class="fixed top-5 right-5 z-50 mt-4 mr-4">
@@ -53,12 +53,14 @@
     </div>
 
     <!-- List of Stories -->
-    <div>
+    <div class = "max-w-6xl mx-auto px-6">
+      <br>
+      <br>
       <h2 class="text-3xl font-handwritten text-indigo-700 text-center mb-6">Choisir une nouvelle histoire</h2>
 
       <div v-if="stories.length === 0" class="text-center text-gray-500">Aucune histoire disponible.</div>
 
-      <div v-for="story in stories" :key="story.id" class="mb-6 p-6 border rounded-lg hover:shadow-md transition">
+      <div v-for="story in stories" :key="story.id" class="bg-white mb-6 p-6 border rounded-lg hover:shadow-md transition">
         <h3 class="text-xl font-bold text-gray-800 mb-2">   📘 {{ story.title }}</h3>
         <p class="text-gray-600 mb-4">{{ story.summary }}</p>
         <button @click="startStory(story.id)" class="w-full bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 flex items-center justify-center gap-2">
@@ -67,39 +69,44 @@
       </div>
     </div>
 
-    <!-- Info Section -->
-    <div class="mt-10 p-6 bg-gray-100 rounded-lg">
-      <h3 class="text-2xl font-bold text-center mb-4">À propos du jeu</h3>
-      <ul class="space-y-6">
-        <li class="flex items-start gap-4">
-          <span class="bg-red-100 text-red-500 rounded-full p-2 text-xl">🧠</span>
-          <div>
-            <strong class="text-gray-700">Charge Mentale</strong>
-            <p class="text-gray-600">Votre stress. À 10, c'est le burn-out.</p>
-          </div>
-        </li>
-        <li class="flex items-start gap-4">
-          <span class="bg-blue-100 text-blue-500 rounded-full p-2 text-xl">😴</span>
-          <div>
-            <strong class="text-gray-700">Sommeil</strong>
-            <p class="text-gray-600">Votre énergie. À 0, c'est l'épuisement.</p>
-          </div>
-        </li>
-        <li class="flex items-start gap-4">
-          <span class="bg-green-100 text-green-500 rounded-full p-2 text-xl">📚</span>
-          <div>
-            <strong class="text-gray-700">Notes</strong>
-            <p class="text-gray-600">Votre réussite académique. À 0, c'est l'échec.</p>
-          </div>
-        </li>
-      </ul>
-      <p class="text-center italic text-gray-600 mt-6">
-        Chaque décision impacte votre progression. Trouvez le bon équilibre !
-      </p>
-    </div>
+    <!-- Info Section améliorée -->
+<div class="max-w-4xl mx-auto px-4 mt-12 p-8 bg-white rounded-xl shadow-md border border-gray-200">
+  <h3 class="text-3xl font-handwritten text-indigo-700 text-center mb-6">Comprendre les mécaniques du jeu</h3>
+
+  <ul class="space-y-6">
+    <li class="flex items-center gap-4">
+      <div class="flex-shrink-0 bg-red-100 text-red-500 rounded-full p-3 text-2xl shadow-inner">🧠</div>
+      <div>
+        <p class="text-lg font-semibold text-gray-800">Charge Mentale</p>
+        <p class="text-gray-600 text-sm">Elle représente ton niveau de stress. Si elle atteint 10, c’est le burn-out garanti !</p>
+      </div>
+    </li>
+    <li class="flex items-center gap-4">
+      <div class="flex-shrink-0 bg-blue-100 text-blue-500 rounded-full p-3 text-2xl shadow-inner">😴</div>
+      <div>
+        <p class="text-lg font-semibold text-gray-800">Sommeil</p>
+        <p class="text-gray-600 text-sm">Ton énergie quotidienne. À 0, tu frôles l'épuisement total.</p>
+      </div>
+    </li>
+    <li class="flex items-center gap-4">
+      <div class="flex-shrink-0 bg-green-100 text-green-500 rounded-full p-3 text-2xl shadow-inner">📚</div>
+      <div>
+        <p class="text-lg font-semibold text-gray-800">Notes</p>
+        <p class="text-gray-600 text-sm">Ta réussite académique. À 0, c’est l’échec scolaire.</p>
+      </div>
+    </li>
+  </ul>
+
+  <p class="text-center italic text-gray-600 mt-8 text-sm">
+    Chaque choix influence ton parcours. Trouve l’équilibre entre performance et bien-être !
+  </p>
+</div>
+
+
     <footer class="text-center text-sm text-gray-500 mt-12">
   Développé à la HEIG-VD • Projet étudiant 2025
 </footer>
+<br>
 
   </main>
 </template>
@@ -142,42 +149,74 @@ export default {
       window.location.href = '/testimonies';
     },
     
-    // Charger les histoires disponibles
-    loadStories() {
-      this.loading = true;
-      this.error = null;
+    // resources/js/components/StoryList.vue
+// Updated loadStories method with proper handling for story chapters
+
+// Charger les histoires disponibles
+loadStories() {
+  this.loading = true;
+  this.error = null;
+  
+  axios.get('/stories', {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Accept': 'application/json'
+    }
+  })
+    .then(response => {
       
-      axios.get('/stories', {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(response => {
-          
-          // Vérifiez le type de données reçu
-          if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
-            console.error('Reçu du HTML au lieu du JSON');
-            this.error = 'Format de données incorrect reçu du serveur';
-            this.stories = [];
-          } else if (Array.isArray(response.data)) {
-            this.stories = response.data;
-          } else if (response.data && Array.isArray(response.data.data)) {
-            this.stories = response.data.data;
-          } else {
-            this.stories = [];
-            console.error('Format de données inattendu:', response.data);
-          }
-          
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error('Error loading stories:', error);
-          this.error = error.response?.data?.message || 'Erreur lors du chargement des histoires';
-          this.loading = false;
+      // Vérifiez le type de données reçu
+      if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+        console.error('Reçu du HTML au lieu du JSON');
+        this.error = 'Format de données incorrect reçu du serveur';
+        this.stories = [];
+      } else if (Array.isArray(response.data)) {
+        this.stories = response.data;
+        
+        // Charger les chapitres de chaque histoire pour identifier les chapitres initiaux
+        this.stories.forEach(story => {
+          this.loadStoryChapters(story);
         });
-    },
-    
+      } else if (response.data && Array.isArray(response.data.data)) {
+        this.stories = response.data.data;
+        
+        // Charger les chapitres de chaque histoire pour identifier les chapitres initiaux
+        this.stories.forEach(story => {
+          this.loadStoryChapters(story);
+        });
+      } else {
+        this.stories = [];
+        console.error('Format de données inattendu:', response.data);
+      }
+      
+      this.loading = false;
+    })
+    .catch(error => {
+      console.error('Error loading stories:', error);
+      this.error = error.response?.data?.message || 'Erreur lors du chargement des histoires';
+      this.loading = false;
+    });
+},
+
+// Méthode pour charger les chapitres d'une histoire
+loadStoryChapters(story) {
+  axios.get(`/story/${story.id}`, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Accept': 'application/json'
+    }
+  })
+    .then(response => {
+      // Mettre à jour l'histoire avec ses chapitres
+      if (response.data && response.data.chapters) {
+        story.chapters = response.data.chapters;
+        console.log(`Chapitres chargés pour l'histoire ${story.id} (${story.title}):`, story.chapters);
+      }
+    })
+    .catch(error => {
+      console.error(`Erreur lors du chargement des chapitres pour l'histoire ${story.id}:`, error);
+    });
+},
     // Charger la progression sauvegardée depuis localStorage
     loadSavedProgress() {
       const savedProgressData = localStorage.getItem('storyProgress');
@@ -232,24 +271,45 @@ export default {
     },
     
     // Démarrer une nouvelle histoire
-    async startStory(storyId) {
-      try {
-        this.loading = true;
-        
-        // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
-        await axios.post('/metrics/reset');
-        
-        // Effacer la progression précédente
-        localStorage.removeItem('storyProgress');
-        
-        // Naviguer vers le premier chapitre de l'histoire sélectionnée
-        this.$router.push(`/story/${storyId}/chapter/1`);
-      } catch (error) {
-        console.error('Error starting story:', error);
-        this.error = error.response?.data?.message || 'Erreur lors du démarrage de l\'histoire';
-        this.loading = false;
+    // resources/js/components/StoryList.vue
+// Only the startStory method is updated
+
+// Démarrer une nouvelle histoire
+async startStory(storyId) {
+  try {
+    this.loading = true;
+    
+    // Réinitialiser le niveau de stress avant de commencer une nouvelle histoire
+    await axios.post('/metrics/reset');
+    
+    // Effacer la progression précédente
+    localStorage.removeItem('storyProgress');
+    
+    // Rechercher le premier chapitre de cette histoire
+    let firstChapterId = 1; // Valeur par défaut
+    
+    // Pour chaque histoire, on essaie de trouver le chapitre avec chapter_number = 1
+    // Cela permet de charger le bon chapitre pour chaque histoire, peu importe l'ID
+    for (const story of this.stories) {
+      if (story.id == storyId && story.chapters && story.chapters.length > 0) {
+        const firstChapter = story.chapters.find(ch => ch.chapter_number === 1);
+        if (firstChapter) {
+          firstChapterId = firstChapter.id;
+          break;
+        }
       }
     }
+    
+    console.log(`Starting story ${storyId} with first chapter ID: ${firstChapterId}`);
+    
+    // Naviguer vers le premier chapitre de l'histoire sélectionnée
+    this.$router.push(`/story/${storyId}/chapter/${firstChapterId}`);
+  } catch (error) {
+    console.error('Error starting story:', error);
+    this.error = error.response?.data?.message || 'Erreur lors du démarrage de l\'histoire';
+    this.loading = false;
+  }
+}
   }
 };
 </script>

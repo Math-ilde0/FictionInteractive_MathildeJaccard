@@ -1,12 +1,12 @@
 <template>
   <main>
     <!-- Bouton retour à l'accueil -->
-    <div class="fixed top-5 right-5 z-50">
+    <div class="fixed top-5 left-5 z-50">
       <button 
         @click="confirmReturnHome" 
-        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow flex items-center gap-2"
+        class="px-4 py-2 bg-white hover:bg-blue-200 text-white rounded-lg shadow flex items-center gap-2"
       >
-        <span>🏠</span> Accueil
+        <span>🏠</span>
       </button>
     </div>
     
@@ -168,6 +168,10 @@ const confirmReturnHome = () => {
 };
 
 // Function to fetch chapter data
+// resources/js/components/Chapter.vue
+// Only the fetchChapter method is updated to handle English chapters
+// Everything else remains the same
+
 const fetchChapter = async () => {
   const { storyId, chapterId } = route.params;
 
@@ -175,15 +179,23 @@ const fetchChapter = async () => {
   error.value = null;
 
   try {
+    // Attempt to get the chapter data with proper headers
     const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`, {
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept': 'application/json'
-  }
-});
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+      }
+    });
 
+    // Process response data
     chapter.value = response.data;
     choices.value = response.data.choices || [];
+    
+    // Debugging info to console
+    console.log('Chapter data loaded:', chapter.value);
+    console.log('Choices loaded:', choices.value);
+    
+    // Load choice impacts
     fetchChoiceImpacts();
   } catch (err) {
     console.error('Fetch chapter error:', err);
@@ -274,6 +286,7 @@ const checkWarnings = () => {
   }
 };
 
+// Function to make a choice and update metrics
 // Function to make a choice and update metrics
 const makeChoice = async (choice) => {
   try {
