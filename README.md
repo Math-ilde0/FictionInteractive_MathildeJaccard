@@ -2,48 +2,13 @@
 
 Une application web de fiction interactive développée avec Laravel et Vue.js qui simule les défis de santé mentale d'un étudiant universitaire.
 
-## Présentation du projet
+## Description du Projet
 
 "Batterie Mentale" est un serious game de fiction interactive conçu pour sensibiliser aux problèmes de santé mentale universitaire. Les joueurs suivent le parcours d'un étudiant en ingénierie des médias à la HEIG-VD, prenant des décisions qui affectent son bien-être mental, son sommeil et ses performances académiques.
 
-## Prérequis
+## 🎮 Mécaniques du Jeu
 
-- PHP 8.1+
-- Composer
-- Node.js et npm
-- MySQL ou SQLite
-- Git
-
-## Installation
-
-```bash
-# 1. Cloner le dépôt
-git clone <https://github.com/votre-nom/batterie-mentale.git>
-cd batterie-mentale
-
-# 2. Installer les dépendances PHP et JavaScript
-composer install
-npm install
-
-# 3. Configurer l'environnement
-cp .env.example .env
-php artisan key:generate
-# Configurer la base de données dans .env
-
-# 4. Créer la base de données et charger les données d'exemple
-php artisan migrate --seed
-
-# 5. Compiler les assets et lancer le serveur
-npm run dev
-php artisan serve
-
-```
-
-Le seeder crée automatiquement l'histoire interactive avec tous ses chapitres et choix.
-
-## Mécaniques du jeu
-
-### Métriques principales
+### Métriques Principales
 
 Le jeu suit trois métriques clés qui déterminent la progression et les fins possibles :
 
@@ -51,53 +16,90 @@ Le jeu suit trois métriques clés qui déterminent la progression et les fins p
 - **😴 Sommeil** (0-10) : Représente la qualité du repos. À 0, provoque un effondrement physique.
 - **🎓 Notes** (0-10) : Représente les performances académiques. À 0, mène à l'échec scolaire.
 
-### Déroulement du jeu
+### Déroulement
 
-1. Choisissez l'histoire "Batterie Mentale" sur la page d'accueil
+1. Choisissez l'histoire "Batterie Mentale"
 2. Lisez chaque chapitre et faites des choix
-3. Chaque décision influence les métriques (indiquées visuellement)
-4. Des conseils thématiques s'affichent pour chaque situation (icônes survolables)
+3. Chaque décision influence les métriques
+4. Des conseils thématiques s'affichent pour chaque situation
 5. Votre progression est automatiquement sauvegardée
 
-### Fins possibles
+### Fins Possibles
 
 - **Succès** : Équilibre atteint entre bien-être et performance
 - **Burn-out** : Charge mentale trop élevée
 - **Épuisement** : Niveau de sommeil à zéro
 - **Échec académique** : Notes insuffisantes
 
-## Fonctionnalités principales
+## 🛠 Technologies Utilisées
 
-- **Narration interactive** avec des conséquences significatives
-- **Visualisation des métriques** en temps réel
-- **Sauvegarde automatique** de la progression
-- **Plateforme de témoignages** pour partager des expériences réelles
-- **Système d'authentification** pour la gestion des témoignages
-- **Interface réactive** adaptée aux mobiles et tablettes
+### Backend
+- Laravel 10.x
+- PHP 8.1+
+- Base de données : SQLite/MySQL
+- Authentification : Laravel Sanctum
 
-## Architecture technique
+### Frontend
+- Vue.js 3.x
+- Tailwind CSS
+- Axios pour les requêtes API
+- Vue Router pour la navigation
 
-### Frontend (Vue.js 3)
+## 📦 Prérequis
 
-- **Components/** : Composants Vue réutilisables (Chapter.vue, MetricsDisplay.vue, etc.)
-- **Auth/** : Composants d'authentification (Login.vue, Register.vue)
-- **Utils/** : Utilitaires JavaScript (metrics.js pour la gestion locale des métriques)
-- **Router/** : Configuration du routage Vue
+- PHP 8.1+
+- Composer
+- Node.js et npm
+- Git
 
-### Backend (Laravel 10)
+## 🚀 Installation
 
-- **Controllers/** : Logique métier (ChapterController, MetricsController, etc.)
-- **Models/** : Modèles Eloquent (Story, Chapter, Choice, Testimony)
-- **Migrations/** : Structure de la base de données
-- **Seeders/** : Données de test et contenu narratif
+### Clonage du projet
 
-### Base de données
+```bash
+git clone https://github.com/math-ilde0/story-game
+cd story-game
+```
 
-- **Stories** : Récits disponibles
-- **Chapters** : Segments narratifs avec impacts sur les métriques
-- **Choices** : Options de décision avec liens vers les chapitres suivants
-- **Testimonies** : Expériences partagées par les utilisateurs
+### Installation des dépendances
+
+```bash
+# Installer les dépendances PHP
+composer install
+
+# Installer les dépendances JavaScript
+npm install
+
+# Copier le fichier d'environnement
+cp .env.example .env
+
+# Générer la clé d'application
+php artisan key:generate
+
+# Configurer la base de données dans .env
+```
+
+### Configuration de la base de données
+
+```bash
+# Créer la base de données et charger les migrations
+php artisan migrate --seed
+
+# Compiler les assets
+npm run dev
+
+# Lancer le serveur
+composer run dev
+(ou
+php artisan serve
+& npm run dev)
+```
 
 
+##  Développé dans le cadre d'un projet éducatif pour sensibiliser à la gestion du stress et à la prévention du burn-out chez les étudiants.
 
-Développé dans le cadre d'un projet éducatif pour sensibiliser à la gestion du stress et à la prévention du burn-out chez les étudiants.
+## 👩‍💻 Auteur
+
+Mathilde Jaccard  
+HEIG-VD – Bachelor Media Engineering  
+Mai 2025
