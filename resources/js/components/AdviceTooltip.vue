@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl p-6 mt-8 text-center shadow-md border border-blue-300">
-    <h3 class="text-xl mb-6 text-gray-700">🧘 Conseils personnalisés</h3>
+  <div class="bg-gradient-to-br from-white via-gray-50 to-indigo-50 rounded-xl p-6 mt-8 text-center shadow-md border border-gray-200">
+    <h3 class="text-xl mb-6 text-gray-700 font-semibold">🧘 Conseils personnalisés</h3>
 
     <div class="flex justify-center gap-10">
       <div 

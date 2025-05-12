@@ -8,6 +8,7 @@ use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\MetricsController;
 
+
 // Route publique pour obtenir les témoignages
 Route::get('/testimonies', [TestimonyController::class, 'index']);
 // Routes nécessitant une authentification

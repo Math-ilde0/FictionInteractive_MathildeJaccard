@@ -17,24 +17,26 @@
     </div>
 
     <!-- Page du chapitre -->
-    <div v-else-if="!error" class="transition-all p-6 relative" :style="pageEffects">
+    <div v-else-if="!error" :style="pageEffects" class="bg-white max-w-3xl mx-auto shadow-xl rounded-lg px-10 py-12 relative font-serif leading-relaxed text-gray-800 prose prose-lg">
+
       <MetricsDisplay :level="chargeMentale" :sleepLevel="sommeil" :gradesLevel="notes" />
 
-      <h1 class="text-3xl font-bold text-center mb-6">Chapitre {{ chapter?.chapter_number || '?' }}</h1>
+      <h1 class="text-4xl font-bold text-center mb-8 tracking-wide">Chapitre {{ chapter?.chapter_number || '?' }}</h1>
       
       <p class="text-gray-700 leading-relaxed mb-8 whitespace-pre-line">{{ chapter?.content }}</p>
 
       <div class="flex flex-col items-center gap-4">
-        <button
-          v-for="(choice, index) in choices"
-          :key="index"
-          @click="makeChoice(choice)"
-          class="w-full max-w-md px-6 py-3 bg-green-300 text-white rounded-lg hover:bg-green-400 transition relative text-left"
-          :class="getChoiceClasses(choice)"
-        >
-          {{ choice.text }}
-        </button>
-      </div>
+  <button
+    v-for="(choice, index) in choices"
+    :key="index"
+    @click="makeChoice(choice)"
+    class="w-full max-w-md px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition relative text-left"
+    :class="getChoiceClasses(choice)"
+  >
+    {{ choice.text }}
+  </button>
+</div>
+
 
       <AdviceTooltip
         v-if="chapter && (chapter.stress_advice || chapter.sleep_advice || chapter.grades_advice)"
@@ -173,7 +175,13 @@ const fetchChapter = async () => {
   error.value = null;
 
   try {
-    const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`);
+    const response = await axios.get(`/story/${storyId}/chapter/${chapterId}`, {
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+    'Accept': 'application/json'
+  }
+});
+
     chapter.value = response.data;
     choices.value = response.data.choices || [];
     fetchChoiceImpacts();

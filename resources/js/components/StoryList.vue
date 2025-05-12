@@ -1,14 +1,17 @@
 <template>
-  <main class="min-h-screen bg-gray-50 py-10 px-4">
-    <!-- Bouton Lire des témoignages -->
-    <div class="fixed top-5 right-5 z-50">
-      <button 
-        @click="goToTestimonies" 
-        class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow"
-      >
-        Lire des témoignages
-      </button>
-    </div>
+  <main class="min-h-screen bg-gradient-to-br from-white via-gray-50 to-indigo-50 py-10 px-4">
+
+<!-- Bouton Témoignages (jaune chaleureux) -->
+<div class="fixed top-5 right-5 z-50 mt-4 mr-4">
+  <button 
+    @click="goToTestimonies" 
+    class="px-4 py-2 bg-yellow-200 hover:bg-yellow-500 text-black font-semibold rounded-lg shadow-md transition"
+  >
+    💬 Découvrir des récits d'étudiants
+  </button>
+</div>
+
+
 
     <!-- Loading -->
     <div v-if="loading" class="fixed inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
@@ -51,15 +54,15 @@
 
     <!-- List of Stories -->
     <div>
-      <h2 class="text-2xl font-bold text-center mb-6">Choisir une nouvelle histoire</h2>
+      <h2 class="text-3xl font-handwritten text-indigo-700 text-center mb-6">Choisir une nouvelle histoire</h2>
 
       <div v-if="stories.length === 0" class="text-center text-gray-500">Aucune histoire disponible.</div>
 
       <div v-for="story in stories" :key="story.id" class="mb-6 p-6 border rounded-lg hover:shadow-md transition">
-        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ story.title }}</h3>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">   📘 {{ story.title }}</h3>
         <p class="text-gray-600 mb-4">{{ story.summary }}</p>
         <button @click="startStory(story.id)" class="w-full bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 flex items-center justify-center gap-2">
-          📖 Commencer
+          ▶️ Commencer
         </button>
       </div>
     </div>
@@ -94,6 +97,10 @@
         Chaque décision impacte votre progression. Trouvez le bon équilibre !
       </p>
     </div>
+    <footer class="text-center text-sm text-gray-500 mt-12">
+  Développé à la HEIG-VD • Projet étudiant 2025
+</footer>
+
   </main>
 </template>
 
