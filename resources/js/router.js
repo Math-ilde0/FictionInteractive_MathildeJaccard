@@ -12,8 +12,9 @@ import { getMetric } from '@/utils/metrics';
 const routes = [
   {
     path: '/',
-    redirect: '/stories'
-  },
+    name: 'Home',
+    component: StoryList
+  },  
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/testimonies', component: Testimonies, meta: {requiresAuth: true} },
@@ -29,7 +30,7 @@ const routes = [
     alias: '/'
   },
   {
-    path: '/story/:storyId/chapter/:chapterId',
+    path: '/story/:storyId',
     component: Chapter,
   },
   {
