@@ -3,7 +3,7 @@ import StoryList from '/resources/js/components/StoryList.vue';
 import Chapter from './components/Chapter.vue';
 import Result from './components/Result.vue';
 import Login from '/resources/js/components/Auth/Login.vue';
-import Register from '/resources/js/components/Auth/Register.vue';
+import Register from '@/components/Auth/Register.vue';
 import Testimonies from '/resources/js/components/Testimonies/TestimoniesList.vue';
 import { user } from './auth';
 import TestimonyCreate from './components/Testimonies/TestimonyCreate.vue'; 
@@ -76,11 +76,6 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
-  // Redirect to home if user is already logged in and tries to access login/register
-  if ((to.path === '/login' || to.path === '/register') && user.value) {
-    next('/');
-    return;
-  }
 
   next();
 });

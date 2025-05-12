@@ -1,3 +1,4 @@
+
 <?php
 use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\ProfileController;
@@ -8,8 +9,10 @@ use App\Http\Controllers\MetricsController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
+// Route pour le CSRF token
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
-// Public routes
+
+// Routes du jeu
 Route::get('/stories', [StoryController::class, 'index']);
 Route::get('/story/{id}', [StoryController::class, 'show']);
 Route::get('/story/{storyId}/chapter/{chapterId}', [ChapterController::class, 'show']);
@@ -18,12 +21,7 @@ Route::post('/metrics/update', [MetricsController::class, 'updateMetrics']);
 Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics']);
 Route::apiResource('/choices', ChoiceController::class);
 
-// Assurez-vous que ces routes sont présentes
-Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-// Authentication routes
+// Routes d'authentification depuis auth.php (SUPPRIMEZ LES DUPLICATIONS ICI)
 require __DIR__.'/auth.php';
 
 // Catch-all route for SPA - must be LAST
