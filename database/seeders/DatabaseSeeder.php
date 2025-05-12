@@ -17,12 +17,14 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        // Appel des seeders individuels pour remplir les tables de la base
         $this->call([
-            StoriesTableSeeder::class,  // Remplit la table `stories`
-            TestimonySeeder::class,     // Remplit la table `testimonies`
+            StoriesTableSeeder::class,
+            UserSeeder::class,
+            TestimonySeeder::class,
         ]);
     }
-}
+    
+    }
+
