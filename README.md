@@ -53,8 +53,8 @@ Le jeu suit trois métriques clés qui déterminent la progression et les fins p
 
 ### 1. Clonage du projet
 ```bash
-git clone https://github.com/math-ilde0/story-game
-cd story-game
+git clone https://github.com/Math-ilde0/FictionInteractive_MathildeJaccard.git
+cd FictionInteractive_MathildeJaccard
 ```
 
 ### 2. Installation des dépendances
