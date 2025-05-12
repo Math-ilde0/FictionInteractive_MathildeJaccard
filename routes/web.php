@@ -18,6 +18,11 @@ Route::post('/metrics/update', [MetricsController::class, 'updateMetrics']);
 Route::post('/metrics/reset', [MetricsController::class, 'resetMetrics']);
 Route::apiResource('/choices', ChoiceController::class);
 
+// Assurez-vous que ces routes sont présentes
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 // Authentication routes
 require __DIR__.'/auth.php';
 

@@ -70,7 +70,7 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
-import { user, logout } from '/resources/js/auth.js';
+import { user, logout } from '@/auth.js';
 import axios from 'axios';
 
 export default {

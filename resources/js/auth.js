@@ -22,32 +22,43 @@ async function fetchUser() {
 fetchUser();
 
 // Login function
+// resources/js/auth.js
 async function login(credentials) {
-    try {
-      // Get CSRF cookie first
-      await axios.get('/sanctum/csrf-cookie');
-      
-      // Add delay to ensure cookie is set
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Manually set CSRF token from meta tag as fallback
-      const token = document.head.querySelector('meta[name="csrf-token"]')?.content;
-      if (token) {
-        axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
-      }
-      
-      // Attempt login with the CSRF token
-      const response = await axios.post('/login', credentials);
-      
-      // Fetch the authenticated user
-      await fetchUser();
-      return true;
-    } catch (error) {
-      console.error('Login failed:', error.response || error);
-      user.value = null;
-      return false;
+  try {
+    console.log('Démarrage processus de connexion');
+    
+    // 1. Obtenir le cookie CSRF
+    await axios.get('/sanctum/csrf-cookie');
+    console.log('CSRF cookie obtenu');
+    
+    // 2. Délai augmenté pour s'assurer que le cookie est bien défini
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // 3. Vérifier l'en-tête CSRF
+    const token = document.querySelector('meta[name="csrf-token"]')?.content;
+    console.log('CSRF token trouvé:', !!token);
+    
+    if (token) {
+      axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
     }
+    
+    // 4. Tenter la connexion
+    console.log('Envoi requête de connexion');
+    const response = await axios.post('/login', credentials);
+    console.log('Réponse reçue:', response.status);
+    
+    // 5. Récupérer les informations utilisateur
+    await fetchUser();
+    console.log('Utilisateur récupéré:', user.value);
+    
+    return !!user.value;
+  } catch (error) {
+    console.error('Détails de l\'erreur:', error.response?.data || error);
+    user.value = null;
+    return false;
   }
+}
+
 // Logout function
 async function logout() {
   try {

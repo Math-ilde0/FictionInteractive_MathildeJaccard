@@ -16,5 +16,5 @@
   
   <script setup>
   import Notification from './notification.vue';
-  import { notification, hideNotification, triggerAction } from '@/stores/notificationStore';
+  import { notification, hideNotification, triggerAction }  from '@/stores/notificationStore';
   </script>

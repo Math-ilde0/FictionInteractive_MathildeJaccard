@@ -50,7 +50,6 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { showNotification } from '@/stores/notificationStore';
-
 const title = ref('');
 const content = ref('');
 const isSubmitting = ref(false);

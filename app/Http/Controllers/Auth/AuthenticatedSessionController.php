@@ -25,16 +25,19 @@ class AuthenticatedSessionController extends Controller
      * Traiter une tentative de connexion.
      */
     public function store(LoginRequest $request): \Illuminate\Http\JsonResponse
-    {
-        $request->authenticate();
+{
+    $request->authenticate();
+
+    $request->session()->regenerate();
     
-        $request->session()->regenerate();
-    
-        return response()->json([
-            'user' => $request->user(),
-            'message' => 'Logged in successfully'
-        ]);
-    }
+    // Assurons-nous que la session est correctement persistée
+    $request->session()->save();
+
+    return response()->json([
+        'user' => $request->user(),
+        'message' => 'Logged in successfully'
+    ]);
+}
 
     /**
      * Déconnexion de l'utilisateur.

@@ -54,7 +54,7 @@ import axios from 'axios';
 import AdviceTooltip from '@/components/AdviceTooltip.vue';
 import MetricsDisplay from '@/components/MetricsDisplay.vue';
 import { setMetric, getMetric } from '@/utils/metrics';
-import { showNotification } from '@/stores/notificationStore';
+import { showNotification } from  '@/stores/notificationStore';
 
 const chapter = ref({});
 const choices = ref([]);

@@ -25,14 +25,28 @@
   
   const submit = async () => {
   try {
-    await axios.post('/register', {
+    // Obtenez d'abord le cookie CSRF
+    await axios.get('/sanctum/csrf-cookie');
+    console.log('CSRF cookie obtenu');
+    
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    console.log('Envoi requête inscription...');
+    const response = await axios.post('/register', {
       name: name.value,
       email: email.value,
       password: password.value,
       password_confirmation: password_confirmation.value
     });
-    router.push('/testimonies');
-  } catch (error) {
+    
+    // Vérifier si l'inscription a réussi
+    if (response.data && response.data.user) {
+      router.push('/testimonies');
+    } else {
+      console.warn('Inscription réussie mais format de réponse inattendu', response);
+      router.push('/testimonies');
+    }
+  }catch (error) {
     // More detailed error handling
     if (error.response) {
       // The request was made and the server responded with a status code

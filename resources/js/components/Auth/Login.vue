@@ -15,9 +15,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { login } from '/resources/js/auth.js';
+import { login } from '@/auth.js';
 import { useRouter } from 'vue-router';
-import { showNotification } from '@/stores/notificationStore';
+import { showNotification } from  '@/stores/notificationStore';
 
 const email = ref('');
 const password = ref('');
@@ -25,6 +25,7 @@ const isSubmitting = ref(false);
 const router = useRouter();
 
 const submitLogin = async () => {
+  console.log('Tentative de connexion avec:', { email: email.value });
   if (isSubmitting.value) return;
   
   try {
