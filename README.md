@@ -103,7 +103,17 @@ composer run dev
 - **Sauvegarde automatique** : Reprenez votre partie là où vous l'avez laissée
 - **Conseils de sensibilisation** : Découvrez des conseils pratiques pour gérer le stress
 
+## 🔌 API REST
 
+Le backend expose une API RESTful pour permettre au frontend de fonctionner en mode SPA (Single Page Application).
+
+    Lorsque http://localhost est ouvert, l'application web interactive apparait.
+
+   /stories, permet de recevoir une réponse JSON avec toutes les histoires.
+
+    Les routes comme /story/1 ou /story/2 affichent l'interface web d'un scénario.
+
+    Les chapitres, comme /story/1/chapter/1, renvoient également du JSON, utile pour naviguer dynamiquement.
 ## 
 
 Ce projet est développé dans le cadre d'un projet éducatif pour sensibiliser à la gestion du stress et à la prévention du burn-out chez les étudiants.
