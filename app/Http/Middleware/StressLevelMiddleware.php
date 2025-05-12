@@ -1,30 +1,34 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Middleware qui vérifie le niveau de stress à partir des cookies.
+ * Redirige vers la page d'échec si le seuil de burnout est dépassé.
+ * 
+ * @package App\Http\Middleware
+ */
 class StressLevelMiddleware
 {
     /**
-     * Handle an incoming request.
+     * Traite la requête entrante et redirige si le stress est trop élevé.
      *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Utiliser les cookies au lieu des sessions
         $stressLevel = $request->cookie('stress_level', 0);
 
         $response = $next($request);
 
-        // Vérifier si le niveau de stress dépasse 10 (burnout)
-        if ($stressLevel >= 10) {
-            // Si l'URL actuelle n'est pas déjà '/result/failure'
-            if ($request->path() !== 'result/failure') {
-                return redirect('/result/failure');
-            }
+        if ($stressLevel >= 10 && $request->path() !== 'result/failure') {
+            return redirect('/result/failure');
         }
 
         return $response;

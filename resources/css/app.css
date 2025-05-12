@@ -1,3 +1,16 @@
+/* 
+ |--------------------------------------------------------------------------
+ | Inclusion des couches Tailwind CSS
+ |--------------------------------------------------------------------------
+ |
+ | @tailwind base      : Injecte les styles CSS de base (reset + normalisation).
+ | @tailwind components: Injecte les composants prédéfinis (comme les boutons, formulaires, etc.).
+ | @tailwind utilities : Injecte toutes les classes utilitaires (margin, padding, text, flex, etc.).
+ |
+ | Ces directives sont traitées par Tailwind lors de la compilation pour générer le CSS final.
+ |
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

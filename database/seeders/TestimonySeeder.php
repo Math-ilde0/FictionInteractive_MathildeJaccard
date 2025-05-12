@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * Seeder pour la table `testimonies`.
+ *
+ * Ce fichier insère des témoignages types d’étudiants dans la base de données.
+ * Chaque témoignage illustre un aspect vécu de la vie étudiante à la HEIG-VD :
+ * stress, équilibre de vie, entraide, fatigue ou encore organisation personnelle.
+ *
+ * Ces données sont associées à l'utilisateur ID 1 et marquées comme "published"
+ * pour être immédiatement visibles via l’API ou l’interface.
+ *
+ * ➤ Utilisé pour enrichir l’application avec du contenu sensible, inspirant
+ *    et réaliste dans le cadre de la prévention de l’épuisement mental.
+ *
+ * Exécution via : php artisan db:seed --class=TestimonySeeder
+ */
+
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -57,7 +74,6 @@ class TestimonySeeder extends Seeder
                 'title' => $data['title'],
                 'content' => $data['content'],
                 'user_id' => 1,
-                'status' => 'published'
             ]);
             
         }

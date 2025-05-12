@@ -7,17 +7,25 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
+ * UserFactory
+ *
+ * Fabrique d'exemples pour le modèle `User`.
+ * Utilisée pour générer des utilisateurs fictifs lors des tests ou du seed de la base.
+ *
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * Mot de passe réutilisé pour toutes les instances générées
+     * afin d'éviter plusieurs appels à Hash::make().
+     *
+     * @var string|null
      */
     protected static ?string $password;
 
     /**
-     * Define the model's default state.
+     * Définition de l'état par défaut du modèle `User`.
      *
      * @return array<string, mixed>
      */
@@ -27,13 +35,15 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make('password'), // mot de passe par défaut
             'remember_token' => Str::random(10),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Déclare que l'utilisateur n'a pas vérifié son adresse email.
+     *
+     * @return static
      */
     public function unverified(): static
     {

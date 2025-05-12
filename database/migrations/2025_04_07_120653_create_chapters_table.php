@@ -4,28 +4,51 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Migration de création de la table `chapters`.
+ * Chaque chapitre est lié à une histoire et peut contenir des impacts
+ * sur le stress, le sommeil et les notes, ainsi que des conseils associés.
+ */
 return new class extends Migration
 {
-    public function up()
-{
-    Schema::create('chapters', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('story_id')->constrained()->onDelete('cascade');  // Associe chaque chapitre à une histoire
-        $table->integer('chapter_number');  // Le numéro du chapitre
-        $table->text('content');  // Le contenu du chapitre
-        $table->integer('stress_level')->default(5); // Valeur par défaut à 5 sur 10
-        $table->timestamps();  // Ajoute created_at et updated_at
-        $table->integer('stress_impact')->default(0); // Impact de stress du chapitre
-            $table->boolean('is_recovery_point')->default(false); // Point de récupération
-            $table->text('stress_advice')->nullable(); // Conseil de gestion du stress
-    });
-}
+    /**
+     * Crée la table `chapters` avec ses colonnes et contraintes.
+     *
+     * @return void
+     */
+    public function up(): void
+    {
+        Schema::create('chapters', function (Blueprint $table) {
+            $table->id(); // Clé primaire
 
+            $table->foreignId('story_id')
+                  ->constrained()
+                  ->onDelete('cascade'); // Lien avec la table `stories` (suppression en cascade)
 
-public function down(): void
-{
-    Schema::table('chapters', function (Blueprint $table) {
-        $table->dropColumn(['stress_impact', 'is_recovery_point', 'stress_advice']);
-    });
-}
+            $table->integer('chapter_number'); // Numéro du chapitre dans l'histoire
+            $table->text('content');           // Contenu narratif du chapitre
+
+            // Impacts potentiels du chapitre
+            $table->integer('stress_impact')->default(0); // Impact sur le stress
+            $table->integer('sleep_impact')->default(0);  // Impact sur le sommeil
+            $table->integer('grades_impact')->default(0); // Impact sur les résultats scolaires
+
+            // Conseils associés à chaque dimension
+            $table->text('stress_advice')->nullable();    // Conseil pour gérer le stress
+            $table->text('sleep_advice')->nullable();     // Conseil pour améliorer le sommeil
+            $table->text('grades_advice')->nullable();    // Conseil pour progresser scolairement
+
+            $table->timestamps(); // created_at / updated_at
+        });
+    }
+
+    /**
+     * Supprime la table `chapters`.
+     *
+     * @return void
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('chapters');
+    }
 };

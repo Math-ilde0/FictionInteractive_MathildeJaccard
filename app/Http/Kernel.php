@@ -4,8 +4,22 @@ namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
+/**
+ * Kernel HTTP
+ * 
+ * Ce fichier configure tous les middlewares globaux, de groupe, et les alias
+ * utilisés dans l'application Laravel, pour les requêtes web et API.
+ * 
+ * @package App\Http
+ */
 class Kernel extends HttpKernel
 {
+    /**
+     * Middlewares globaux de l'application.
+     * Ils s'exécutent à chaque requête HTTP, quel que soit le groupe.
+     *
+     * @var array<int, class-string|string>
+     */
     protected $middleware = [
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
@@ -15,7 +29,15 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
+    /**
+     * Groupes de middlewares pour les routes web et API.
+     *
+     * @var array<string, array<int, class-string|string>>
+     */
     protected $middlewareGroups = [
+        /**
+         * Middlewares appliqués aux routes web classiques (HTML, formulaires, sessions).
+         */
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -27,6 +49,9 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\MetricsMiddleware::class,
         ],
 
+        /**
+         * Middlewares appliqués aux routes de l'API (JSON, authentification, stateless).
+         */
         'api' => [
             \Illuminate\Session\Middleware\StartSession::class,
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
@@ -38,6 +63,12 @@ class Kernel extends HttpKernel
         ],
     ];
 
+    /**
+     * Alias de middlewares pouvant être utilisés dans les routes.
+     * Permet d'associer des noms courts à des classes de middleware.
+     *
+     * @var array<string, class-string|string>
+     */
     protected $middlewareAliases = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
@@ -50,8 +81,10 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
+        // Middlewares personnalisés
         'stress' => \App\Http\Middleware\StressLevelMiddleware::class,
         'metrics' => \App\Http\Middleware\MetricsMiddleware::class,
-        'json.response' => \App\Http\Middleware\ForceJsonResponse::class, // ← Alias correct ici
+        'json.response' => \App\Http\Middleware\ForceJsonResponse::class, // Force le JSON sur les routes
     ];
 }

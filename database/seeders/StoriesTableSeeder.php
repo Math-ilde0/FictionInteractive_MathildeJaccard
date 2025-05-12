@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * Seeder pour la table `stories`.
+ *
+ * Ce fichier insère dans la base de données des histoires interactives complètes,
+ * incluant leurs chapitres et choix associés. Chaque chapitre contient du contenu narratif,
+ * des conseils personnalisés (stress, sommeil, notes) et des impacts sur les métriques de jeu.
+ * Ce seeder supporte plusieurs langues (ex: 🇫🇷 et 🇬🇧).
+ *
+ * ➤ Utilisé pour initialiser la base de données avec un scénario de simulation complet
+ *    destiné à illustrer la charge mentale des étudiants en ingénierie des médias à la HEIG-VD.
+ *
+ * Exécution via : php artisan db:seed --class=StoriesTableSeeder
+ */
+
+
 namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Story;

@@ -1,48 +1,45 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Middleware qui vérifie les métriques de l'utilisateur dans la session
+ * et redirige en cas de surcharge mentale, de manque de sommeil ou d'échec académique.
+ * 
+ * @package App\Http\Middleware
+ */
 class MetricsMiddleware
 {
     /**
-     * Handle an incoming request.
+     * Traite la requête entrante et applique les redirections si nécessaire.
      *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Récupérer les métriques depuis la session, ou utiliser les valeurs par défaut
         $stressLevel = session('stress_level', 3);
         $sleepLevel = session('sleep_level', 7);
         $gradesLevel = session('grades_level', 6);
 
         $response = $next($request);
 
-        // Burnout (stress trop élevé)
-        if ($stressLevel >= 10) {
-            // Si l'URL actuelle n'est pas déjà '/result/failure'
-            if ($request->path() !== 'result/failure') {
-                return redirect('/result/failure');
-            }
+        // Redirections selon les seuils atteints
+        if ($stressLevel >= 10 && $request->path() !== 'result/failure') {
+            return redirect('/result/failure');
         }
 
-        // Crise de sommeil (sommeil trop bas)
-        if ($sleepLevel <= 0) {
-            // Si l'URL actuelle n'est pas déjà '/result/sleep-crisis'
-            if ($request->path() !== 'result/sleep-crisis') {
-                return redirect('/result/sleep-crisis');
-            }
+        if ($sleepLevel <= 0 && $request->path() !== 'result/sleep-crisis') {
+            return redirect('/result/sleep-crisis');
         }
 
-        // Crise académique (notes trop basses)
-        if ($gradesLevel <= 0) {
-            // Si l'URL actuelle n'est pas déjà '/result/academic-crisis'
-            if ($request->path() !== 'result/academic-crisis') {
-                return redirect('/result/academic-crisis');
-            }
+        if ($gradesLevel <= 0 && $request->path() !== 'result/academic-crisis') {
+            return redirect('/result/academic-crisis');
         }
 
         return $response;

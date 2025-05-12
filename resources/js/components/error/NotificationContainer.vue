@@ -1,4 +1,5 @@
 <template>
+  <!-- Composant Notification affiché dynamiquement -->
     <Notification
       :show="notification.show"
       :type="notification.type"
@@ -15,6 +16,7 @@
   </template>
   
   <script setup>
+  // Import du composant Notification et du store d’état
   import Notification from './notification.vue';
-  import { notification, hideNotification, triggerAction }  from '@/stores/notificationStore';
+  import { notification, hideNotification, triggerAction } from '@/stores/notificationStore';
   </script>

@@ -1,4 +1,11 @@
-<?php
+/**
+ * Handler.php
+ * 
+ * Ce fichier définit la classe Handler pour gérer les exceptions dans l'application Laravel.
+ * 
+ * @package App\Exceptions
+ * @extends \Illuminate\Foundation\Exceptions\Handler
+ */
 
 namespace App\Exceptions;
 
@@ -8,7 +15,8 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
+     * Liste des champs qui ne doivent jamais être stockés dans la session
+     * lors d'une erreur de validation (ex : mots de passe).
      *
      * @var array<int, string>
      */
@@ -19,17 +27,19 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
+     * Enregistre les callbacks pour le reporting d'exceptions.
+     *
+     * @return void
      */
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            // Personnaliser la logique de rapport d'erreurs ici si nécessaire
         });
     }
 
     /**
-     * Render an exception into an HTTP response.
+     * Convertit une exception en réponse HTTP.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Throwable  $e

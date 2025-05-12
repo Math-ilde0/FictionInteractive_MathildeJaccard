@@ -7,15 +7,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * User
+ *
+ * Modèle représentant un utilisateur de l'application.
+ * Peut soumettre plusieurs témoignages et s'authentifier.
+ *
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ *
+ * @package App\Models
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Attributs modifiables en masse.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
@@ -24,9 +37,9 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Attributs cachés pour la sérialisation.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -34,7 +47,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Attributs à caster automatiquement.
      *
      * @return array<string, string>
      */
@@ -45,9 +58,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function testimonies()
-{
-    return $this->hasMany(Testimony::class);
-}
 
+    /**
+     * Relation : l'utilisateur peut avoir plusieurs témoignages.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function testimonies()
+    {
+        return $this->hasMany(Testimony::class);
+    }
 }

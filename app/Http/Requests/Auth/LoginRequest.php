@@ -9,10 +9,20 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * LoginRequest
+ *
+ * Cette classe gère la validation et l'authentification d'une requête de connexion.
+ * Elle intègre également une protection contre le brute force via le système de limitation Laravel.
+ *
+ * @package App\Http\Requests\Auth
+ */
 class LoginRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Détermine si l'utilisateur est autorisé à faire cette requête.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -20,7 +30,7 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Retourne les règles de validation pour la requête.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
@@ -33,9 +43,11 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Attempt to authenticate the request's credentials.
+     * Tente d'authentifier l'utilisateur avec les identifiants fournis.
+     * Lance une exception si les identifiants sont incorrects ou en cas de trop nombreuses tentatives.
      *
      * @throws \Illuminate\Validation\ValidationException
+     * @return void
      */
     public function authenticate(): void
     {
@@ -53,9 +65,11 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Ensure the login request is not rate limited.
+     * Vérifie que la requête n'a pas dépassé la limite de tentatives autorisées.
+     * Si c'est le cas, déclenche l'événement Lockout et lance une exception.
      *
      * @throws \Illuminate\Validation\ValidationException
+     * @return void
      */
     public function ensureIsNotRateLimited(): void
     {
@@ -76,10 +90,13 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Get the rate limiting throttle key for the request.
+     * Génère une clé unique basée sur l'email et l'adresse IP
+     * pour le système de limitation des tentatives (rate limiting).
+     *
+     * @return string
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }
