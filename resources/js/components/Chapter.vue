@@ -383,32 +383,52 @@
   });
   
   onMounted(async () => {
+  // Récupérer le chapterId de l'URL
+  const { chapterId } = route.params;
   
-  try {
-  
-  await axios.post('/metrics/reset');
-  
-  chargeMentale.value = 3;
-  
-  sommeil.value = 7;
-  
-  notes.value = 6;
-  
-  setMetric('stress_level', chargeMentale.value);
-  
-  setMetric('sleep_level', sommeil.value);
-  
-  setMetric('grades_level', notes.value);
-  
-  } catch (error) {
-  
-  showNotification({ type: 'warning', message: 'Erreur de réinitialisation', duration: 3000 });
-  
+  // Si chapterId est présent dans l'URL, l'utiliser
+  if (chapterId) {
+    currentChapterId.value = parseInt(chapterId);
   }
   
-  fetchChapter(currentChapterId.value);
+  try {
+    // Vérifier si nous sommes en train de reprendre une partie sauvegardée
+    const savedProgressData = localStorage.getItem('storyProgress');
+    if (savedProgressData) {
+      const progress = JSON.parse(savedProgressData);
+      
+      // Utiliser les métriques sauvegardées au lieu de réinitialiser
+      chargeMentale.value = progress.chargeMentale ?? 3;
+      sommeil.value = progress.sommeil ?? 7;
+      notes.value = progress.notes ?? 6;
+      
+      // Si nous avons un chapterId sauvegardé, l'utiliser
+      if (progress.chapterId) {
+        currentChapterId.value = parseInt(progress.chapterId);
+      }
+    } else {
+      // Seulement réinitialiser les métriques si nous ne reprenons pas une partie
+      await axios.post('/metrics/reset');
+      chargeMentale.value = 3;
+      sommeil.value = 7;
+      notes.value = 6;
+    }
+    
+    // Mettre à jour les métriques locales
+    setMetric('stress_level', chargeMentale.value);
+    setMetric('sleep_level', sommeil.value);
+    setMetric('grades_level', notes.value);
+  } catch (error) {
+    showNotification({ 
+      type: 'warning', 
+      message: 'Erreur de réinitialisation', 
+      duration: 3000 
+    });
+  }
   
-  });
+  // Charger le chapitre avec l'ID récupéré
+  fetchChapter(currentChapterId.value);
+});
   
   </script>
   

@@ -438,7 +438,7 @@
   
   .then(() => {
   
-  this.$router.push(`/story/${this.savedProgress.storyId}/chapter/${this.savedProgress.chapterId}`);
+  this.$router.push(`/story/${this.savedProgress.storyId}`);
   
   })
   
