@@ -113,12 +113,12 @@ class TestimonyController extends Controller
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function all()
-    {
-        return Testimony::where('status', 'published')
-            ->with('user:id,name')
-            ->latest()
-            ->get();
-    }
+{
+    // Retourner tous les témoignages sans filtrer par status
+    return Testimony::with('user:id,name')
+        ->latest()
+        ->get();
+}
 
     /**
      * Mettre à jour un témoignage existant.

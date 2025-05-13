@@ -1,4 +1,13 @@
 <template>
+  <!-- Bouton Retour -->
+  <div class="mb-6">
+      <button 
+        @click="goBack" 
+        class="flex items-center gap-2 text-blue-500 hover:text-blue-700 transition"
+      >
+        <span>←</span> Retour aux témoignages
+      </button>
+    </div>
   <div class="testimony-create-container">
     <h1 class="text-2xl font-bold mb-6">Partager mon témoignage</h1>
     
@@ -54,6 +63,10 @@ const content = ref('');
 const isSubmitting = ref(false);
 const router = useRouter();
 
+// Fonction pour retourner à la page précédente
+const goBack = () => {
+  router.push('/testimonies');
+};
 const submitTestimony = async () => {
   if (isSubmitting.value) return;
   
@@ -116,6 +129,8 @@ const submitTestimony = async () => {
       router.push('/login');
     }
     
+    
+
     showNotification({
       type: 'error',
       title: 'Erreur de publication',
@@ -130,5 +145,6 @@ const submitTestimony = async () => {
   } finally {
     isSubmitting.value = false;
   }
+  
 };
 </script>
