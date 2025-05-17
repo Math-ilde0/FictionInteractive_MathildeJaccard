@@ -1,6 +1,20 @@
+<!--
+/**
+ * @component TestimoniesList.vue
+ * Affiche la liste des témoignages publiés par les utilisateurs.
+ *
+ * Récupère les données via GET `/testimonies/all`.
+ * Affiche les noms, titres et dates, avec mise en page responsive.
+ * Permet de se déconnecter et d’accéder au formulaire de création (lien désactivé).
+ *
+ * @auteur Mathilde Jaccard – HEIG-VD
+ * @date Mai 2025
+ */
+-->
+
 <template>
   <div class="max-w-3xl mx-auto px-4 py-10">
-    <!-- Bouton unique pour retour à l'accueil avec déconnexion -->
+    <!-- Bouton de déconnexion + retour à l'accueil -->
     <div class="fixed top-5 right-5 z-50">
       <button
         @click="logoutAndGoHome"
@@ -14,6 +28,7 @@
       Témoignages sur la charge mentale
     </h1>
 
+    <!-- Bouton pour créer un témoignage si l'utilisateur est connecté -->
     <div v-if="isAuthenticated" class="text-center mb-8">
       <router-link
         to="/testimonies/create"
@@ -23,18 +38,22 @@
       </router-link>
     </div>
 
+    <!-- Chargement en cours -->
     <div v-if="loading" class="text-center py-8 text-gray-500">
       Chargement des témoignages...
     </div>
 
+    <!-- Message d’erreur -->
     <div v-else-if="error" class="bg-red-100 text-red-700 p-4 rounded-lg text-center">
       {{ error }}
     </div>
 
+    <!-- Aucun témoignage trouvé -->
     <div v-else-if="!testimonies || testimonies.length === 0" class="text-center py-8 text-gray-500 italic">
       Aucun témoignage n'a encore été publié.
     </div>
 
+    <!-- Affichage des témoignages -->
     <div v-else class="space-y-6">
       <div
         v-for="(testimony, index) in testimonies"
@@ -63,11 +82,15 @@ import axios from 'axios';
 
 export default {
   setup() {
+    // Variables réactives pour stocker les témoignages, l’état de chargement et les erreurs
     const testimonies = ref([]);
     const loading = ref(true);
     const error = ref(null);
+
+    // Vérifie si l’utilisateur est connecté
     const isAuthenticated = computed(() => !!user.value);
 
+    // Déconnexion + redirection vers l’accueil
     const logoutAndGoHome = async () => {
       try {
         await logout();
@@ -78,10 +101,10 @@ export default {
       }
     };
 
+    // Récupère les témoignages depuis l'API
     const fetchTestimonies = async () => {
       loading.value = true;
       error.value = null;
-
       try {
         const response = await axios.get('/testimonies/all');
         testimonies.value = response.data;
@@ -93,6 +116,7 @@ export default {
       }
     };
 
+    // Formate une date au format français
     const formatDate = (dateString) => {
       if (!dateString) return '';
       try {
@@ -108,11 +132,12 @@ export default {
       }
     };
 
+    // Raccourcit le contenu d’un témoignage
     const excerpt = (text = '', length = 200) => {
-      if (!text) return '';
       return text.length <= length ? text : text.substring(0, length) + '...';
     };
 
+    // Chargement initial des témoignages
     onMounted(() => {
       fetchTestimonies();
     });

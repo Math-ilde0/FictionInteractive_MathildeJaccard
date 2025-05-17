@@ -1,17 +1,35 @@
+<!--
+/**
+ * @component TestimonyCreate.vue
+ * Formulaire de création de témoignage par un utilisateur connecté.
+ *
+ * Permet de poster un récit personnel via POST `/api/testimonies`.
+ * Inclut un système de notification, validation du formulaire, et gestion d’erreur.
+ * Accessible uniquement après authentification.
+ *
+ * @auteur Mathilde Jaccard – HEIG-VD
+ * @date Mai 2025
+ */
+-->
+
 <template>
-  <!-- Bouton Retour -->
+  <!-- Bouton retour vers la liste des témoignages -->
   <div class="mb-6">
-      <button 
-        @click="goBack" 
-        class="flex items-center gap-2 text-blue-500 hover:text-blue-700 transition"
-      >
-        <span>←</span> Retour aux témoignages
-      </button>
-    </div>
+    <button 
+      @click="goBack" 
+      class="flex items-center gap-2 text-blue-500 hover:text-blue-700 transition"
+    >
+      <span>←</span> Retour aux témoignages
+    </button>
+  </div>
+
   <div class="testimony-create-container">
     <h1 class="text-2xl font-bold mb-6">Partager mon témoignage</h1>
     
+    <!-- Formulaire de création de témoignage -->
     <form @submit.prevent="submitTestimony" class="max-w-lg mx-auto">
+      
+      <!-- Champ pour le titre -->
       <div class="mb-4">
         <label for="title" class="block mb-2">Titre du témoignage</label>
         <input 
@@ -24,6 +42,7 @@
         />
       </div>
       
+      <!-- Champ pour le contenu -->
       <div class="mb-4">
         <label for="content" class="block mb-2">Votre témoignage</label>
         <textarea 
@@ -36,6 +55,7 @@
         ></textarea>
       </div>
       
+      <!-- Bouton de soumission désactivé pour l’instant -->
       <button 
         type="submit" 
         class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
@@ -52,36 +72,39 @@
       </button>
     </form>
   </div>
-</template><script setup>
+</template>
+
+<script setup>
+// Import des fonctions de base
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { showNotification } from '@/stores/notificationStore';
 
+// Variables réactives pour les champs du formulaire
 const title = ref('');
 const content = ref('');
 const isSubmitting = ref(false);
+
+// Router Vue pour navigation
 const router = useRouter();
 
-// Fonction pour retourner à la page précédente
+// Redirection manuelle vers la page des témoignages
 const goBack = () => {
   router.push('/testimonies');
 };
+
+// Fonction de soumission du formulaire
 const submitTestimony = async () => {
   if (isSubmitting.value) return;
-  
+
   try {
     isSubmitting.value = true;
-    
-    // Debugging
-    console.log('Début de la soumission du témoignage');
-    
-    // Get CSRF cookie first
-    console.log('Récupération du cookie CSRF...');
+
+    // Obtenir le cookie CSRF de Laravel
     await axios.get('/sanctum/csrf-cookie');
-    
-    console.log('Envoi du témoignage...');
-    // Envoi explicite avec withCredentials pour s'assurer que les cookies sont envoyés
+
+    // Requête POST vers l'API protégée
     const response = await axios.post('/api/testimonies', {
       title: title.value,
       content: content.value
@@ -92,45 +115,33 @@ const submitTestimony = async () => {
         'Content-Type': 'application/json'
       }
     });
-    
-    console.log('Réponse du serveur:', response);
-    
-    // Success
+
+    // Notification de succès
     await showNotification({
       type: 'success',
       title: 'Témoignage publié !',
       message: 'Votre témoignage a été soumis avec succès.',
       duration: 3000
     });
-    
+
+    // Redirection après succès
     router.push('/testimonies');
   } catch (error) {
-    console.error('Erreur détaillée lors de la publication:', {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      headers: error.response?.headers
-    });
-    
+    // Gestion fine des erreurs
     let errorMessage = 'Impossible de publier le témoignage. Réessayez.';
     
-    if (error.response?.data?.message) {
+    if (error.response?.status === 401) {
+      errorMessage = "Vous n'êtes pas connecté. Veuillez vous connecter.";
+      router.push('/login');
+    } else if (error.response?.data?.message) {
       errorMessage = error.response.data.message;
     } else if (error.response?.data?.errors) {
       errorMessage = Object.values(error.response.data.errors).flat().join('\n');
     } else if (error.request) {
       errorMessage = 'Problème de connexion. Vérifiez votre réseau.';
     }
-    
-    if (error.response?.status === 401) {
-      errorMessage = "Vous n'êtes pas connecté. Veuillez vous connecter pour publier un témoignage.";
-      // Rediriger vers la page de connexion
-      router.push('/login');
-    }
-    
-    
 
+    // Affichage de la notification d’erreur
     showNotification({
       type: 'error',
       title: 'Erreur de publication',
@@ -145,6 +156,5 @@ const submitTestimony = async () => {
   } finally {
     isSubmitting.value = false;
   }
-  
 };
 </script>
