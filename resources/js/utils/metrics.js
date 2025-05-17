@@ -1,13 +1,26 @@
-// Mise à jour du fichier resources/js/utils/metrics.js
-// Pour une meilleure gestion des métriques avec localStorage
+/**
+ * @file metrics.js
+ * @description
+ * Utilitaires Vue pour gérer les métriques du joueur (charge mentale, sommeil, notes)
+ * via le `localStorage`. Utilisé dans les composants de jeu pour lire, écrire et réinitialiser
+ * les valeurs des indicateurs.
+ *
+ * Fonctionnalités :
+ * - Sauvegarde et lecture de chaque métrique individuellement
+ * - Réinitialisation des trois métriques en un appel
+ * - Sécurisation des valeurs dans la plage 0–10
+ *
+ * @auteur Mathilde Jaccard – HEIG-VD, Bachelor Media Engineering
+ * @date Mai 2025
+ */
 
 /**
- * Définit une métrique dans le localStorage
- * @param {string} name - Nom de la métrique (stress_level, sleep_level, grades_level)
- * @param {number} value - Valeur de la métrique
+ * Définit une métrique dans le localStorage, en la bornant entre 0 et 10.
+ * @param {string} name - Nom de la métrique (ex: 'stress_level')
+ * @param {number} value - Valeur souhaitée
+ * @returns {number} - Valeur sauvegardée, corrigée si nécessaire
  */
 export const setMetric = (name, value) => {
-  // Convertir en nombre et s'assurer que la valeur est dans les limites
   const numValue = parseInt(value);
   const safeValue = Math.max(0, Math.min(10, numValue));
   localStorage.setItem(name, safeValue);
@@ -15,22 +28,21 @@ export const setMetric = (name, value) => {
 };
 
 /**
- * Récupère une métrique du localStorage
- * @param {string} name - Nom de la métrique
- * @param {number} defaultValue - Valeur par défaut si métrique non trouvée
- * @returns {number} - Valeur numérique de la métrique
+ * Récupère une métrique depuis le localStorage, ou retourne une valeur par défaut.
+ * @param {string} name - Nom de la métrique à lire
+ * @param {number} [defaultValue=5] - Valeur par défaut si absente ou invalide
+ * @returns {number} - Valeur entière de la métrique
  */
 export const getMetric = (name, defaultValue = 5) => {
   const value = localStorage.getItem(name);
   if (value === null) return defaultValue;
-  
+
   const numValue = parseInt(value);
-  // S'assurer que la valeur est un nombre valide
   return isNaN(numValue) ? defaultValue : numValue;
 };
 
 /**
- * Réinitialise toutes les métriques aux valeurs par défaut
+ * Réinitialise toutes les métriques aux valeurs de départ (stress: 3, sommeil: 7, notes: 6).
  */
 export const resetMetrics = () => {
   setMetric('stress_level', 3);
@@ -39,8 +51,8 @@ export const resetMetrics = () => {
 };
 
 /**
- * Obtient toutes les métriques en une seule fois
- * @returns {Object} - Objet contenant toutes les métriques
+ * Récupère toutes les métriques courantes sous forme d’objet.
+ * @returns {{stress_level: number, sleep_level: number, grades_level: number}}
  */
 export const getAllMetrics = () => {
   return {

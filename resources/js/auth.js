@@ -1,11 +1,35 @@
-// resources/js/auth.js
+/**
+ * @file auth.js
+ * @description
+ * Ce module gère l’état d’authentification de l’utilisateur dans l’application Vue.
+ * Il fournit les fonctions `login`, `logout`, et `fetchUser` pour interagir avec l’API Laravel protégée par Sanctum.
+ * 
+ * @fonctionnalités :
+ * - Connexion de l’utilisateur (via `/login` + CSRF)
+ * - Récupération du profil connecté (via `/api/user`)
+ * - Déconnexion (via `/logout`)
+ * - Suivi réactif de l’état d’authentification (`isAuthenticated`)
+ *
+ * @auteur Mathilde Jaccard – HEIG-VD, Bachelor Media Engineering
+ * @date Mai 2025
+ */
+
 import { ref, computed } from 'vue';
 import axios from 'axios';
 
+// État utilisateur courant
 const user = ref(null);
+
+/**
+ * Renvoie true si un utilisateur est connecté
+ * @type {import('vue').ComputedRef<boolean>}
+ */
 const isAuthenticated = computed(() => !!user.value);
 
-// Get the current user
+/**
+ * Récupère les données de l’utilisateur connecté depuis l’API Laravel
+ * @returns {Promise<Object|null>} L'utilisateur ou null s'il n'est pas connecté
+ */
 async function fetchUser() {
   try {
     const response = await axios.get('/api/user', {
@@ -23,28 +47,29 @@ async function fetchUser() {
   }
 }
 
-// Try to fetch the user when the app loads
+// Initialisation automatique à l'import
 fetchUser();
 
-// Login function
+/**
+ * Tente de connecter l'utilisateur avec les identifiants fournis
+ * @param {Object} credentials - Les identifiants { email, password }
+ * @returns {Promise<boolean>} True si la connexion est réussie, false sinon
+ */
 async function login(credentials) {
   try {
     console.log('Démarrage processus de connexion');
     
-    // 1. Obtenir le cookie CSRF
+    // Étape 1 : récupérer le cookie CSRF
     await axios.get('/sanctum/csrf-cookie');
     console.log('CSRF cookie obtenu');
     
-    // 2. Vérifier l'en-tête CSRF
+    // Étape 2 : injecter le token CSRF si disponible
     const token = document.querySelector('meta[name="csrf-token"]')?.content;
-    console.log('CSRF token trouvé:', !!token);
-    
     if (token) {
       axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
     }
     
-    // 3. Tenter la connexion
-    console.log('Envoi requête de connexion');
+    // Étape 3 : envoi de la requête de connexion
     const response = await axios.post('/login', credentials, {
       withCredentials: true,
       headers: {
@@ -52,21 +77,21 @@ async function login(credentials) {
         'Content-Type': 'application/json'
       }
     });
-    console.log('Réponse reçue:', response.status);
-    
-    // 4. Récupérer les informations utilisateur
+
+    // Étape 4 : récupération du profil utilisateur
     await fetchUser();
-    console.log('Utilisateur récupéré:', user.value);
-    
     return !!user.value;
   } catch (error) {
-    console.error('Détails de l\'erreur:', error.response?.data || error);
+    console.error('Erreur de connexion :', error.response?.data || error);
     user.value = null;
     return false;
   }
 }
 
-// Logout function
+/**
+ * Déconnecte l'utilisateur en appelant l'API Laravel
+ * @returns {Promise<boolean>} True si la déconnexion est réussie
+ */
 async function logout() {
   try {
     await axios.post('/logout', {}, {

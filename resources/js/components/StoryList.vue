@@ -210,8 +210,7 @@ export default {
     },
     clearSavedProgress() {
       if (confirm('Confirmer la suppression de la progression ?')) {
-        loc
-        alStorage.removeItem('storyProgress');
+        localStorage.removeItem('storyProgress');
         this.savedProgress = null;
       }
     },
