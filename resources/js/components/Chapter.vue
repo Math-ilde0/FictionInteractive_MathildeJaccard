@@ -17,52 +17,55 @@
 <template>
   <!-- Bouton de retour à l'accueil -->
   <div class="fixed top-5 left-5 z-50">
-    <button @click="confirmReturnHome" class="px-4 py-2 bg-white hover:bg-blue-200 text-white rounded-lg shadow flex items-center gap-2">
+    <button @click="confirmReturnHome" class="px-4 py-2 bg-white dark:bg-gray-700 hover:bg-blue-200 dark:hover:bg-blue-800 text-white rounded-lg shadow flex items-center gap-2">
       <span>🏠</span>
     </button>
   </div>
 
   <!-- Indicateur de chargement -->
-  <div v-if="loading && !suppressLoading" class="fixed inset-0 bg-white/80 flex flex-col justify-center items-center z-50">
-    <div class="w-12 h-12 border-4 border-gray-200 border-t-green-300 rounded-full animate-spin"></div>
-    <div class="mt-4 text-lg text-gray-700">Chargement du chapitre...</div>
+  <div v-if="loading && !suppressLoading" class="fixed inset-0 bg-white/80 dark:bg-gray-900/80 flex flex-col justify-center items-center z-50">
+    <div class="w-12 h-12 border-4 border-gray-200 dark:border-gray-600 border-t-green-300 rounded-full animate-spin"></div>
+    <div class="mt-4 text-lg text-gray-700 dark:text-gray-300">Chargement du chapitre...</div>
   </div>
 
-  <!-- Affichage du chapitre -->
-  <div
-    v-else-if="!error"
-    :style="pageEffects"
-    class="bg-white max-w-3xl mx-auto shadow-xl rounded-lg px-10 py-12 relative font-serif leading-relaxed text-gray-800 prose prose-lg"
-  >
-    <!-- Affichage des métriques -->
-    <MetricsDisplay :level="chargeMentale" :sleepLevel="sommeil" :gradesLevel="notes" />
+  <!-- Affichage du chapitre avec transition -->
+  <transition name="chapter-fade" mode="out-in">
+    <div
+      v-if="!error && !loading"
+      :key="chapter.chapter_number"
+      :style="pageEffects"
+      class="bg-white dark:bg-gray-800 max-w-3xl mx-auto shadow-xl rounded-lg px-10 py-12 relative font-serif leading-relaxed text-gray-800 dark:text-gray-200 prose prose-lg"
+    >
+      <!-- Affichage des métriques -->
+      <MetricsDisplay :level="chargeMentale" :sleepLevel="sommeil" :gradesLevel="notes" />
 
-    <h1 class="text-4xl font-bold text-center mb-8 tracking-wide">Chapitre {{ chapter?.chapter_number || '?' }}</h1>
+      <h1 class="text-4xl font-bold text-center mb-8 tracking-wide dark:text-white">Chapitre {{ chapter?.chapter_number || '?' }}</h1>
 
-    <p class="text-gray-700 leading-relaxed mb-8 whitespace-pre-line">{{ chapter?.content }}</p>
+      <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-8 whitespace-pre-line">{{ chapter?.content }}</p>
 
-    <!-- Affichage des choix -->
-    <div class="flex flex-col items-center gap-4">
-      <button
-        v-for="(choice, index) in choices"
-        :key="index"
-        @click="makeChoice(choice)"
-        class="w-full max-w-md px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition relative text-left"
-        :class="getChoiceClasses(choice)"
-      >
-        {{ choice.text }}
-      </button>
+      <!-- Affichage des choix -->
+      <div class="flex flex-col items-center gap-4">
+        <button
+          v-for="(choice, index) in choices"
+          :key="index"
+          @click="makeChoice(choice)"
+          class="w-full max-w-md px-6 py-3 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition relative text-left"
+          :class="getChoiceClasses(choice)"
+        >
+          {{ choice.text }}
+        </button>
+      </div>
+
+      <!-- Affichage des conseils -->
+      <AdviceTooltip
+        v-if="chapter && (chapter.stress_advice || chapter.sleep_advice || chapter.grades_advice)"
+        :stressAdvice="chapter.stress_advice || ''"
+        :sleepAdvice="chapter.sleep_advice || ''"
+        :gradesAdvice="chapter.grades_advice || ''"
+        class="mt-10"
+      />
     </div>
-
-    <!-- Affichage des conseils -->
-    <AdviceTooltip
-      v-if="chapter && (chapter.stress_advice || chapter.sleep_advice || chapter.grades_advice)"
-      :stressAdvice="chapter.stress_advice || ''"
-      :sleepAdvice="chapter.sleep_advice || ''"
-      :gradesAdvice="chapter.grades_advice || ''"
-      class="mt-10"
-    />
-  </div>
+  </transition>
 </template>
 
 <script setup>
@@ -104,7 +107,7 @@ const pageEffects = computed(() => {
   return { boxShadow: '0 8px 20px rgba(239, 83, 80, 0.5)', animation: 'shake 0.5s infinite' };
 });
 
-// Classes visuelles pour les choix en fonction de l’impact
+// Classes visuelles pour les choix en fonction de l'impact
 const getChoiceClasses = (choice) => {
   const impacts = choiceImpacts.value.get(choice.id);
   if (!impacts) return {};
@@ -119,7 +122,7 @@ const getChoiceClasses = (choice) => {
   return classes;
 };
 
-// Charger un chapitre depuis l’API
+// Charger un chapitre depuis l'API
 const fetchChapter = async (chapterId = currentChapterId.value) => {
   const { storyId } = route.params;
   if (!suppressLoading.value) loading.value = true;
@@ -138,7 +141,7 @@ const fetchChapter = async (chapterId = currentChapterId.value) => {
   }
 };
 
-// Prédit l’impact des choix sur les métriques
+// Prédit l'impact des choix sur les métriques
 const fetchChoiceImpacts = async () => {
   const impactsMap = new Map();
   for (const choice of choices.value) {
@@ -154,7 +157,7 @@ const fetchChoiceImpacts = async () => {
   choiceImpacts.value = impactsMap;
 };
 
-// Obtenir les infos d’un chapitre par ID
+// Obtenir les infos d'un chapitre par ID
 const fetchChapterInfo = async (chapterId) => {
   const { storyId } = route.params;
   try {
@@ -172,7 +175,7 @@ const checkWarnings = () => {
   else if (notes.value <= 0) router.push('/result/academic-crisis');
 };
 
-// Lorsqu’un choix est fait
+// Lorsqu'un choix est fait
 const makeChoice = async (choice) => {
   suppressLoading.value = true;
   try {
@@ -207,7 +210,7 @@ const makeChoice = async (choice) => {
   }
 };
 
-// Sauvegarder l’état de la partie
+// Sauvegarder l'état de la partie
 const saveProgress = () => {
   localStorage.setItem('storyProgress', JSON.stringify({
     storyId: route.params.storyId,
@@ -218,7 +221,7 @@ const saveProgress = () => {
   }));
 };
 
-// Confirmer le retour à l’accueil
+// Confirmer le retour à l'accueil
 const confirmReturnHome = () => {
   showNotification({
     type: 'warning',
@@ -262,10 +265,42 @@ onMounted(async () => {
   fetchChapter(currentChapterId.value);
 });
 
-// 🎯 Suivre les changements d’état
+// 🎯 Suivre les changements d'état
 watch(currentChapterId, fetchChapter);
 watch([chargeMentale, sommeil, notes], () => {
   saveProgress();
   checkWarnings();
 });
 </script>
+
+<style scoped>
+/* Animation de transition entre chapitres */
+.chapter-fade-enter-active,
+.chapter-fade-leave-active {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.chapter-fade-enter-from,
+.chapter-fade-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Animations pour les indicateurs de stress élevé */
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  5% { transform: scale(1.01); }
+  10% { transform: scale(1); }
+  15% { transform: scale(1.01); }
+  20% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(3px); }
+  50% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+</style>

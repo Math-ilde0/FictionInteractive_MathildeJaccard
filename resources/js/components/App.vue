@@ -19,6 +19,9 @@
     <!-- Affiche dynamiquement les composants selon la route -->
     <router-view />
 
+    <!-- Ajouter le toggle dark mode -->
+    <DarkModeToggle />
+    
     <!-- Conteneur global pour les notifications -->
     <NotificationContainer />
   </div>
@@ -27,11 +30,13 @@
 <script>
 // Import du composant centralisé des notifications
 import NotificationContainer from './error/NotificationContainer.vue';
+import DarkModeToggle from './ui/DarkModeToggle.vue';
 
 export default {
   name: 'App',
   components: {
-    NotificationContainer
+    NotificationContainer,
+    DarkModeToggle
   }
 };
 </script>
@@ -40,11 +45,16 @@ export default {
 /* Import de la police Merienda depuis Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap');
 
-/* Animation d’apparition/disparition douce pour transitions */
+/* Animation d'apparition/disparition douce pour transitions */
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s;
 }
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+
+/* Transition globale des couleurs pour le mode sombre */
+.transition-colors {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 </style>
