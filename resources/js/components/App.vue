@@ -14,8 +14,8 @@
 <template>
   <!-- Conteneur principal de l'application avec style personnalisé -->
   <div
-    class="font-[Dancing_Script] bg-[#f4f1e3] text-[#333] leading-relaxed min-h-screen pt-10 overflow-y-auto"
-  >
+  class="font-[Dancing_Script] bg-[#f4f1e3] dark:bg-gray-900 text-[#333] dark:text-gray-200 leading-relaxed min-h-screen pt-10 overflow-y-auto transition-colors"
+>
     <!-- Affiche dynamiquement les composants selon la route -->
     <router-view />
 
