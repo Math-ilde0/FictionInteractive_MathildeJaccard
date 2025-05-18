@@ -68,12 +68,6 @@
         >
           {{ buttonText }}
         </router-link>
-        <button
-          @click="restartGame"
-          class="px-6 py-2 bg-gray-400 dark:bg-gray-600 text-white rounded hover:bg-gray-500 dark:hover:bg-gray-700 transition-colors"
-        >
-          Rejouer
-        </button>
       </div>
     </div>
   </main>
@@ -173,16 +167,4 @@ const adviceList = computed(() => ({
     'Ne pas laisser les notes définir ta valeur',
   ],
 }[outcome.value] || []));
-
-// Redémarrer le jeu
-const restartGame = async () => {
-  try {
-    await axios.post('/api/metrics/reset');
-    localStorage.removeItem('storyProgress');
-    router.push('/');
-  } catch (error) {
-    console.error('Erreur lors du redémarrage:', error);
-    router.push('/');
-  }
-};
 </script>

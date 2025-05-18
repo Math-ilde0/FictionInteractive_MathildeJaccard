@@ -29,12 +29,12 @@
   </div>
 
   <!-- Affichage du chapitre avec transition -->
-  <transition name="chapter-fade" mode="out-in">
+  <transition name="page-turn" mode="out-in">
     <div
       v-if="!error && !loading"
-      :key="chapter.chapter_number"
-      :style="pageEffects"
-      class="bg-white dark:bg-gray-800 max-w-3xl mx-auto shadow-xl rounded-lg px-10 py-12 relative font-serif leading-relaxed text-gray-800 dark:text-gray-200 prose prose-lg"
+     :key="chapter.chapter_number"
+     :style="pageEffects"
+     class="bg-white dark:bg-gray-800 max-w-3xl mx-auto shadow-xl rounded-lg px-10 py-12 relative font-serif leading-relaxed text-gray-800 dark:text-gray-200 prose prose-lg chapter-container"
     >
       <!-- Affichage des métriques -->
       <MetricsDisplay :level="chargeMentale" :sleepLevel="sommeil" :gradesLevel="notes" />
@@ -272,12 +272,12 @@ watch([chargeMentale, sommeil, notes], () => {
   checkWarnings();
 });
 </script>
-
 <style scoped>
+/* Remplacer ceci */
 /* Animation de transition entre chapitres */
 .chapter-fade-enter-active,
 .chapter-fade-leave-active {
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.4s ease, transform 0.6s ease;
 }
 
 .chapter-fade-enter-from,
@@ -286,7 +286,32 @@ watch([chargeMentale, sommeil, notes], () => {
   transform: translateY(30px);
 }
 
-/* Animations pour les indicateurs de stress élevé */
+/* Par cet effet de livre */
+/* Animation d'effet de page qui tourne */
+.page-turn-enter-active,
+.page-turn-leave-active {
+  transition: all 0.4s ease;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.page-turn-enter-from {
+  opacity: 0;
+  transform: translateX(100%) rotateY(-30deg);
+}
+
+.page-turn-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) rotateY(30deg);
+}
+
+/* Ajout d'une perspective au conteneur pour améliorer l'effet 3D */
+.chapter-container {
+  perspective: 1000px;
+}
+
+/* Garder les animations existantes */
 @keyframes heartbeat {
   0% { transform: scale(1); }
   5% { transform: scale(1.01); }

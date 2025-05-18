@@ -125,6 +125,7 @@
 <script>
 import axios from 'axios';
 import { setMetric } from '@/utils/metrics';
+import { showNotification } from '@/stores/notificationStore';
 
 export default {
   data() {
@@ -210,11 +211,29 @@ export default {
       });
     },
     clearSavedProgress() {
-      if (confirm('Confirmer la suppression de la progression ?')) {
-        localStorage.removeItem('storyProgress');
-        this.savedProgress = null;
-      }
-    },
+      // Remplacer l'alerte native par une notification stylisée
+      showNotification({
+        type: 'warning',
+        title: 'Supprimer la progression',
+        message: 'Êtes-vous sûr de vouloir effacer votre progression sauvegardée ?',
+        action: true,
+        actionText: 'Supprimer',
+        position: 'top-4 inset-x-0 mx-auto',
+        duration: 0 // La notification reste jusqu'à ce que l'utilisateur interagisse
+      }).then(result => {
+        if (result === 'action') {
+          localStorage.removeItem('storyProgress');
+          this.savedProgress = null;
+          
+          // Afficher une notification de confirmation après la suppression
+          showNotification({
+            type: 'success',
+            message: 'Votre progression a été effacée avec succès.',
+            duration: 3000
+          });
+        }
+        }); 
+},  
     async startStory(storyId) {
       try {
         this.loading = true;

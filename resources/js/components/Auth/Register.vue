@@ -1,7 +1,7 @@
 <!--
 /**
  * @component Register.vue
- * Formulaire d’inscription utilisateur.
+ * Formulaire d'inscription utilisateur.
  *
  * Crée un compte via POST `/register` et connecte automatiquement après succès.
  * Vérifie que les mots de passe correspondent.
@@ -12,9 +12,15 @@
 -->
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center px-4">
-    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 space-y-6">
-      <h1 class="text-2xl font-bold text-center text-indigo-700">Créer un compte</h1>
+  <div class="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-950 flex items-center justify-center px-4">
+    <!-- Bouton de retour à l'accueil -->
+    <div class="fixed top-5 left-5 z-50">
+      <button @click="confirmReturnHome" class="px-4 py-2 bg-white dark:bg-gray-700 hover:bg-blue-200 dark:hover:bg-blue-800 text-gray-700 dark:text-white rounded-lg shadow flex items-center gap-2 transition-colors duration-200">
+      <span>🏠</span>
+      </button>
+    </div>
+    <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6 transition-colors duration-200">
+      <h1 class="text-2xl font-bold text-center text-indigo-700 dark:text-indigo-300">Créer un compte</h1>
 
       <!-- Formulaire d'inscription -->
       <form @submit.prevent="submit" class="space-y-4">
@@ -25,7 +31,7 @@
           type="text"
           placeholder="Nom"
           required
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:ring-indigo-500"
         />
 
         <!-- Champ Email -->
@@ -34,7 +40,7 @@
           type="email"
           placeholder="Email"
           required
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:ring-indigo-500"
         />
 
         <!-- Champ Mot de passe -->
@@ -44,7 +50,7 @@
           placeholder="Mot de passe"
           required
           minlength="8"
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:ring-indigo-500"
         />
 
         <!-- Confirmation du mot de passe -->
@@ -53,36 +59,29 @@
           type="password"
           placeholder="Confirmer le mot de passe"
           required
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:ring-indigo-500"
         />
 
         <!-- Bouton d'envoi -->
         <button
           type="submit"
           :disabled="isSubmitting"
-          class="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold"
+          class="w-full py-2 bg-indigo-600 dark:bg-indigo-700 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition font-semibold disabled:opacity-50"
         >
           {{ isSubmitting ? 'Création en cours...' : 'Créer mon compte' }}
         </button>
 
         <!-- Avertissement manuel -->
-        <p class="text-xs text-center text-gray-500 mt-2">
+        <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
           ⚠️ Si la redirection vers les témoignages ne fonctionne pas, connectez-vous manuellement avec vos identifiants.
         </p>
       </form>
 
       <!-- Lien vers la page de connexion -->
-      <div class="text-center text-sm text-gray-600 mt-6">
-        <router-link to="/login" class="inline-flex items-center gap-2 text-indigo-600 hover:underline">
+      <div class="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
+        <router-link to="/login" class="inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:underline">
           🔼 Retourner vers "Se connecter"
         </router-link>
-      </div>
-
-      <!-- Bouton retour accueil -->
-      <div class="text-center mt-4">
-        <button @click="goHome" class="inline-flex items-center gap-2 text-sm text-gray-700 hover:text-indigo-700 transition">
-          🏠 Retour à l'accueil
-        </button>
       </div>
     </div>
   </div>
@@ -171,9 +170,33 @@ const submit = async () => {
 }
 
 /**
- * Redirige vers l'accueil
+ * Confirme le retour à l'accueil
  */
-const goHome = () => {
-  router.push('/')
-}
+const confirmReturnHome = () => {
+  showNotification({
+    type: 'warning',
+    title: 'Quitter la connexion',
+    message: 'Voulez-vous retourner à l\'accueil ?',
+    action: true,
+    actionText: 'Quitter',
+    position: 'top-4 inset-x-0 mx-auto'
+  }).then(result => {
+    if (result === 'action') {
+      router.push('/');
+    }
+  });
+};
 </script>
+
+<style scoped>
+/* Animation de transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

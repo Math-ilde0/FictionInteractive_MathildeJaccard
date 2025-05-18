@@ -5,7 +5,7 @@
  *
  * Récupère les données via GET `/testimonies/all`.
  * Affiche les noms, titres et dates, avec mise en page responsive.
- * Permet de se déconnecter et d’accéder au formulaire de création (lien désactivé).
+ * Permet de se déconnecter et d'accéder au formulaire de création (lien désactivé).
  *
  * @auteur Mathilde Jaccard – HEIG-VD
  * @date Mai 2025
@@ -13,18 +13,18 @@
 -->
 
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-10">
+  <div class="max-w-3xl mx-auto px-4 py-10 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
     <!-- Bouton de déconnexion + retour à l'accueil -->
     <div class="fixed top-5 right-5 z-50">
       <button
         @click="logoutAndGoHome"
-        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow flex items-center gap-2"
+        class="px-4 py-2 bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg shadow flex items-center gap-2 transition-colors duration-200"
       >
         Se déconnecter et retourner à l'accueil <span>🏠</span>
       </button>
     </div>
 
-    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">
+    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
       Témoignages sur la charge mentale
     </h1>
 
@@ -32,24 +32,24 @@
     <div v-if="isAuthenticated" class="text-center mb-8">
       <router-link
         to="/testimonies/create"
-        class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors inline-block"
+        class="bg-green-500 dark:bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-600 dark:hover:bg-green-700 transition-colors inline-block"
       >
         Partager mon témoignage (indisponible pour le moment)
       </router-link>
     </div>
 
     <!-- Chargement en cours -->
-    <div v-if="loading" class="text-center py-8 text-gray-500">
+    <div v-if="loading" class="text-center py-8 text-gray-500 dark:text-gray-400">
       Chargement des témoignages...
     </div>
 
-    <!-- Message d’erreur -->
-    <div v-else-if="error" class="bg-red-100 text-red-700 p-4 rounded-lg text-center">
+    <!-- Message d'erreur -->
+    <div v-else-if="error" class="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 p-4 rounded-lg text-center">
       {{ error }}
     </div>
 
     <!-- Aucun témoignage trouvé -->
-    <div v-else-if="!testimonies || testimonies.length === 0" class="text-center py-8 text-gray-500 italic">
+    <div v-else-if="!testimonies || testimonies.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400 italic">
       Aucun témoignage n'a encore été publié.
     </div>
 
@@ -58,16 +58,16 @@
       <div
         v-for="(testimony, index) in testimonies"
         :key="testimony?.id || index"
-        class="bg-white rounded-lg shadow-md p-6"
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-200"
       >
-        <h2 class="text-xl font-semibold mb-3 text-gray-800">
+        <h2 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">
           {{ testimony?.title || 'Sans titre' }}
         </h2>
-        <div class="flex justify-between text-sm text-gray-500 mb-4">
+        <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
           <span>Par {{ testimony?.user?.name || 'Anonyme' }}</span>
           <span>{{ formatDate(testimony?.created_at) }}</span>
         </div>
-        <p class="text-gray-700 mb-4 leading-relaxed">
+        <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
           {{ excerpt(testimony?.content || '') }}
         </p>
       </div>
@@ -82,15 +82,15 @@ import axios from 'axios';
 
 export default {
   setup() {
-    // Variables réactives pour stocker les témoignages, l’état de chargement et les erreurs
+    // Variables réactives pour stocker les témoignages, l'état de chargement et les erreurs
     const testimonies = ref([]);
     const loading = ref(true);
     const error = ref(null);
 
-    // Vérifie si l’utilisateur est connecté
+    // Vérifie si l'utilisateur est connecté
     const isAuthenticated = computed(() => !!user.value);
 
-    // Déconnexion + redirection vers l’accueil
+    // Déconnexion + redirection vers l'accueil
     const logoutAndGoHome = async () => {
       try {
         await logout();
@@ -132,7 +132,7 @@ export default {
       }
     };
 
-    // Raccourcit le contenu d’un témoignage
+    // Raccourcit le contenu d'un témoignage
     const excerpt = (text = '', length = 200) => {
       return text.length <= length ? text : text.substring(0, length) + '...';
     };
@@ -154,3 +154,33 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/* Animation pour les transitions entre éléments */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Animation pour les cartes de témoignages */
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Appliquer l'animation aux cartes */
+div[v-for] {
+  animation: appear 0.3s ease-out forwards;
+}
+</style>

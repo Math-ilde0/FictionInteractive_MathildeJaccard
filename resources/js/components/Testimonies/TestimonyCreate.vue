@@ -4,7 +4,7 @@
  * Formulaire de création de témoignage par un utilisateur connecté.
  *
  * Permet de poster un récit personnel via POST `/api/testimonies`.
- * Inclut un système de notification, validation du formulaire, et gestion d’erreur.
+ * Inclut un système de notification, validation du formulaire, et gestion d'erreur.
  * Accessible uniquement après authentification.
  *
  * @auteur Mathilde Jaccard – HEIG-VD
@@ -13,64 +13,68 @@
 -->
 
 <template>
-  <!-- Bouton retour vers la liste des témoignages -->
-  <div class="mb-6">
-    <button 
-      @click="goBack" 
-      class="flex items-center gap-2 text-blue-500 hover:text-blue-700 transition"
-    >
-      <span>←</span> Retour aux témoignages
-    </button>
-  </div>
+  <div class="bg-gray-50 dark:bg-gray-900 min-h-screen p-6 transition-colors duration-200">
+    <div class="max-w-2xl mx-auto">
+      <!-- Bouton retour vers la liste des témoignages -->
+      <div class="mb-6">
+        <button 
+          @click="goBack" 
+          class="flex items-center gap-2 text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition"
+        >
+          <span>←</span> Retour aux témoignages
+        </button>
+      </div>
 
-  <div class="testimony-create-container">
-    <h1 class="text-2xl font-bold mb-6">Partager mon témoignage</h1>
-    
-    <!-- Formulaire de création de témoignage -->
-    <form @submit.prevent="submitTestimony" class="max-w-lg mx-auto">
-      
-      <!-- Champ pour le titre -->
-      <div class="mb-4">
-        <label for="title" class="block mb-2">Titre du témoignage</label>
-        <input 
-          v-model="title" 
-          type="text" 
-          id="title" 
-          required 
-          class="w-full p-2 border rounded"
-          placeholder="Un titre court et significatif"
-        />
+      <div class="testimony-create-container bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md transition-colors duration-200">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100">Partager mon témoignage</h1>
+        
+        <!-- Formulaire de création de témoignage -->
+        <form @submit.prevent="submitTestimony" class="max-w-lg mx-auto">
+          
+          <!-- Champ pour le titre -->
+          <div class="mb-4">
+            <label for="title" class="block mb-2 text-gray-700 dark:text-gray-300">Titre du témoignage</label>
+            <input 
+              v-model="title" 
+              type="text" 
+              id="title" 
+              required 
+              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:ring-blue-500 transition-colors duration-200"
+              placeholder="Un titre court et significatif"
+            />
+          </div>
+          
+          <!-- Champ pour le contenu -->
+          <div class="mb-4">
+            <label for="content" class="block mb-2 text-gray-700 dark:text-gray-300">Votre témoignage</label>
+            <textarea 
+              v-model="content" 
+              id="content" 
+              required 
+              rows="6" 
+              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:focus:ring-blue-500 transition-colors duration-200"
+              placeholder="Partagez votre expérience avec la charge mentale..."
+            ></textarea>
+          </div>
+          
+          <!-- Bouton de soumission désactivé pour l'instant -->
+          <button 
+            type="submit" 
+            class="w-full bg-green-500 dark:bg-green-600 text-white p-2 rounded hover:bg-green-600 dark:hover:bg-green-700 transition-colors duration-200 disabled:opacity-50"
+            disabled
+          >
+            <span v-if="isSubmitting">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Envoi en cours...
+            </span>
+            <span v-else>Publier mon témoignage</span>
+          </button>
+        </form>
       </div>
-      
-      <!-- Champ pour le contenu -->
-      <div class="mb-4">
-        <label for="content" class="block mb-2">Votre témoignage</label>
-        <textarea 
-          v-model="content" 
-          id="content" 
-          required 
-          rows="6" 
-          class="w-full p-2 border rounded"
-          placeholder="Partagez votre expérience avec la charge mentale..."
-        ></textarea>
-      </div>
-      
-      <!-- Bouton de soumission désactivé pour l’instant -->
-      <button 
-        type="submit" 
-        class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
-        disabled
-      >
-        <span v-if="isSubmitting">
-          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Envoi en cours...
-        </span>
-        <span v-else>Publier mon témoignage</span>
-      </button>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -141,7 +145,7 @@ const submitTestimony = async () => {
       errorMessage = 'Problème de connexion. Vérifiez votre réseau.';
     }
 
-    // Affichage de la notification d’erreur
+    // Affichage de la notification d'erreur
     showNotification({
       type: 'error',
       title: 'Erreur de publication',
@@ -158,3 +162,21 @@ const submitTestimony = async () => {
   }
 };
 </script>
+
+<style scoped>
+/* Transition douce pour les changements d'états */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Effet de focus sur les champs du formulaire */
+input:focus, textarea:focus {
+  outline: none;
+}
+</style>
