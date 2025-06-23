@@ -31,12 +31,7 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->routes(function () {
-            /**
-             * Chargement des routes API (sans préfixe 'api') avec middleware JSON forcé.
-             * Les routes sont définies dans `routes/api.php`.
-             */
-            Route::middleware(['api', \App\Http\Middleware\ForceJsonResponse::class])
-                ->group(base_path('routes/api.php'));
+
 
             /**
              * Chargement des routes Web avec gestion de session, CSRF, etc.

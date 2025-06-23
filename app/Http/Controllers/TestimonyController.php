@@ -55,127 +55,30 @@ class TestimonyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|min:5|max:255',
-            'content' => 'required|min:20',
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+    ]);
 
-        $testimony = Auth::user()->testimonies()->create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'status' => 'draft',
-        ]);
+    $testimony = new Testimony();
+    $testimony->title = $validated['title'];
+    $testimony->content = $validated['content'];
+    $testimony->user_id = auth()->id(); // pour relier l’utilisateur
+    $testimony->save();
 
-        return response()->json([
-            'message' => 'Témoignage créé avec succès et sera examiné avant publication.',
-            'testimony' => $testimony
-        ], 201);
-    }
-
-    /**
-     * Afficher un témoignage spécifique.
-     *
-     * @param  \App\Models\Testimony  $testimony
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(Testimony $testimony)
-    {
-        if ($testimony->status !== 'published' && (Auth::guest() || Auth::id() !== $testimony->user_id)) {
-            abort(403, 'Ce témoignage n\'est pas encore publié.');
-        }
-
-        $testimony->load('user:id,name');
-
-        return response()->json($testimony);
-    }
-
-    /**
-     * Afficher le formulaire d'édition d'un témoignage.
-     *
-     * @param  \App\Models\Testimony  $testimony
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function edit(Testimony $testimony)
-    {
-        $this->authorize('update', $testimony);
-
-        return response()->json([
-            'message' => 'Formulaire d\'édition disponible.',
-            'testimony' => $testimony
-        ]);
-    }
+    return response()->json(['message' => 'Témoignage enregistré avec succès'], 201);
+}
 
     /**
      * Retourner tous les témoignages publiés sans pagination.
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function all()
+   public function all()
 {
-    // Retourner tous les témoignages sans filtrer par status
-    return Testimony::with('user:id,name')
-        ->latest()
-        ->get();
+    return response()->json(\App\Models\Testimony::latest()->get());
 }
 
-    /**
-     * Mettre à jour un témoignage existant.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Testimony  $testimony
-     * @return \Illuminate\Http\JsonResponse|null
-     */
-    public function update(Request $request, Testimony $testimony)
-    {
-        $this->authorize('update', $testimony);
-
-        $validated = $request->validate([
-            'title' => 'required|min:5|max:255',
-            'content' => 'required|min:20',
-        ]);
-
-        $testimony->update([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'status' => 'draft',
-        ]);
-
-        if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'Témoignage mis à jour avec succès.',
-                'testimony' => $testimony
-            ]);
-        }
-    }
-
-    /**
-     * Supprimer un témoignage.
-     *
-     * @param  \App\Models\Testimony  $testimony
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(Testimony $testimony)
-    {
-        $this->authorize('delete', $testimony);
-
-        $testimony->delete();
-
-        return response()->json([
-            'message' => 'Témoignage supprimé avec succès.'
-        ]);
-    }
-
-    /**
-     * Afficher les témoignages de l'utilisateur actuellement connecté.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function myTestimonies()
-    {
-        $testimonies = Auth::user()->testimonies()->latest()->paginate(10);
-
-        return response()->json($testimonies);
-    }
 }

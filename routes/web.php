@@ -13,7 +13,10 @@ use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 // Route pour le CSRF token
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
-Route::get('/testimonies/all', [TestimonyController::class, 'all']);
+Route::get('/testimonies', [TestimonyController::class, 'all']);
+
+    Route::post('/testimonies', [TestimonyController::class, 'store']);
+    
 // Routes du jeu
 Route::get('/stories', [StoryController::class, 'index']);
 Route::get('/story/{id}', [StoryController::class, 'show']);

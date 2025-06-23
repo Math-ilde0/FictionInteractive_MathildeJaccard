@@ -29,14 +29,13 @@
     </h1>
 
     <!-- Bouton pour créer un témoignage si l'utilisateur est connecté -->
-    <div v-if="isAuthenticated" class="text-center mb-8">
-      <router-link
-        to="/testimonies/create"
-        class="bg-green-500 dark:bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-600 dark:hover:bg-green-700 transition-colors inline-block"
-      >
-        Partager mon témoignage (indisponible pour le moment)
-      </router-link>
-    </div>
+   <router-link
+  to="/testimonies/create"
+  class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow transition duration-200"
+>
+  ➕ Ajouter un témoignage
+</router-link>
+
 
     <!-- Chargement en cours -->
     <div v-if="loading" class="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -106,7 +105,7 @@ export default {
       loading.value = true;
       error.value = null;
       try {
-        const response = await axios.get('/testimonies/all');
+        const response = await axios.get('/testimonies');
         testimonies.value = response.data;
       } catch (err) {
         error.value = "Aucun témoignage trouvé.";
