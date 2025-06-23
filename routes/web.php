@@ -1,5 +1,17 @@
 <?php
-// routes/web.php
+/**
+ * Fichier des routes Web pour l'application Laravel.
+ *
+ * Définit les endpoints accessibles via le navigateur pour :
+ * - l'accès public et authentifié aux témoignages
+ * - le système de narration interactive (histoires, chapitres, choix)
+ * - le suivi de métriques utilisateur
+ * - l'authentification (via `auth.php`)
+ * - le support de la SPA Vue.js via une route catch-all
+ *
+ * @auteur Mathilde Jaccard – HEIG-VD
+ * @date Juin 2025
+ */
 
 use App\Http\Controllers\TestimonyController;
 use App\Http\Controllers\ProfileController;
@@ -16,7 +28,7 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 Route::get('/testimonies', [TestimonyController::class, 'all']);
 
     Route::post('/testimonies', [TestimonyController::class, 'store']);
-    
+
 // Routes du jeu
 Route::get('/stories', [StoryController::class, 'index']);
 Route::get('/story/{id}', [StoryController::class, 'show']);

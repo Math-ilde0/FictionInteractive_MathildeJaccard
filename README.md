@@ -116,10 +116,10 @@ Le backend expose une API RESTful pour permettre au frontend de fonctionner en m
     Les chapitres, comme /story/1/chapter/1, renvoient également du JSON, utile pour naviguer dynamiquement.
 ## 
 
-Ce projet est développé dans le cadre d'un projet éducatif pour sensibiliser à la gestion du stress et à la prévention du burn-out chez les étudiants.
+Ce projet "Batterie Mentale" a été développé dans le cadre d’un projet scolaire réalisé en Bachelor d’ingénierie des médias (HEIG-VD), pour sensibiliser à la gestion du stress et à la prévention du burn-out chez les étudiants.
 
 ## 👩‍💻 
 
 Mathilde Jaccard  
 HEIG-VD – Bachelor Media Engineering  
-Mai 2025
+Juin 2025

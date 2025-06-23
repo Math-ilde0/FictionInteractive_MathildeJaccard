@@ -1,3 +1,22 @@
+<!--
+/**
+ * @component TestimonyCreate.vue
+ * Formulaire de soumission d’un témoignage utilisateur.
+ *
+ * Accessible uniquement après authentification. Permet de publier un témoignage
+ * contenant un titre et un contenu, via la route POST `/testimonies`.
+ * 
+ * Gestion des erreurs de validation (422) et de session expirée (401).
+ * Redirection vers la liste des témoignages après envoi.
+ * 
+ * Contrôles visuels adaptés à la thématique (mode clair/sombre), 
+ * accessibilité, animation d’apparition, retour vers l’accueil.
+ *
+ * @auteur Mathilde Jaccard – HEIG-VD
+ * @date Juin 2025
+ */
+-->
+
 <template>
   <div class="max-w-3xl mx-auto px-4 py-10 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
 

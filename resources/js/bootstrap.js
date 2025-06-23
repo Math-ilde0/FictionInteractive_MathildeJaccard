@@ -12,6 +12,7 @@
  */
 
 import axios from 'axios';
+import router from './router'; 
 
 // Définir Axios globalement (optionnel mais courant dans les apps Vue/Laravel)
 window.axios = axios;
